@@ -3,7 +3,7 @@
 
 import type { Metadata } from 'next';
 import { getTheme } from '@/lib/api/theme';
-import { getProducts } from '@/lib/api/products';
+import { getProducts, getFilterFacets } from '@/lib/api/products';
 import { getCategories, getBrands } from '@/lib/api/catalog';
 import { resolveTemplate } from '@/templates';
 
@@ -14,7 +14,7 @@ interface ProductsPageProps {
 export async function generateMetadata(): Promise<Metadata> {
   const theme = await getTheme();
   return {
-    title: `Shop All Products`,
+    title: `Shop All Products | ${theme.seoSiteTitle || theme.storeName}`,
     description: `Browse our full catalogue of products at ${theme.storeName}.`,
   };
 }
@@ -22,22 +22,28 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const resolvedParams = await searchParams;
 
-  const [theme, categories, brands] = await Promise.all([
+  const [theme, categories, brands, filterFacets] = await Promise.all([
     getTheme(),
     getCategories(),
     getBrands(),
+    getFilterFacets(),
   ]);
 
   // Derive filter params from URL
   const products = await getProducts({
-    category:  resolvedParams.category as string | undefined,
-    brand:     resolvedParams.brand as string | undefined,
-    search:    resolvedParams.search as string | undefined,
-    sort:      resolvedParams.sort as string | undefined,
-    minPrice:  resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
-    maxPrice:  resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
-    page:      resolvedParams.page ? Number(resolvedParams.page) : 1,
-    limit:     24,
+    category:    resolvedParams.category as string | undefined,
+    categories:  resolvedParams.categories as string | undefined,
+    brand:       resolvedParams.brand as string | undefined,
+    brands:      resolvedParams.brands as string | undefined,
+    search:      (resolvedParams.search || resolvedParams.q) as string | undefined,
+    sort:        resolvedParams.sort as string | undefined,
+    minPrice:    resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
+    maxPrice:    resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
+    discount:    resolvedParams.discount ? Number(resolvedParams.discount) : undefined,
+    minDiscount: resolvedParams.minDiscount ? Number(resolvedParams.minDiscount) : undefined,
+    gender:      resolvedParams.gender as string | undefined,
+    page:        resolvedParams.page ? Number(resolvedParams.page) : 1,
+    limit:       24,
   });
 
   const { PLPPage } = resolveTemplate(theme.activeTemplateSlug);
@@ -48,6 +54,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       products={products}
       categories={categories}
       brands={brands}
+      filterFacets={filterFacets}
       searchParams={resolvedParams}
     />
   );

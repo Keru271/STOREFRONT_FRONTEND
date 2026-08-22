@@ -14,6 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function LoginPage() {
   const theme = await getTheme();
+
+  console.log({ theme })
   const { LoginPage } = resolveTemplate(theme.activeTemplateSlug);
   return <LoginPage theme={theme} />;
 }

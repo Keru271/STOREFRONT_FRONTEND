@@ -1,9 +1,9 @@
-// ─── Theme API ────────────────────────────────────────────────────────────────
-// Fetches the active store/theme configuration from the backend.
-// This drives template selection, color injection, and store metadata.
+// ─── Theme & Store Info API ──────────────────────────────────────────────────
+// Fetches the active store branding (name, logo, favicon, meta title)
+// and theme configuration from the backend CMS.
 
 import { apiClient } from './client';
-import type { ThemeConfig } from './types';
+import type { ThemeConfig, StoreInfo } from './types';
 
 // Default fallback theme — used when backend is unreachable
 export const DEFAULT_THEME: ThemeConfig = {
@@ -12,7 +12,7 @@ export const DEFAULT_THEME: ThemeConfig = {
   currency: 'USD',
   language: 'en-US',
   timezone: 'UTC',
-  activeTemplateSlug: 'default',
+  activeTemplateSlug: 'mincom',
   themePrimaryColor: '#6366f1',
   themeSecondaryColor: '#8b5cf6',
   themeBackgroundColor: '#ffffff',
@@ -29,19 +29,46 @@ export const DEFAULT_THEME: ThemeConfig = {
   footerShowSocial: true,
   footerShowNewsletter: true,
   footerCopyright: `© ${new Date().getFullYear()} Storefront. All rights reserved.`,
+  seoSiteTitle: 'Storefront | Modern E-Commerce',
+  seoMetaDescription: 'Shop premium products with fast shipping and secure checkout.',
 };
 
 /**
  * Fetches the storefront theme config from the backend.
- * Cached for 5 minutes (300s) on the server.
- * Falls back to DEFAULT_THEME if the request fails.
+ * Uses on-demand revalidation so changes saved in the CMS reflect immediately.
  */
 export async function getTheme(): Promise<ThemeConfig> {
   try {
-    return await apiClient.get<ThemeConfig>('api/storefront/theme', {
-      next: { revalidate: 300, tags: ['theme'] },
+    const theme = await apiClient.get<ThemeConfig>('api/storefront/theme', {
+      next: { revalidate: 0, tags: ['theme'] },
     });
+    return theme;
   } catch {
     return DEFAULT_THEME;
+  }
+}
+
+/**
+ * Fetches dedicated store branding info (storeName, logo, favicon, meta title, description).
+ */
+export async function getStoreInfo(): Promise<StoreInfo> {
+  try {
+    const info = await apiClient.get<StoreInfo>('api/storefront/theme/info', {
+      next: { revalidate: 0, tags: ['store-info', 'theme'] },
+    });
+    return info;
+  } catch {
+    return {
+      storeName: DEFAULT_THEME.storeName,
+      slug: DEFAULT_THEME.slug,
+      logo: DEFAULT_THEME.logo,
+      favicon: DEFAULT_THEME.favicon,
+      seoSiteTitle: DEFAULT_THEME.seoSiteTitle,
+      seoMetaDescription: DEFAULT_THEME.seoMetaDescription,
+      description: DEFAULT_THEME.description,
+      currency: DEFAULT_THEME.currency,
+      language: DEFAULT_THEME.language,
+      activeTemplateSlug: DEFAULT_THEME.activeTemplateSlug,
+    };
   }
 }

@@ -1,8 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import type { Product, ProductDetail } from '@/lib/api/types';
+import { useWishlist } from '@/context/WishlistContext';
+import { useCurrency } from '@/hooks/useCurrency';
 
 type LuxeProduct = Product & Partial<Pick<ProductDetail, 'colorOptions'>>;
 
@@ -12,12 +15,24 @@ interface LuxeProductCardProps {
 
 export default function LuxeProductCard({ product }: LuxeProductCardProps) {
   const [hovered, setHovered] = useState(false);
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const { formatPrice } = useCurrency();
+  const isWishlisted = isInWishlist(product.id);
+
   const imageUrl = product.image || product.images?.[0];
   const secondImage = product.images?.[1];
   const productHref = product.urlSlug ? `/products/${product.urlSlug}` : `/products/${product.id}`;
   const discount = product.compareAtPrice
     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
     : 0;
+  const isOOS = product.stockQuantity === 0;
+  const isLowStock = product.stockQuantity != null && product.stockQuantity > 0 && product.stockQuantity <= 5;
+
+  const handleWishlist = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await toggleWishlist(product.id);
+  };
 
   return (
     <Link
@@ -36,10 +51,12 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
       >
         {/* Primary image */}
         {imageUrl ? (
-          <img
+          <Image
             src={imageUrl}
             alt={product.name}
-            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-cover transition-opacity duration-500"
             style={{ opacity: hovered && secondImage ? 0 : 1 }}
           />
         ) : (
@@ -55,21 +72,15 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
 
         {/* Hover: Second image or zoom */}
         {secondImage ? (
-          <img
+          <Image
             src={secondImage}
             alt={`${product.name} — alternate view`}
-            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-cover transition-opacity duration-500"
             style={{ opacity: hovered ? 1 : 0 }}
           />
-        ) : (
-          imageUrl && (
-            <img
-              src={imageUrl}
-              alt={product.name}
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 scale-100 group-hover:scale-110"
-            />
-          )
-        )}
+        ) : null}
 
         {/* Badges */}
         <div className="absolute top-4 left-4 flex flex-col gap-1.5">
@@ -92,15 +103,26 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
               Sold Out
             </span>
           )}
+          {isLowStock && (
+            <span
+              className="px-2.5 py-0.5 text-xs font-light tracking-widest uppercase bg-amber-500 text-white"
+            >
+              Only {product.stockQuantity} left
+            </span>
+          )}
         </div>
 
         {/* Quick Wishlist */}
         <button
-          className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-1.5"
-          style={{ backgroundColor: 'var(--sf-bg)', color: 'var(--sf-text)' }}
-          aria-label="Add to wishlist"
+          onClick={handleWishlist}
+          className={`absolute top-4 right-4 transition-all duration-300 p-1.5 rounded-full ${
+            isWishlisted
+              ? 'opacity-100 bg-rose-50 text-rose-500 shadow-md'
+              : 'opacity-0 group-hover:opacity-100 bg-white/90 text-gray-600 hover:text-rose-500'
+          }`}
+          aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.25}>
+          <svg className="w-4 h-4" fill={isWishlisted ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           </svg>
         </button>
@@ -120,12 +142,12 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
             </h3>
           </div>
           <div className="text-right flex-shrink-0">
-            <p className="text-sm font-medium" style={{ color: 'var(--sf-text)' }}>
-              ${product.price.toFixed(2)}
+            <p className="text-sm font-medium" style={{ color: isOOS ? 'rgb(156 163 175)' : 'var(--sf-text)' }}>
+              {isOOS ? <span className="text-xs text-rose-500 font-medium">Out of Stock</span> : formatPrice(product.price)}
             </p>
             {product.compareAtPrice && (
               <p className="text-xs font-light line-through" style={{ color: 'color-mix(in srgb, var(--sf-text) 30%, transparent)' }}>
-                ${product.compareAtPrice.toFixed(2)}
+                {formatPrice(product.compareAtPrice)}
               </p>
             )}
           </div>

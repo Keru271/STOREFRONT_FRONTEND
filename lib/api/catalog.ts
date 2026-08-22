@@ -2,7 +2,7 @@
 // Categories, collections, brands, menus, and static pages.
 
 import { apiClient } from './client';
-import type { Brand, Category, Collection, Menu } from './types';
+import type { Brand, Category, Collection, Menu, CmsPage } from './types';
 
 /**
  * Fetches all product categories.
@@ -48,12 +48,12 @@ export async function getBrands(): Promise<Brand[]> {
 
 /**
  * Fetches all navigation menus.
- * Cached for 5 minutes (300s).
+ * Uses on-demand revalidation (revalidate: 0) for real-time synchronization with CMS.
  */
 export async function getMenus(): Promise<Menu[]> {
   try {
     return await apiClient.get<Menu[]>('api/storefront/catalog/menus', {
-      next: { revalidate: 300, tags: ['menus'] },
+      next: { revalidate: 0, tags: ['menus'] },
     });
   } catch {
     return [];
@@ -61,15 +61,59 @@ export async function getMenus(): Promise<Menu[]> {
 }
 
 /**
- * Fetches a single static page by its slug.
+ * Fetches a single navigation menu by handle, location, or id.
+ * Uses on-demand revalidation (revalidate: 0) for real-time synchronization with CMS.
  */
-export async function getPage(slug: string): Promise<{ title: string; content: string } | null> {
+export async function getMenu(handle: string = 'main-menu'): Promise<Menu | null> {
   try {
-    return await apiClient.get<{ title: string; content: string }>(
-      `api/storefront/catalog/pages/${encodeURIComponent(slug)}`,
-      { next: { revalidate: 300 } }
+    return await apiClient.get<Menu>(
+      `api/storefront/catalog/menus/${encodeURIComponent(handle)}`,
+      { next: { revalidate: 0, tags: ['menus', `menu-${handle}`] } }
     );
   } catch {
     return null;
   }
 }
+
+/**
+ * Fetches all published static and custom pages.
+ */
+export async function getPages(): Promise<CmsPage[]> {
+  try {
+    return await apiClient.get<CmsPage[]>('api/storefront/catalog/pages', {
+      next: { revalidate: 0, tags: ['pages'] },
+    });
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Fetches a single static/custom page by its slug or ID.
+ */
+export async function getPage(slug: string): Promise<CmsPage | null> {
+  try {
+    return await apiClient.get<CmsPage>(
+      `api/storefront/catalog/pages/${encodeURIComponent(slug)}`,
+      { next: { revalidate: 0, tags: ['pages', `page-${slug}`] } }
+    );
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetches a single collection by slug, including its metadata.
+ * Cached for 5 minutes (300s).
+ */
+export async function getCollectionBySlug(slug: string): Promise<Collection | null> {
+  try {
+    return await apiClient.get<Collection>(
+      `api/storefront/catalog/collections/${encodeURIComponent(slug)}`,
+      { next: { revalidate: 300, tags: ['collections', `collection-${slug}`] } }
+    );
+  } catch {
+    return null;
+  }
+}
+

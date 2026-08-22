@@ -1,18 +1,24 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Product } from '@/lib/api/types';
+import { useCurrency } from '@/hooks/useCurrency';
 
 interface MinimalProductCardProps {
   product: Product;
 }
 
 export default function MinimalProductCard({ product }: MinimalProductCardProps) {
+  const { formatPrice } = useCurrency();
   const imageUrl = product.image || product.images?.[0];
   const productHref = product.urlSlug ? `/products/${product.urlSlug}` : `/products/${product.id}`;
   const discount = product.compareAtPrice
     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
     : 0;
+
+  const isOOS = product.stockQuantity === 0;
+  const isLowStock = product.stockQuantity != null && product.stockQuantity > 0 && product.stockQuantity <= 5;
 
   return (
     <Link href={productHref} className="group block">
@@ -25,10 +31,12 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
         }}
       >
         {imageUrl ? (
-          <img
+          <Image
             src={imageUrl}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-110"
           />
         ) : (
           <div
@@ -61,6 +69,18 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
             −{discount}%
           </div>
         )}
+        {isOOS && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+            <span className="text-white text-xs font-semibold tracking-widest uppercase px-3 py-1" style={{ backgroundColor: 'var(--sf-text)' }}>Sold Out</span>
+          </div>
+        )}
+        {isLowStock && (
+          <div className="absolute top-3 left-3">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-white px-2 py-0.5">
+              Only {product.stockQuantity} left
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Info */}
@@ -74,12 +94,12 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
           {product.name}
         </p>
         <div className="flex items-center gap-3">
-          <span className="text-sm" style={{ color: 'var(--sf-text)' }}>
-            ${product.price.toFixed(2)}
+          <span className="text-sm" style={{ color: isOOS ? 'rgb(156 163 175)' : 'var(--sf-text)' }}>
+            {isOOS ? <span className="text-xs font-medium text-rose-500">Out of Stock</span> : formatPrice(product.price)}
           </span>
-          {product.compareAtPrice && (
+          {!isOOS && product.compareAtPrice && (
             <span className="text-xs line-through" style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}>
-              ${product.compareAtPrice.toFixed(2)}
+              {formatPrice(product.compareAtPrice)}
             </span>
           )}
         </div>
