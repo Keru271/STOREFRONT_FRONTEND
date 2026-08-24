@@ -351,19 +351,6 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
       return;
     }
 
-    // ─── Out-of-Stock Guard ──────────────────────────────────────────────────
-    const oosItems = items.filter((item) => item.stockQuantity === 0);
-    if (oosItems.length > 0) {
-      const names = oosItems.map((i) => `"${i.name}"`).join(', ');
-      toast.error(
-        `${names} ${oosItems.length === 1 ? 'is' : 'are'} out of stock. Please remove ${oosItems.length === 1 ? 'it' : 'them'} from your cart before placing an order.`,
-        'Items Out of Stock'
-      );
-      setIsProcessing(false);
-      stopLoading();
-      return;
-    }
-
     startLoading('Securing payment & placing order...');
 
     const cartItemsPayload = items.map((item) => ({
@@ -400,6 +387,21 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
       } catch (err) {
         console.warn('Could not auto-save new address to account:', err);
       }
+    }
+
+    // Check if any cart item is out of stock before initializing payment
+    const outOfStockItem = items.find(
+      (it) => (it as any).isOutOfStock || (it as any).stockQuantity === 0
+    );
+    if (outOfStockItem || summary?.stockValid === false) {
+      const stockMsg = outOfStockItem
+        ? `"${outOfStockItem.name}" is currently Out of Stock. Please remove it from your cart to place your order.`
+        : summary?.stockMessage || 'Some items in your cart are out of stock.';
+      toast.error(stockMsg, 'Out of Stock');
+      setErrorMessage(stockMsg);
+      setIsProcessing(false);
+      stopLoading();
+      return;
     }
 
     try {
@@ -1432,24 +1434,45 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
               )}
             </div>
 
+            {/* Out of Stock Warning Banner */}
+            {items.some((it) => (it as any).isOutOfStock || (it as any).stockQuantity === 0) && (
+              <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-start gap-2.5">
+                <span className="text-base">⚠️</span>
+                <div>
+                  <p className="font-bold">Items Out of Stock</p>
+                  <p className="text-[11px] mt-0.5 opacity-90">One or more items in your cart are currently out of stock. Please return to your cart and remove them before completing checkout.</p>
+                </div>
+              </div>
+            )}
+
             {/* Place Order CTA Button */}
-            <button
-              type="submit"
-              disabled={isProcessing}
-              className="w-full py-4 rounded-2xl font-bold text-base text-white shadow-xl hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-              style={{ backgroundColor: theme.themePrimaryColor || '#191a1b' }}
-            >
-              {isProcessing ? (
-                <>
-                  <span className="animate-spin text-lg">⏳</span>
-                  <span>Processing Secure Payment...</span>
-                </>
-              ) : (
-                <>
-                  <span>🔒 Place Order • {currencySymbol}{summary?.grandTotal ?? totalAmount}</span>
-                </>
-              )}
-            </button>
+            {items.some((it) => (it as any).isOutOfStock || (it as any).stockQuantity === 0) ? (
+              <button
+                type="button"
+                disabled
+                className="w-full py-4 rounded-2xl font-bold text-sm bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700"
+              >
+                <span>⚠️ Remove Out of Stock Items to Pay</span>
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={isProcessing}
+                className="w-full py-4 rounded-2xl font-bold text-base text-white shadow-xl hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                style={{ backgroundColor: theme.themePrimaryColor || '#191a1b' }}
+              >
+                {isProcessing ? (
+                  <>
+                    <span className="animate-spin text-lg">⏳</span>
+                    <span>Processing Secure Payment...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>🔒 Place Order • {currencySymbol}{summary?.grandTotal ?? totalAmount}</span>
+                  </>
+                )}
+              </button>
+            )}
           </div>
 
           {/* ─── RIGHT COLUMN: ORDER SUMMARY & CMS TAXES (5 COLS) ────────────────── */}
@@ -1473,7 +1496,14 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                         />
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900 dark:text-gray-100 line-clamp-1">{item.name}</p>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="font-bold text-gray-900 dark:text-gray-100 line-clamp-1">{item.name}</p>
+                          {((item as any).isOutOfStock || (item as any).stockQuantity === 0) && (
+                            <span className="px-1.5 py-0.2 rounded text-[9px] font-black uppercase bg-rose-500 text-white">
+                              Out of Stock
+                            </span>
+                          )}
+                        </div>
                         <p className="text-gray-400">Qty: {item.quantity} × {currencySymbol}{item.price}</p>
                       </div>
                     </div>

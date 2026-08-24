@@ -24,13 +24,14 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
   const discount = product.compareAtPrice && product.compareAtPrice > product.price
     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
     : 0;
-  const isOOS = product.stockQuantity === 0;
-  const isLowStock = product.stockQuantity != null && product.stockQuantity > 0 && product.stockQuantity <= 5;
+
+  const stock = product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1;
+  const isOutOfStock = stock <= 0;
 
   const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isAdding || isOOS) return;
+    if (isAdding || isOutOfStock) return;
     setIsAdding(true);
     try {
       await addToCart({ productId: product.id, quantity: 1 });
@@ -63,25 +64,22 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
       
       {/* Top Image Container */}
       <div className="relative aspect-square overflow-hidden" style={{ backgroundColor: 'color-mix(in srgb, var(--sf-primary) 5%, var(--sf-bg))' }}>
-        {/* Discount Badge */}
-        {discount > 0 && (
-          <span
-            className="absolute top-3 left-3 z-10 px-2.5 py-1 font-black text-[10px] uppercase tracking-wider rounded-full shadow text-white"
-            style={{ backgroundColor: 'var(--sf-accent, var(--sf-primary))' }}
-          >
-            -{discount}% OFF
-          </span>
-        )}
-        {isOOS && (
-          <span className="absolute top-3 left-3 z-10 px-2.5 py-1 font-black text-[10px] uppercase tracking-wider rounded-full shadow text-white bg-rose-600">
-            Sold Out
-          </span>
-        )}
-        {isLowStock && (
-          <span className="absolute top-3 left-3 z-10 px-2.5 py-1 font-black text-[10px] uppercase tracking-wider rounded-full shadow text-white bg-amber-500">
-            Only {product.stockQuantity} left!
-          </span>
-        )}
+        {/* Badges */}
+        <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
+          {discount > 0 && (
+            <span
+              className="px-2.5 py-1 font-black text-[10px] uppercase tracking-wider rounded-full shadow text-white"
+              style={{ backgroundColor: 'var(--sf-accent, var(--sf-primary))' }}
+            >
+              -{discount}% OFF
+            </span>
+          )}
+          {isOutOfStock && (
+            <span className="px-2.5 py-1 font-black text-[10px] uppercase tracking-wider rounded-full shadow text-white bg-rose-600">
+              Out of Stock
+            </span>
+          )}
+        </div>
 
         {/* Wishlist Floating Button */}
         <button
@@ -113,17 +111,15 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
         <div className="absolute inset-x-3 bottom-3 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 flex gap-2">
           <button
             onClick={handleQuickAdd}
-            disabled={isAdding || isOOS}
-            className={`flex-1 py-2.5 px-3 font-bold text-xs shadow-lg transition flex items-center justify-center gap-1.5 active:scale-95 text-white disabled:opacity-60 disabled:cursor-not-allowed ${
-              isOOS ? 'bg-gray-400' : ''
-            }`}
+            disabled={isAdding || isOutOfStock}
+            className="flex-1 py-2.5 px-3 font-bold text-xs shadow-lg transition flex items-center justify-center gap-1.5 active:scale-95 text-white disabled:opacity-80 disabled:cursor-not-allowed"
             style={{
-              backgroundColor: isOOS ? undefined : 'var(--sf-primary)',
+              backgroundColor: isOutOfStock ? '#64748b' : 'var(--sf-primary)',
               borderRadius: 'calc(var(--sf-radius) * 0.75)',
             }}
           >
-            <span>{isOOS ? 'Out of Stock' : added ? 'Added! ✓' : isAdding ? 'Adding...' : 'Add to Bag'}</span>
-            {!isOOS && <span>🛍️</span>}
+            <span>{added ? 'Added! ✓' : isAdding ? 'Adding...' : isOutOfStock ? 'Out of Stock' : 'Add to Bag'}</span>
+            <span>🛍️</span>
           </button>
           <Link
             href={href}
@@ -181,15 +177,21 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
           </div>
 
           <span
-            className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-              isOOS ? 'bg-rose-100 text-rose-600' : isLowStock ? 'bg-amber-100 text-amber-700' : ''
-            }`}
-            style={isOOS || isLowStock ? undefined : {
-              backgroundColor: 'color-mix(in srgb, var(--sf-primary) 15%, transparent)',
-              color: 'var(--sf-primary)',
+            className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+            style={{
+              backgroundColor: isOutOfStock
+                ? 'rgba(239, 68, 68, 0.15)'
+                : stock <= 5
+                ? 'rgba(245, 158, 11, 0.15)'
+                : 'color-mix(in srgb, var(--sf-primary) 15%, transparent)',
+              color: isOutOfStock
+                ? '#ef4444'
+                : stock <= 5
+                ? '#d97706'
+                : 'var(--sf-primary)',
             }}
           >
-            {isOOS ? 'Out of Stock' : isLowStock ? `Only ${product.stockQuantity} left` : 'In Stock'}
+            {isOutOfStock ? 'Out of Stock' : stock <= 5 ? `Only ${stock} left` : 'In Stock'}
           </span>
         </div>
       </div>

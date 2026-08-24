@@ -15,9 +15,21 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function CartPage() {
-  const theme = await getTheme();
-  const { CartPage: TemplateCartPage } = resolveTemplate(theme.activeTemplateSlug);
-
-  return <TemplateCartPage theme={theme} />;
+interface CartPageProps {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
+
+export default async function CartPage({ searchParams }: CartPageProps) {
+  const resolvedParams = await searchParams;
+  const previewTemplate = resolvedParams?.previewTemplate as string | undefined;
+
+  const theme = await getTheme();
+  const effectiveTheme = previewTemplate
+    ? { ...theme, activeTemplateSlug: previewTemplate }
+    : theme;
+
+  const { CartPage: TemplateCartPage } = resolveTemplate(effectiveTheme.activeTemplateSlug);
+
+  return <TemplateCartPage theme={effectiveTheme} />;
+}
+

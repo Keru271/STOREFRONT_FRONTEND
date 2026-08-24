@@ -69,7 +69,12 @@ export default async function CollectionDetailPage({
     limit:    24,
   });
 
-  const { PLPPage } = resolveTemplate(theme.activeTemplateSlug);
+  const previewTemplate = resolvedParams?.previewTemplate as string | undefined;
+  const effectiveTheme = previewTemplate
+    ? { ...theme, activeTemplateSlug: previewTemplate }
+    : theme;
+
+  const { PLPPage } = resolveTemplate(effectiveTheme.activeTemplateSlug);
 
   // Pass collection context via searchParams so PLPPage can show the heading
   const enrichedParams: Record<string, string | string[] | undefined> = {
@@ -81,7 +86,7 @@ export default async function CollectionDetailPage({
 
   return (
     <PLPPage
-      theme={theme}
+      theme={effectiveTheme}
       products={products}
       categories={categories}
       brands={brands}

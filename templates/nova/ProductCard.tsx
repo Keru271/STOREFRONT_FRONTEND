@@ -21,8 +21,8 @@ export default function NovaProductCard({ product }: NovaProductCardProps) {
   const isLiked = isInWishlist(product.id);
   const primaryImage = product.images?.[0] || product.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80';
   const hasDiscount = product.compareAtPrice && product.compareAtPrice > product.price;
-  const isOutOfStock = product.stockQuantity === 0;
-  const isLowStock = product.stockQuantity != null && product.stockQuantity > 0 && product.stockQuantity <= 5;
+  const stock = product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1;
+  const isOutOfStock = stock <= 0;
   const productHref = `/products/${product.urlSlug || product.id}`;
   const categoryLabel = product.categoryName || (typeof product.category === 'string' ? product.category : '');
 
@@ -59,13 +59,8 @@ export default function NovaProductCard({ product }: NovaProductCardProps) {
             </span>
           )}
           {isOutOfStock && (
-            <span className="px-2 py-0.5 text-[10px] font-semibold tracking-tight uppercase bg-rose-600 text-white rounded-[980px]">
-              Sold Out
-            </span>
-          )}
-          {isLowStock && (
-            <span className="px-2 py-0.5 text-[10px] font-semibold tracking-tight uppercase bg-amber-500 text-white rounded-[980px]">
-              Low Stock
+            <span className="px-2 py-0.5 text-[10px] font-bold tracking-tight uppercase bg-rose-600 text-white rounded-[980px]">
+              Out of Stock
             </span>
           )}
         </div>

@@ -182,25 +182,31 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
 
                   {/* Move to cart */}
                   <div className="p-4 pt-0">
-                    <button
-                      onClick={() => handleMoveToCart(item.id)}
-                      disabled={movingId === item.id || item.stockQuantity === 0}
-                      className="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-white shadow transition flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50"
-                      style={{ backgroundColor: 'var(--sf-primary)' }}
-                    >
-                      {movingId === item.id ? (
-                        'Moving…'
-                      ) : item.stockQuantity === 0 ? (
-                        'Out of Stock'
-                      ) : (
-                        <>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                          </svg>
-                          Move to Cart
-                        </>
-                      )}
-                    </button>
+                    {(() => {
+                      const stock = item.stockQuantity !== undefined ? Number(item.stockQuantity) : (item as any).inventory !== undefined ? Number((item as any).inventory) : 1;
+                      const isOutOfStock = stock <= 0;
+                      return (
+                        <button
+                          onClick={() => handleMoveToCart(item.id)}
+                          disabled={movingId === item.id || isOutOfStock}
+                          className="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-white shadow transition flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                          style={{ backgroundColor: isOutOfStock ? '#64748b' : 'var(--sf-primary)' }}
+                        >
+                          {movingId === item.id ? (
+                            'Moving…'
+                          ) : isOutOfStock ? (
+                            'Out of Stock'
+                          ) : (
+                            <>
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                              </svg>
+                              Move to Cart
+                            </>
+                          )}
+                        </button>
+                      );
+                    })()}
                   </div>
                 </div>
               );

@@ -27,10 +27,13 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
   const productHref = product.urlSlug ? `/products/${product.urlSlug}` : `/products/${product.id}`;
   const isWishlisted = isInWishlist(product.id);
 
+  const stock = product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1;
+  const isOutOfStock = stock <= 0;
+
   const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isAdding || product.stockQuantity === 0) return;
+    if (isAdding || isOutOfStock) return;
 
     setIsAdding(true);
     try {
@@ -90,39 +93,44 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
         </svg>
       </button>
 
+      {/* Card Click Link */}
       <Link href={productHref} className="block">
-        {/* Product Image */}
-        <div
-          className="relative overflow-hidden aspect-square"
-          style={{ backgroundColor: 'color-mix(in srgb, var(--sf-text) 5%, transparent)' }}
-        >
+        {/* Image Container */}
+        <div className="relative w-full aspect-square bg-gray-50 dark:bg-gray-800/50 overflow-hidden">
           {imageUrl ? (
             <Image
               src={imageUrl}
               alt={product.name}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
             <div
               className="w-full h-full flex items-center justify-center"
               style={{
-                background: 'linear-gradient(135deg, color-mix(in srgb, var(--sf-primary) 15%, white), color-mix(in srgb, var(--sf-secondary) 10%, white))',
+                background: `linear-gradient(135deg, color-mix(in srgb, var(--sf-primary) 10%, transparent), color-mix(in srgb, var(--sf-accent) 10%, transparent))`,
               }}
             >
               <svg
-                className="w-16 h-16 opacity-30"
+                className="w-12 h-12 opacity-25"
                 style={{ color: 'var(--sf-primary)' }}
-                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
               </svg>
             </div>
           )}
 
           {/* Badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+          <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
             {discount > 0 && (
               <span
                 className="px-2.5 py-1 rounded-full text-xs font-bold text-white shadow-sm"
@@ -131,14 +139,14 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
                 -{discount}%
               </span>
             )}
-            {product.stockQuantity <= 5 && product.stockQuantity > 0 && (
+            {!isOutOfStock && stock <= 5 && stock > 0 && (
               <span className="px-2.5 py-1 rounded-full text-xs font-bold text-white bg-amber-500 shadow-sm">
-                Low Stock
+                Only {stock} Left
               </span>
             )}
-            {product.stockQuantity === 0 && (
-              <span className="px-2.5 py-1 rounded-full text-xs font-bold text-white bg-gray-600 shadow-sm">
-                Sold Out
+            {isOutOfStock && (
+              <span className="px-2.5 py-1 rounded-full text-xs font-bold text-white bg-rose-600 shadow-sm uppercase tracking-wider">
+                Out of Stock
               </span>
             )}
           </div>
@@ -146,9 +154,9 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
           {/* Quick Add Overlay Button */}
           <button
             onClick={handleQuickAdd}
-            disabled={isAdding || product.stockQuantity === 0}
-            className="absolute inset-x-0 bottom-0 py-3 px-4 translate-y-full group-hover:translate-y-0 transition-all duration-300 font-semibold text-sm text-white flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: 'var(--sf-primary)' }}
+            disabled={isAdding || isOutOfStock}
+            className="absolute inset-x-0 bottom-0 py-3 px-4 translate-y-full group-hover:translate-y-0 transition-all duration-300 font-semibold text-sm text-white flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+            style={{ backgroundColor: isOutOfStock ? '#64748b' : 'var(--sf-primary)' }}
           >
             {isAdding ? (
               <span className="flex items-center gap-2">
@@ -158,8 +166,8 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
                 </svg>
                 Adding...
               </span>
-            ) : product.stockQuantity === 0 ? (
-              'Out of Stock'
+            ) : isOutOfStock ? (
+              <span>Out of Stock</span>
             ) : (
               <>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

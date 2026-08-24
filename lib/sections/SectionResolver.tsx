@@ -239,6 +239,8 @@ function ProductCardMini({ product }: ProductCardMiniProps) {
   const href = product.urlSlug ? `/products/${product.urlSlug}` : `/products/${product.id}`;
   const image = product.images?.[0] || product.image;
   const hasDiscount = product.compareAtPrice && product.compareAtPrice > product.price;
+  const stock = product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1;
+  const isOutOfStock = stock <= 0;
 
   return (
     <Link href={href} className="group block">
@@ -254,11 +256,18 @@ function ProductCardMini({ product }: ProductCardMiniProps) {
         ) : (
           <div className="w-full h-full flex items-center justify-center text-4xl">🛍️</div>
         )}
-        {hasDiscount && (
-          <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: 'var(--sf-accent)' }}>
-            Sale
-          </span>
-        )}
+        <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
+          {hasDiscount && (
+            <span className="px-2 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: 'var(--sf-accent)' }}>
+              Sale
+            </span>
+          )}
+          {isOutOfStock && (
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-white bg-rose-600">
+              Out of Stock
+            </span>
+          )}
+        </div>
       </div>
       <h3 className="font-medium text-sm line-clamp-1 mb-1 group-hover:underline" style={{ color: 'var(--sf-text)' }}>
         {product.name}
@@ -270,6 +279,11 @@ function ProductCardMini({ product }: ProductCardMiniProps) {
         {hasDiscount && (
           <span className="text-xs line-through" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
             {product.compareAtPrice!.toFixed(2)}
+          </span>
+        )}
+        {isOutOfStock && (
+          <span className="text-xs font-bold text-rose-600 ml-auto">
+            Out of Stock
           </span>
         )}
       </div>

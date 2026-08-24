@@ -85,14 +85,17 @@ export function PDPBody({ theme: _theme, product, relatedProducts, renderRelated
   const starCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
   reviewsList.forEach((r) => { if (r.rating >= 1 && r.rating <= 5) (starCounts as Record<number, number>)[r.rating]++; });
 
+  const stock = product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1;
+  const isOutOfStock = stock <= 0;
+
   const handleAddToCart = async () => {
-    if (isAdding || product.stockQuantity === 0) return;
+    if (isAdding || isOutOfStock) return;
     setIsAdding(true);
     try {
       await addToCart({
         productId: product.id,
         variantId: selectedVariantId || undefined,
-        quantity,
+        quantity: Math.min(quantity, Math.max(1, stock)),
         options: {
           size: selectedSize || undefined,
           color: selectedColor || undefined,
@@ -273,7 +276,9 @@ export function PDPBody({ theme: _theme, product, relatedProducts, renderRelated
                   {avgRating} ({totalReviewsCount} {totalReviewsCount === 1 ? 'review' : 'reviews'})
                 </button>
                 <span style={{ color: 'color-mix(in srgb, var(--sf-text) 20%, transparent)' }}>•</span>
-                <span className="text-xs font-semibold text-emerald-600">✓ In Stock</span>
+                <span className={`text-xs font-bold ${isOutOfStock ? 'text-rose-600' : stock <= 5 ? 'text-amber-600' : 'text-emerald-600'}`}>
+                  {isOutOfStock ? '✕ Out of Stock' : stock <= 5 ? `⚠️ Only ${stock} left in stock` : `✓ In Stock (${stock} units)`}
+                </span>
               </div>
             </div>
 
@@ -371,33 +376,40 @@ export function PDPBody({ theme: _theme, product, relatedProducts, renderRelated
                 >
                   <button
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="w-9 h-9 flex items-center justify-center font-bold text-sm rounded-xl transition hover:opacity-70"
+                    disabled={isOutOfStock || quantity <= 1}
+                    className="w-9 h-9 flex items-center justify-center font-bold text-sm rounded-xl transition hover:opacity-70 disabled:opacity-30 disabled:cursor-not-allowed"
                     style={{ color: 'var(--sf-text)' }}
                   >-</button>
-                  <span className="w-10 text-center font-bold text-sm" style={{ color: 'var(--sf-text)' }}>{quantity}</span>
+                  <span className="w-10 text-center font-bold text-sm" style={{ color: 'var(--sf-text)' }}>
+                    {isOutOfStock ? 0 : quantity}
+                  </span>
                   <button
-                    onClick={() => setQuantity((q) => q + 1)}
-                    className="w-9 h-9 flex items-center justify-center font-bold text-sm rounded-xl transition hover:opacity-70"
+                    onClick={() => setQuantity((q) => Math.min(stock, q + 1))}
+                    disabled={isOutOfStock || quantity >= stock}
+                    className="w-9 h-9 flex items-center justify-center font-bold text-sm rounded-xl transition hover:opacity-70 disabled:opacity-30 disabled:cursor-not-allowed"
                     style={{ color: 'var(--sf-text)' }}
                   >+</button>
                 </div>
                 <button
                   onClick={handleAddToCart}
-                  disabled={isAdding || product.stockQuantity === 0}
-                  className="flex-1 py-4 rounded-2xl font-bold text-sm text-white shadow-xl transition hover:opacity-90 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
-                  style={{ backgroundColor: 'var(--sf-primary)' }}
+                  disabled={isAdding || isOutOfStock}
+                  className="flex-1 py-4 rounded-2xl font-bold text-sm text-white shadow-xl transition hover:opacity-90 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  style={{ backgroundColor: isOutOfStock ? '#64748b' : 'var(--sf-primary)' }}
                 >
-                  {isAdding ? 'Adding…' : product.stockQuantity === 0 ? 'Out of Stock' : 'Add to Bag'} 🛍️
+                  {isAdding ? 'Adding…' : isOutOfStock ? 'Out of Stock' : 'Add to Bag'} 🛍️
                 </button>
               </div>
-              <Link
-                href="/checkout"
-                onClick={handleAddToCart}
-                className="w-full py-3.5 rounded-2xl font-bold text-sm text-center border-2 transition block"
-                style={{ borderColor: 'var(--sf-primary)', color: 'var(--sf-primary)' }}
-              >
-                Express Checkout →
-              </Link>
+
+              {!isOutOfStock && (
+                <Link
+                  href="/checkout"
+                  onClick={handleAddToCart}
+                  className="w-full py-3.5 rounded-2xl font-bold text-sm text-center border-2 transition block hover:opacity-90 cursor-pointer"
+                  style={{ borderColor: 'var(--sf-primary)', color: 'var(--sf-primary)' }}
+                >
+                  Express Checkout →
+                </Link>
+              )}
             </div>
 
             {/* Trust strip */}

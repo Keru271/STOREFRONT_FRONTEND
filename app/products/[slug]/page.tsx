@@ -10,6 +10,7 @@ import { resolveTemplate } from '@/templates';
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
@@ -39,8 +40,10 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   };
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({ params, searchParams }: ProductPageProps) {
   const { slug } = await params;
+  const resolvedSearchParams = await searchParams;
+  const previewTemplate = resolvedSearchParams?.previewTemplate as string | undefined;
 
   const [theme, product, allProducts] = await Promise.all([
     getTheme(),
@@ -61,7 +64,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
     )
     .slice(0, 4);
 
-  const { PDPPage } = resolveTemplate(theme.activeTemplateSlug);
+  const effectiveTheme = previewTemplate
+    ? { ...theme, activeTemplateSlug: previewTemplate }
+    : theme;
 
-  return <PDPPage theme={theme} product={product} relatedProducts={related} />;
+  const { PDPPage } = resolveTemplate(effectiveTheme.activeTemplateSlug);
+
+  return <PDPPage theme={effectiveTheme} product={product} relatedProducts={related} />;
 }
+

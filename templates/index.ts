@@ -69,6 +69,17 @@ const MincomWishlistPage       = dynamic(() => import('./mincom/WishlistPage'));
 const MincomCartPage           = dynamic(() => import('./mincom/CartPage'));
 const MincomAccountPage        = dynamic(() => import('./mincom/AccountPage'));
 
+// Funo template (Scandinavian Modern Furniture & Decor - dynamic chunks)
+const FunoHomePage           = dynamic(() => import('./funo/HomePage'));
+const FunoPLPPage            = dynamic(() => import('./funo/PLPPage'));
+const FunoLoginPage          = dynamic(() => import('./funo/LoginPage'));
+const FunoSignupPage         = dynamic(() => import('./funo/SignupPage'));
+const FunoForgotPasswordPage = dynamic(() => import('./funo/ForgotPasswordPage'));
+const FunoPDPPage            = dynamic(() => import('./funo/PDPPage'));
+const FunoWishlistPage       = dynamic(() => import('./funo/WishlistPage'));
+const FunoCartPage           = dynamic(() => import('./funo/CartPage'));
+const FunoAccountPage        = dynamic(() => import('./funo/AccountPage'));
+
 // ── Shared Prop Interfaces ────────────────────────────────────────────────────
 // All page components in all templates must satisfy these contracts.
 
@@ -210,7 +221,22 @@ const luxeComponents: TemplateComponents = {
   AccountPage:        LuxeAccountPage,
 };
 
+const funoComponents: TemplateComponents = {
+  HomePage:           FunoHomePage,
+  PLPPage:            FunoPLPPage,
+  LoginPage:          FunoLoginPage,
+  SignupPage:         FunoSignupPage,
+  ForgotPasswordPage: FunoForgotPasswordPage,
+  PDPPage:            FunoPDPPage,
+  WishlistPage:       FunoWishlistPage,
+  CartPage:           FunoCartPage,
+  AccountPage:        FunoAccountPage,
+};
+
 const TEMPLATE_REGISTRY: Record<string, TemplateComponents> = {
+  funo: funoComponents,
+  funie: funoComponents,
+  'funo-furniture': funoComponents,
   mincom: mincomComponents,
   'mincom-furniture': mincomComponents,
   'mincom-theme': mincomComponents,

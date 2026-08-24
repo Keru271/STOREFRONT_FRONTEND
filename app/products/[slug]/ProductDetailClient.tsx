@@ -104,14 +104,17 @@ export default function ProductDetailClient({
     1: reviewsList.filter((r) => r.rating === 1).length,
   };
 
+  const stock = product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1;
+  const isOutOfStock = stock <= 0;
+
   const handleAddToCart = async () => {
-    if (isAdding || product.stockQuantity === 0) return;
+    if (isAdding || isOutOfStock) return;
     setIsAdding(true);
     try {
       await addToCart({
         productId: product.id,
         variantId: selectedVariantId || undefined,
-        quantity,
+        quantity: Math.min(quantity, Math.max(1, stock)),
         options: {
           size: selectedSize || undefined,
           color: selectedColor || undefined,
@@ -334,7 +337,9 @@ export default function ProductDetailClient({
                   {avgRating} ({totalReviewsCount} {totalReviewsCount === 1 ? 'review' : 'reviews'})
                 </button>
                 <span className="text-xs text-gray-300 dark:text-gray-700">•</span>
-                <span className="text-xs font-semibold text-emerald-600">✓ In Stock</span>
+                <span className={`text-xs font-bold ${isOutOfStock ? 'text-rose-600' : stock <= 5 ? 'text-amber-600' : 'text-emerald-600'}`}>
+                  {isOutOfStock ? '✕ Out of Stock' : stock <= 5 ? `⚠️ Only ${stock} units left` : `✓ In Stock (${stock} available)`}
+                </span>
               </div>
             </div>
 
@@ -404,14 +409,16 @@ export default function ProductDetailClient({
                 <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-2xl p-1 bg-gray-50 dark:bg-gray-800">
                   <button
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="w-9 h-9 flex items-center justify-center font-bold text-sm hover:bg-white dark:hover:bg-gray-700 rounded-xl transition"
+                    disabled={isOutOfStock || quantity <= 1}
+                    className="w-9 h-9 flex items-center justify-center font-bold text-sm hover:bg-white dark:hover:bg-gray-700 rounded-xl transition disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     -
                   </button>
-                  <span className="w-10 text-center font-bold text-sm font-mono">{quantity}</span>
+                  <span className="w-10 text-center font-bold text-sm font-mono">{isOutOfStock ? 0 : quantity}</span>
                   <button
-                    onClick={() => setQuantity((q) => q + 1)}
-                    className="w-9 h-9 flex items-center justify-center font-bold text-sm hover:bg-white dark:hover:bg-gray-700 rounded-xl transition"
+                    onClick={() => setQuantity((q) => Math.min(stock, q + 1))}
+                    disabled={isOutOfStock || quantity >= stock}
+                    className="w-9 h-9 flex items-center justify-center font-bold text-sm hover:bg-white dark:hover:bg-gray-700 rounded-xl transition disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     +
                   </button>
@@ -419,25 +426,27 @@ export default function ProductDetailClient({
 
                 <button
                   onClick={handleAddToCart}
-                  disabled={isAdding || product.stockQuantity === 0}
-                  className="flex-1 py-4 rounded-2xl font-bold text-sm text-white shadow-xl transition hover:opacity-90 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
-                  style={{ backgroundColor: 'var(--sf-primary)' }}
+                  disabled={isAdding || isOutOfStock}
+                  className="flex-1 py-4 rounded-2xl font-bold text-sm text-white shadow-xl transition hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  style={{ backgroundColor: isOutOfStock ? '#64748b' : 'var(--sf-primary)' }}
                 >
-                  <span>{isAdding ? 'Adding...' : product.stockQuantity === 0 ? 'Out of Stock' : 'Add to Bag'}</span>
+                  <span>{isAdding ? 'Adding...' : isOutOfStock ? 'Out of Stock' : 'Add to Bag'}</span>
                   <span>🛍️</span>
                 </button>
               </div>
 
               {/* Express Buy Now */}
-              <Link
-                href="/checkout"
-                onClick={async () => {
-                  await handleAddToCart();
-                }}
-                className="w-full py-3.5 rounded-2xl font-bold text-sm text-center border-2 border-[var(--sf-primary)] text-[var(--sf-primary)] hover:bg-[var(--sf-primary)] hover:text-white transition block shadow-sm"
-              >
-                Instant Express Checkout →
-              </Link>
+              {!isOutOfStock && (
+                <Link
+                  href="/checkout"
+                  onClick={async () => {
+                    await handleAddToCart();
+                  }}
+                  className="w-full py-3.5 rounded-2xl font-bold text-sm text-center border-2 border-[var(--sf-primary)] text-[var(--sf-primary)] hover:bg-[var(--sf-primary)] hover:text-white transition block shadow-sm cursor-pointer"
+                >
+                  Instant Express Checkout →
+                </Link>
+              )}
             </div>
 
             {/* Value Props Banner */}

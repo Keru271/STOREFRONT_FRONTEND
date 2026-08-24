@@ -301,9 +301,10 @@ export interface CartItem {
   price: number;
   image?: string;
   quantity: number;
+  stockQuantity?: number;
+  isOutOfStock?: boolean;
   options?: CartItemOption;
   totalPrice: number;
-  stockQuantity?: number | null;
 }
 
 export interface Cart {
@@ -564,6 +565,9 @@ export interface CheckoutSummaryResponse {
   grandTotal: number;
   currency: string;
   isTaxInclusive?: boolean;
+  stockValid?: boolean;
+  stockMessage?: string;
+  outOfStockItem?: any;
 }
 
 export interface ValidateCouponResponse {

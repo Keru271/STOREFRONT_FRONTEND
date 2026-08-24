@@ -273,36 +273,15 @@ export function CartBody({ theme }: CartBodyProps) {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          {/* Out-of-Stock Banner at top if any item is OOS */}
-          {items.some((i) => i.stockQuantity === 0) && (
-            <div className="lg:col-span-12 flex items-start gap-3 p-4 rounded-2xl bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800">
-              <span className="text-rose-500 text-lg mt-0.5">⚠️</span>
-              <div>
-                <p className="text-sm font-bold text-rose-700 dark:text-rose-400">Some items are out of stock</p>
-                <p className="text-xs text-rose-600 dark:text-rose-300 mt-0.5">
-                  Please remove out-of-stock items before proceeding to checkout.
-                </p>
-              </div>
-            </div>
-          )}
-
           {/* Cart Items List */}
           <div className="lg:col-span-8 space-y-4">
-            {items.map((item) => {
-              const isOOS = item.stockQuantity === 0;
-              const isLowStock = item.stockQuantity != null && item.stockQuantity > 0 && item.stockQuantity <= 5;
-              const atStockLimit = item.stockQuantity != null && item.stockQuantity !== null && item.quantity >= item.stockQuantity;
-              return (
+            {items.map((item) => (
               <div
                 key={`${item.productId}-${item.variantId || 'base'}`}
-                className={`flex flex-col sm:flex-row items-center gap-4 p-5 rounded-3xl border transition shadow-sm ${
-                  isOOS ? 'opacity-70' : ''
-                }`}
+                className="flex flex-col sm:flex-row items-center gap-4 p-5 rounded-3xl border transition shadow-sm"
                 style={{
                   backgroundColor: 'var(--sf-bg)',
-                  borderColor: isOOS
-                    ? 'rgb(239 68 68 / 0.4)'
-                    : 'color-mix(in srgb, var(--sf-text) 8%, transparent)',
+                  borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)',
                 }}
               >
                 {/* Product Thumbnail */}
@@ -316,27 +295,34 @@ export function CartBody({ theme }: CartBodyProps) {
                       alt={item.name}
                       fill
                       sizes="96px"
-                      className={`object-cover ${isOOS ? 'grayscale' : ''}`}
+                      className="object-cover"
                     />
                   ) : (
                     <span className="text-2xl opacity-40">🛍️</span>
-                  )}
-                  {isOOS && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-2xl">
-                      <span className="text-white text-[10px] font-bold bg-rose-600 px-2 py-0.5 rounded-full">SOLD OUT</span>
-                    </div>
                   )}
                 </div>
 
                 {/* Product Details */}
                 <div className="flex-1 min-w-0 text-center sm:text-left">
-                  <Link
-                    href={`/products/${item.productId}`}
-                    className="font-bold text-base transition line-clamp-1 hover:underline"
-                    style={{ color: 'var(--sf-text)' }}
-                  >
-                    {item.name}
-                  </Link>
+                  <div className="flex flex-wrap items-center gap-2 justify-center sm:justify-start">
+                    <Link
+                      href={`/products/${item.productId}`}
+                      className="font-bold text-base transition line-clamp-1 hover:underline"
+                      style={{ color: 'var(--sf-text)' }}
+                    >
+                      {item.name}
+                    </Link>
+
+                    {((item as any).isOutOfStock || (item as any).stockQuantity === 0) ? (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500 text-white shadow-xs">
+                        Out of Stock
+                      </span>
+                    ) : typeof (item as any).stockQuantity === 'number' && (item as any).stockQuantity <= 5 ? (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400">
+                        Only {(item as any).stockQuantity} left
+                      </span>
+                    ) : null}
+                  </div>
 
                   {item.sku && (
                     <p className="text-xs mt-0.5" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
@@ -351,20 +337,14 @@ export function CartBody({ theme }: CartBodyProps) {
                     </div>
                   )}
 
-                  <div className="mt-1.5 flex items-center justify-center sm:justify-start gap-2 flex-wrap">
-                    <span className="text-sm font-extrabold" style={{ color: 'var(--sf-primary)' }}>
-                      {formatPrice(item.price)}
-                    </span>
-                    {isOOS && (
-                      <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400">
-                        Out of Stock
-                      </span>
-                    )}
-                    {isLowStock && (
-                      <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-                        Only {item.stockQuantity} left!
-                      </span>
-                    )}
+                  {((item as any).isOutOfStock || (item as any).stockQuantity === 0) && (
+                    <p className="text-[11px] font-bold text-rose-500 mt-1">
+                      ⚠️ Item is out of stock. Please remove it to complete your checkout.
+                    </p>
+                  )}
+
+                  <div className="mt-2 text-sm font-extrabold" style={{ color: 'var(--sf-primary)' }}>
+                    {formatPrice(item.price)}
                   </div>
                 </div>
 
@@ -388,30 +368,26 @@ export function CartBody({ theme }: CartBodyProps) {
                   </span>
                   <button
                     onClick={() => handleUpdateQuantity(item.productId, item.quantity + 1, item.variantId)}
-                    disabled={isOOS || atStockLimit}
+                    disabled={(item as any).isOutOfStock || (item as any).stockQuantity === 0 || (typeof (item as any).stockQuantity === 'number' && item.quantity >= (item as any).stockQuantity)}
                     className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs hover:opacity-70 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                     style={{ color: 'var(--sf-text)' }}
-                    title={atStockLimit ? `Only ${item.stockQuantity} in stock` : ''}
+                    title={typeof (item as any).stockQuantity === 'number' && item.quantity >= (item as any).stockQuantity ? 'Maximum available stock reached' : 'Add one more'}
                   >
                     +
                   </button>
                 </div>
 
                 {/* Line Total */}
-                <div className="text-right font-black text-base w-24" style={{ color: isOOS ? 'rgb(156 163 175)' : 'var(--sf-text)' }}>
-                  {isOOS ? (
-                    <span className="text-xs font-semibold text-rose-500">Unavailable</span>
-                  ) : (
-                    formatPrice(item.price * item.quantity)
-                  )}
+                <div className="text-right font-black text-base w-24" style={{ color: 'var(--sf-text)' }}>
+                  {formatPrice(item.price * item.quantity)}
                 </div>
 
                 {/* Remove Button */}
                 <button
                   onClick={() => handleRemoveItem(item.productId, item.variantId)}
                   className="p-2 transition rounded-lg hover:text-rose-500 cursor-pointer"
-                  style={{ color: isOOS ? 'rgb(239 68 68 / 0.7)' : 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
-                  title={isOOS ? 'Remove out-of-stock item' : 'Remove from cart'}
+                  style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+                  title="Remove from cart"
                   aria-label="Remove item"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -419,8 +395,7 @@ export function CartBody({ theme }: CartBodyProps) {
                   </svg>
                 </button>
               </div>
-              );
-            })}
+            ))}
           </div>
 
           {/* Order Summary */}
@@ -554,17 +529,23 @@ export function CartBody({ theme }: CartBodyProps) {
                 </div>
               </div>
 
-              {/* Checkout CTA */}
-              {items.some((i) => i.stockQuantity === 0) ? (
-                <div className="mt-6">
-                  <div className="w-full py-4 rounded-2xl font-bold text-sm text-gray-400 dark:text-gray-600 bg-gray-100 dark:bg-gray-800 flex items-center justify-center gap-2 cursor-not-allowed border border-dashed border-gray-300 dark:border-gray-700">
-                    <span>⛔</span>
-                    <span>Remove Out-of-Stock Items</span>
-                  </div>
-                  <p className="text-xs text-rose-500 text-center mt-2 font-medium">
-                    Please remove unavailable items to continue
-                  </p>
+              {/* Out of Stock Notice */}
+              {items.some((it) => (it as any).isOutOfStock || (it as any).stockQuantity === 0) && (
+                <div className="mt-4 p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-start gap-2">
+                  <span className="text-sm">⚠️</span>
+                  <span>Some items in your shopping bag are currently Out of Stock. Please remove them to proceed with checkout.</span>
                 </div>
+              )}
+
+              {/* Checkout CTA */}
+              {items.some((it) => (it as any).isOutOfStock || (it as any).stockQuantity === 0) ? (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full mt-4 py-4 rounded-2xl font-bold text-sm bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700"
+                >
+                  <span>⚠️ Remove Out of Stock Items to Checkout</span>
+                </button>
               ) : (
                 <Link
                   href={appliedDiscount ? `/checkout?coupon=${encodeURIComponent(appliedDiscount.code)}` : '/checkout'}

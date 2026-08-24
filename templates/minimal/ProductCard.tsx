@@ -17,8 +17,8 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
     : 0;
 
-  const isOOS = product.stockQuantity === 0;
-  const isLowStock = product.stockQuantity != null && product.stockQuantity > 0 && product.stockQuantity <= 5;
+  const stock = product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1;
+  const isOutOfStock = stock <= 0;
 
   return (
     <Link href={productHref} className="group block">
@@ -60,27 +60,22 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
             className="text-xs tracking-widest uppercase font-medium px-5 py-2.5"
             style={{ backgroundColor: 'var(--sf-bg)', color: 'var(--sf-text)' }}
           >
-            View Product
+            {isOutOfStock ? 'Out of Stock' : 'View Product'}
           </span>
         </div>
 
-        {discount > 0 && (
-          <div className="absolute top-3 right-3 text-xs" style={{ color: 'var(--sf-primary)' }}>
-            −{discount}%
-          </div>
-        )}
-        {isOOS && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-            <span className="text-white text-xs font-semibold tracking-widest uppercase px-3 py-1" style={{ backgroundColor: 'var(--sf-text)' }}>Sold Out</span>
-          </div>
-        )}
-        {isLowStock && (
-          <div className="absolute top-3 left-3">
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-white px-2 py-0.5">
-              Only {product.stockQuantity} left
+        <div className="absolute top-3 right-3 flex flex-col gap-1 z-10">
+          {discount > 0 && (
+            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-white/80 dark:bg-black/80" style={{ color: 'var(--sf-primary)' }}>
+              −{discount}%
             </span>
-          </div>
-        )}
+          )}
+          {isOutOfStock && (
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-rose-600 text-white">
+              Out of Stock
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Info */}
@@ -94,12 +89,17 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
           {product.name}
         </p>
         <div className="flex items-center gap-3">
-          <span className="text-sm" style={{ color: isOOS ? 'rgb(156 163 175)' : 'var(--sf-text)' }}>
-            {isOOS ? <span className="text-xs font-medium text-rose-500">Out of Stock</span> : formatPrice(product.price)}
+          <span className="text-sm" style={{ color: 'var(--sf-text)' }}>
+            {formatPrice(product.price)}
           </span>
-          {!isOOS && product.compareAtPrice && (
+          {product.compareAtPrice && (
             <span className="text-xs line-through" style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}>
               {formatPrice(product.compareAtPrice)}
+            </span>
+          )}
+          {isOutOfStock && (
+            <span className="text-xs font-bold text-rose-600 ml-auto">
+              Out of Stock
             </span>
           )}
         </div>

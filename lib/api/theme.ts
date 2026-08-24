@@ -56,6 +56,7 @@ export async function getStoreInfo(): Promise<StoreInfo> {
     const info = await apiClient.get<StoreInfo>('api/storefront/theme/info', {
       next: { revalidate: 0, tags: ['store-info', 'theme'] },
     });
+    console.log({ info })
     return info;
   } catch {
     return {

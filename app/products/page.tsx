@@ -46,11 +46,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     limit:       24,
   });
 
-  const { PLPPage } = resolveTemplate(theme.activeTemplateSlug);
+  // Allow CMS to preview any template via ?previewTemplate=<slug>
+  const previewTemplate = resolvedParams?.previewTemplate as string | undefined;
+  const effectiveTheme = previewTemplate ? { ...theme, activeTemplateSlug: previewTemplate } : theme;
+
+  const { PLPPage } = resolveTemplate(effectiveTheme.activeTemplateSlug);
 
   return (
     <PLPPage
-      theme={theme}
+      theme={effectiveTheme}
       products={products}
       categories={categories}
       brands={brands}
