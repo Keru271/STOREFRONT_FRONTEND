@@ -15,10 +15,12 @@ const BASE_URL =
 // Store identification — set via environment variables.
 // In server components these are the only source of truth.
 // In client components, localStorage can override (see getClientStoreId).
-const ENV_STORE_ID   = process.env.NEXT_PUBLIC_STORE_ID   || '';
+const ENV_STORE_ID = process.env.NEXT_PUBLIC_STORE_ID || '';
 const ENV_STORE_SLUG = process.env.NEXT_PUBLIC_STORE_SLUG || '';
 
 // ── Custom API Error ──────────────────────────────────────────────────────────
+
+console.log({ ENV_STORE_ID, ENV_STORE_SLUG })
 
 export class ApiError extends Error {
   statusCode: number;
@@ -29,9 +31,9 @@ export class ApiError extends Error {
     this.name = 'ApiError';
   }
 
-  isNotFound()     { return this.statusCode === 404; }
+  isNotFound() { return this.statusCode === 404; }
   isUnauthorized() { return this.statusCode === 401; }
-  isForbidden()    { return this.statusCode === 403; }
+  isForbidden() { return this.statusCode === 403; }
 }
 
 // ── Store ID resolution ───────────────────────────────────────────────────────
@@ -99,13 +101,15 @@ async function apiFetch<T>(
   }
 
   // Resolve store identity — caller override → localStorage (client only) → env
-  const resolvedStoreId   = storeId   || getClientStoreId()   || 'default-store-id';
+  const resolvedStoreId = storeId || getClientStoreId() || 'default-store-id';
   const resolvedStoreSlug = storeSlug || getClientStoreSlug();
 
+  console.log({ resolvedStoreId, resolvedStoreSlug })
+
   // Multi-tenant store identification headers
-  headers['x-store-id']   = resolvedStoreId;
-  headers['store-id']     = resolvedStoreId;
-  headers['x-tenant-id']  = resolvedStoreId;
+  headers['x-store-id'] = resolvedStoreId;
+  headers['store-id'] = resolvedStoreId;
+  headers['x-tenant-id'] = resolvedStoreId;
 
   if (resolvedStoreSlug) {
     headers['x-store-slug'] = resolvedStoreSlug;
@@ -126,6 +130,8 @@ async function apiFetch<T>(
     headers,
     ...(next ? { next } : {}),
   });
+
+  console.log({ response })
 
   if (!response.ok) {
     const errorData: ApiErrorResponse = await response

@@ -2,7 +2,7 @@
 // Categories, collections, brands, menus, and static pages.
 
 import { apiClient } from './client';
-import type { Brand, Category, Collection, Menu, CmsPage } from './types';
+import type { Brand, Category, Collection, Menu, CmsPage, BlogPost } from './types';
 
 /**
  * Fetches all product categories.
@@ -170,6 +170,41 @@ export async function getCollectionBySlug(slug: string): Promise<Collection | nu
     return await apiClient.get<Collection>(
       `api/storefront/catalog/collections/${encodeURIComponent(slug)}`,
       { next: { revalidate: 300, tags: ['collections', `collection-${slug}`] } }
+    );
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetches all published blog posts for the storefront.
+ */
+export async function getBlogPosts(params?: { category?: string; tag?: string; search?: string }): Promise<BlogPost[]> {
+  try {
+    const searchParams = new URLSearchParams();
+    if (params?.category) searchParams.set('category', params.category);
+    if (params?.tag) searchParams.set('tag', params.tag);
+    if (params?.search) searchParams.set('search', params.search);
+
+    const query = searchParams.toString();
+    const endpoint = `api/storefront/catalog/blogs${query ? `?${query}` : ''}`;
+
+    return await apiClient.get<BlogPost[]>(endpoint, {
+      next: { revalidate: 60, tags: ['blogs'] },
+    });
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Fetches a single published blog post by its URL slug.
+ */
+export async function getBlogPost(slug: string): Promise<BlogPost | null> {
+  try {
+    return await apiClient.get<BlogPost>(
+      `api/storefront/catalog/blogs/${encodeURIComponent(slug)}`,
+      { next: { revalidate: 60, tags: ['blogs', `blog-${slug}`] } }
     );
   } catch {
     return null;

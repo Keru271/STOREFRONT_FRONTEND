@@ -487,6 +487,9 @@ export interface AuthResponse {
 export interface Order {
   id: string;
   orderNumber?: string;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
   status?: string;
   paymentStatus?: string;
   fulfillmentStatus?: string;
@@ -663,4 +666,27 @@ export interface OrderPlacedResponse {
     paymentId?: string;
     createdAt: string;
   };
+}
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string | null;
+  author?: string | null;
+  featuredImage?: string | null;
+  category?: string | null;
+  tags?: string | null;
+  status: 'DRAFT' | 'PUBLISHED' | 'SCHEDULED';
+  publishedAt?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  ogImage?: string | null;
+  canonicalUrl?: string | null;
+  relatedProductIds?: string | null;
+  relatedProducts?: Product[];
+  storeId?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
