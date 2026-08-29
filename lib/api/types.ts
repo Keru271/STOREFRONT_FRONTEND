@@ -144,7 +144,23 @@ export interface Product {
   collectionName?: string | null;
   status: string;
   urlSlug?: string | null;
+  variants?: ProductVariant[];
   createdAt?: string;
+}
+
+export interface EligibleCoupon {
+  id: string;
+  code: string;
+  title: string;
+  discountType: 'PERCENTAGE' | 'FIXED_AMOUNT' | 'FREE_SHIPPING' | 'BUY_X_GET_Y' | string;
+  value: number;
+  minOrderAmount?: number;
+  estimatedSavings?: number;
+  badge?: string;
+  description?: string;
+  terms?: string;
+  expiresAt?: string | null;
+  isAutomatic?: boolean;
 }
 
 export interface ProductDetail extends Product {
@@ -156,6 +172,7 @@ export interface ProductDetail extends Product {
   tags?: string[];
   variants?: ProductVariant[];
   reviews?: ProductReview[];
+  eligibleCoupons?: EligibleCoupon[];
   metaTitle?: string | null;
   metaDescription?: string | null;
   structuredDataJson?: string | null;
@@ -165,6 +182,7 @@ export interface ProductVariant {
   id: string;
   name: string;
   price: number;
+  compareAtPrice?: number | null;
   sku?: string | null;
   inventory: number;
   image?: string;
@@ -290,6 +308,8 @@ export interface CartItemOption {
   size?: string;
   color?: string;
   material?: string;
+  variant?: string;
+  [key: string]: any;
 }
 
 export interface CartItem {
@@ -370,6 +390,7 @@ export interface Category {
   name: string;
   slug: string;
   icon?: string | null;
+  image?: string | null;
   description?: string | null;
 }
 
@@ -387,6 +408,9 @@ export interface Brand {
   id: string;
   name: string;
   slug: string;
+  logo?: string | null;
+  description?: string | null;
+  website?: string | null;
 }
 
 export interface MenuItem {
@@ -510,6 +534,42 @@ export interface Order {
   updatedAt?: string;
 }
 
+export interface CarrierRateQuote {
+  providerId: string;
+  carrierCode: string;
+  carrierName: string;
+  serviceType: 'standard' | 'express' | 'same-day' | string;
+  serviceName: string;
+  estimatedDays: number;
+  cost: number;
+  currency: string;
+  codAvailable: boolean;
+  codFee?: number;
+  badge?: string;
+  rating?: number;
+}
+
+export interface TrackingMilestone {
+  status: string;
+  title: string;
+  location: string;
+  timestamp: string;
+  completed: boolean;
+  remarks?: string;
+}
+
+export interface TrackingStatusResponse {
+  awbNumber: string;
+  carrierCode: string;
+  carrierName: string;
+  currentStatus: string;
+  originCity?: string;
+  destinationCity?: string;
+  estimatedDeliveryDate?: string;
+  deliveredAt?: string;
+  events: TrackingMilestone[];
+}
+
 export interface OrderItem {
   id?: string;
   productId?: string;
@@ -550,11 +610,22 @@ export interface CheckoutAddress {
 
 export interface CheckoutCartItemPayload {
   productId: string;
+  variantId?: string;
   name: string;
   price: number;
   quantity: number;
   sku?: string;
   image?: string;
+}
+
+export interface ProductStockResponse {
+  productId: string;
+  productName: string;
+  variantId?: string | null;
+  variantName?: string | null;
+  inStock: boolean;
+  stockQuantity: number;
+  status: string;
 }
 
 export interface CheckoutSummaryResponse {

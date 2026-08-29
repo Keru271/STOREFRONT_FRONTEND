@@ -23,8 +23,10 @@ export default function FunoPLPPage({
   );
 
   const activeSearch = (searchParams.search || searchParams.q) as string | undefined;
+  const activeBrand = (searchParams.brand || searchParams.brands) as string | undefined;
+  const activeCategory = (searchParams.category || searchParams.categories) as string | undefined;
 
-  // Filter products locally if category selected
+  // Filter products locally if category or brand selected
   const displayProducts = products.filter((p) => {
     if (selectedCategory !== 'all') {
       const matchCat =
@@ -46,22 +48,44 @@ export default function FunoPLPPage({
           <nav className="flex items-center gap-2 text-xs text-slate-400">
             <Link href="/" className="hover:text-slate-900 transition">Home</Link>
             <span>/</span>
-            <span className="text-slate-900 font-semibold">Catalog</span>
-            {activeSearch && (
+            <Link href="/products" className="hover:text-slate-900 transition">Catalog</Link>
+            {activeBrand ? (
+              <>
+                <span>/</span>
+                <Link href="/brands" className="hover:text-slate-900 transition">Brands</Link>
+                <span>/</span>
+                <span className="text-orange-600 font-bold capitalize">{(searchParams._brandName as string) || activeBrand}</span>
+              </>
+            ) : activeCategory && activeCategory !== 'all' ? (
+              <>
+                <span>/</span>
+                <Link href="/categories" className="hover:text-slate-900 transition">Categories</Link>
+                <span>/</span>
+                <span className="text-orange-600 font-bold capitalize">{(searchParams._categoryName as string) || activeCategory}</span>
+              </>
+            ) : activeSearch ? (
               <>
                 <span>/</span>
                 <span className="text-orange-600 font-bold">Search: "{activeSearch}"</span>
               </>
-            )}
+            ) : null}
           </nav>
 
           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4">
             <div>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-950 font-heading">
-                {activeSearch ? `Search Results for "${activeSearch}"` : 'All Studio Furniture & Objects'}
+                {activeSearch
+                  ? `Search Results for "${activeSearch}"`
+                  : activeBrand
+                    ? ((searchParams._brandName as string) || activeBrand)
+                    : activeCategory && activeCategory !== 'all'
+                      ? ((searchParams._categoryName as string) || activeCategory)
+                      : 'All Studio Furniture & Objects'}
               </h1>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                Showing {displayProducts.length} curated design pieces
+                {(searchParams._brandDescription as string) ||
+                  (searchParams._categoryDescription as string) ||
+                  `Showing ${displayProducts.length} curated design pieces`}
               </p>
             </div>
 
@@ -126,6 +150,30 @@ export default function FunoPLPPage({
                 ))}
               </div>
             </div>
+
+            {/* Brands Filter */}
+            {brands.length > 0 && (
+              <div className="space-y-3 pt-4 border-t border-slate-100">
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 pb-1">
+                  Makers & Brands
+                </h3>
+                <div className="space-y-1 max-h-44 overflow-y-auto pr-1">
+                  {brands.map((b) => (
+                    <Link
+                      key={b.id || b.slug || b.name}
+                      href={`/brands/${b.slug || b.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+                      className={`block px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                        activeBrand?.toLowerCase() === (b.slug || b.name).toLowerCase()
+                          ? 'bg-orange-500 text-white font-bold'
+                          : 'text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      <span>{b.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Quick Price Filter */}
             <div className="space-y-3 pt-4 border-t border-slate-100">

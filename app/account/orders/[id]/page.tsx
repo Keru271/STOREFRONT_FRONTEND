@@ -5,8 +5,9 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { getCustomerOrder } from '@/lib/api/customer';
+import { trackShipmentAwb } from '@/lib/api/shipping';
 import { useAuth } from '@/hooks/useAuth';
-import type { Order } from '@/lib/api/types';
+import type { Order, TrackingStatusResponse } from '@/lib/api/types';
 import {
   ArrowLeft,
   Calendar,
@@ -19,6 +20,10 @@ import {
   CheckCircle2,
   AlertCircle,
   ShoppingBag,
+  ExternalLink,
+  Copy,
+  Check,
+  Navigation,
 } from 'lucide-react';
 
 function OrderStatusBadge({ status }: { status?: string }) {
@@ -61,6 +66,9 @@ export default function AccountOrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [trackingData, setTrackingData] = useState<TrackingStatusResponse | null>(null);
+  const [isTrackingLoading, setIsTrackingLoading] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     if (authLoading) return;
@@ -74,7 +82,17 @@ export default function AccountOrderDetailPage() {
     getCustomerOrder(orderId)
       .then((data) => {
         if (!data) setError('Order not found.');
-        else setOrder(data);
+        else {
+          setOrder(data);
+          if (data.trackingNumber) {
+            setIsTrackingLoading(true);
+            trackShipmentAwb(data.trackingNumber, data.carrier || 'SHIPROCKET')
+              .then((trackRes) => {
+                if (trackRes) setTrackingData(trackRes);
+              })
+              .finally(() => setIsTrackingLoading(false));
+          }
+        }
       })
       .catch(() => setError('Failed to load order.'))
       .finally(() => setIsLoading(false));
@@ -160,22 +178,134 @@ export default function AccountOrderDetailPage() {
           </button>
         </div>
 
-        {/* Shipping & Delivery Tracker Banner */}
+        {/* Live Shipment Tracking Component */}
         {order.trackingNumber && (
-          <div className="p-4 sm:p-5 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-indigo-600 text-white rounded-xl">
-                <Truck className="w-5 h-5" />
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-indigo-600 text-white rounded-2xl shadow-sm">
+                  <Truck className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">
+                      {order.carrier || 'Nexus Carrier'}
+                    </span>
+                    <span className="text-xs font-bold text-slate-500">Live Consignment</span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-sm font-mono font-bold text-slate-900 dark:text-white">
+                      AWB: {order.trackingNumber}
+                    </span>
+                    <button
+                      onClick={() => {
+                        if (order.trackingNumber) {
+                          navigator.clipboard.writeText(order.trackingNumber);
+                          setIsCopied(true);
+                          setTimeout(() => setIsCopied(false), 2000);
+                        }
+                      }}
+                      className="p-1 text-slate-400 hover:text-slate-600 transition"
+                      title="Copy AWB Number"
+                    >
+                      {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-900 dark:text-indigo-200">
-                  Shipment Tracking Information
-                </h4>
-                <p className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                  Carrier: {order.carrier || 'Standard Logistics'} • Tracking # {order.trackingNumber}
-                </p>
+
+              <div className="flex items-center gap-3">
+                <span
+                  className={`text-xs font-bold px-3 py-1 rounded-full ${
+                    trackingData?.currentStatus === 'DELIVERED'
+                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200'
+                      : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-200 animate-pulse'
+                  }`}
+                >
+                  {trackingData?.currentStatus || (order.fulfillmentStatus === 'DELIVERED' ? 'DELIVERED' : 'IN_TRANSIT')}
+                </span>
+                <a
+                  href={`https://shiprocket.co/tracking/${order.trackingNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 transition"
+                >
+                  Carrier Portal <ExternalLink className="w-3 h-3" />
+                </a>
               </div>
             </div>
+
+            {/* 5-Step Milestone Progress Stepper */}
+            <div>
+              {(() => {
+                const currentStatus = (trackingData?.currentStatus || order.fulfillmentStatus || 'IN_TRANSIT').toUpperCase();
+                const steps = [
+                  { key: 'MANIFESTED', label: 'Order Manifested' },
+                  { key: 'PICKED_UP', label: 'Picked Up' },
+                  { key: 'IN_TRANSIT', label: 'In Transit' },
+                  { key: 'OUT_FOR_DELIVERY', label: 'Out for Delivery' },
+                  { key: 'DELIVERED', label: 'Delivered' },
+                ];
+                const statusOrder = ['MANIFESTED', 'PICKED_UP', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'DELIVERED'];
+                const currentIndex = Math.max(0, statusOrder.indexOf(currentStatus));
+
+                return (
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-4 relative">
+                    {steps.map((step, idx) => {
+                      const isComplete = idx <= currentIndex;
+                      const isCurrent = idx === currentIndex;
+                      return (
+                        <div key={step.key} className="flex flex-col items-center text-center space-y-2">
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                              isComplete
+                                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                            } ${isCurrent ? 'ring-4 ring-indigo-100 dark:ring-indigo-950 scale-110' : ''}`}
+                          >
+                            {isComplete ? <Check className="w-4 h-4" /> : idx + 1}
+                          </div>
+                          <span
+                            className={`text-[11px] font-bold ${
+                              isComplete ? 'text-slate-900 dark:text-white' : 'text-slate-400'
+                            }`}
+                          >
+                            {step.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Milestone Events Timeline Log */}
+            {trackingData && trackingData.events && trackingData.events.length > 0 && (
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+                <h5 className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Tracking Event History
+                </h5>
+                <div className="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-800">
+                  {trackingData.events.map((ev, i) => (
+                    <div key={i} className="relative">
+                      <div
+                        className={`absolute -left-6 top-1 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-slate-900 ${
+                          ev.completed ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-700'
+                        }`}
+                      />
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs">
+                        <span className="font-bold text-slate-900 dark:text-white">{ev.title}</span>
+                        <span className="text-[10px] text-slate-400">
+                          {ev.timestamp ? new Date(ev.timestamp).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-slate-500 block">{ev.location}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

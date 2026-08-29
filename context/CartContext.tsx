@@ -104,9 +104,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             },
           }
         );
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error in addToCart context:', err);
-        toast.error('Failed to add item to bag. Please try again.');
+        const msg = err?.message || 'Failed to add item to bag. Please try again.';
+        toast.error(msg, 'Stock Alert');
         throw err;
       } finally {
         setIsLoading(false);
@@ -150,14 +151,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           quantity,
         });
         setCart(response);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error in updateQuantity context:', err);
+        const msg = err?.message || 'Failed to update item quantity.';
+        toast.error(msg, 'Stock Alert');
         throw err;
       } finally {
         setIsLoading(false);
       }
     },
-    [cartToken]
+    [cartToken, toast]
   );
 
   const clearCart = useCallback(async () => {

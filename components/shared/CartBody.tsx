@@ -331,7 +331,12 @@ export function CartBody({ theme }: CartBodyProps) {
                   )}
 
                   {item.options && (
-                    <div className="flex items-center gap-2 mt-1 justify-center sm:justify-start text-xs" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                    <div className="flex flex-wrap items-center gap-2 mt-1 justify-center sm:justify-start text-xs" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                      {item.options.variant && (
+                        <span className="font-semibold px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                          Option: {item.options.variant}
+                        </span>
+                      )}
                       {item.options.size && <span>Size: {item.options.size}</span>}
                       {item.options.color && <span>• Color: {item.options.color}</span>}
                     </div>

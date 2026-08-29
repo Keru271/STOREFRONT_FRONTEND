@@ -21,6 +21,8 @@ export {
   postProductReview,
   editProductReview,
   upvoteProductReview,
+  getProductStock,
+  getProductEligibleCoupons,
 } from './products';
 
 // 3 & 4. Wishlist APIs
@@ -84,6 +86,13 @@ export {
   verifyStripePayment,
   processDirectCheckout,
 } from './checkout';
+
+// Shipping & Logistics APIs
+export {
+  checkShippingServiceability,
+  getShippingRateQuotes,
+  trackShipmentAwb,
+} from './shipping';
 
 // All Type Definitions
 export * from './types';

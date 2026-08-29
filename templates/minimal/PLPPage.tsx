@@ -64,8 +64,19 @@ export default function MinimalPLPPage({ products, categories, brands, filterFac
               {products.length} {products.length === 1 ? 'product' : 'products'}
             </span>
             <h1 className="text-4xl font-extralight" style={{ color: 'var(--sf-text)' }}>
-              {activeCategory ? <span className="capitalize">{activeCategory}</span> : 'Shop All'}
+              {activeBrand ? (
+                <span className="capitalize">{(searchParams._brandName as string) || activeBrand}</span>
+              ) : activeCategory ? (
+                <span className="capitalize">{(searchParams._categoryName as string) || activeCategory}</span>
+              ) : (
+                'Shop All'
+              )}
             </h1>
+            {((searchParams._brandDescription as string) || (searchParams._categoryDescription as string)) && (
+              <p className="mt-2 text-xs font-light max-w-xl" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                {(searchParams._brandDescription as string) || (searchParams._categoryDescription as string)}
+              </p>
+            )}
           </div>
           <select
             value={activeSort}

@@ -7,6 +7,7 @@ import type { Product } from '@/lib/api/types';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/hooks/useCurrency';
+import QuickVariantModal from '@/components/shared/QuickVariantModal';
 
 interface DefaultProductCardProps {
   product: Product;
@@ -18,6 +19,15 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
   const { formatPrice } = useCurrency();
   const [isAdding, setIsAdding] = useState(false);
   const [addedToast, setAddedToast] = useState(false);
+  const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+
+  const hasVariants = Boolean(product.variants && product.variants.length > 0);
+  const variantPrices = hasVariants
+    ? product.variants!.map((v) => Number(v.price)).filter((p) => !isNaN(p))
+    : [];
+  const minVariantPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : Number(product.price);
+  const maxVariantPrice = variantPrices.length > 0 ? Math.max(...variantPrices) : Number(product.price);
+  const hasPriceRange = hasVariants && minVariantPrice !== maxVariantPrice;
 
   const discount = product.compareAtPrice
     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
@@ -27,13 +37,22 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
   const productHref = product.urlSlug ? `/products/${product.urlSlug}` : `/products/${product.id}`;
   const isWishlisted = isInWishlist(product.id);
 
-  const stock = product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1;
+  const stock = hasVariants
+    ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
+    : (product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1);
   const isOutOfStock = stock <= 0;
 
   const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isAdding || isOutOfStock) return;
+    if (isOutOfStock) return;
+
+    if (hasVariants) {
+      setIsVariantModalOpen(true);
+      return;
+    }
+
+    if (isAdding) return;
 
     setIsAdding(true);
     try {
@@ -131,6 +150,11 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
 
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+            {hasVariants && (
+              <span className="px-2.5 py-1 rounded-full text-xs font-black tracking-wide text-white bg-indigo-600 shadow-sm">
+                {product.variants!.length} Options
+              </span>
+            )}
             {discount > 0 && (
               <span
                 className="px-2.5 py-1 rounded-full text-xs font-bold text-white shadow-sm"
@@ -168,6 +192,13 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
               </span>
             ) : isOutOfStock ? (
               <span>Out of Stock</span>
+            ) : hasVariants ? (
+              <>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+                Select Options ⚡
+              </>
             ) : (
               <>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -203,7 +234,7 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
                 className="text-base font-bold"
                 style={{ color: 'var(--sf-primary)' }}
               >
-                {formatPrice(product.price)}
+                {hasPriceRange ? `From ${formatPrice(minVariantPrice)}` : formatPrice(minVariantPrice)}
               </span>
               {product.compareAtPrice && (
                 <span
@@ -228,6 +259,15 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
           </div>
         </div>
       </Link>
+
+      {/* Quick Variant Modal */}
+      {hasVariants && (
+        <QuickVariantModal
+          isOpen={isVariantModalOpen}
+          onClose={() => setIsVariantModalOpen(false)}
+          product={product}
+        />
+      )}
     </div>
   );
 }

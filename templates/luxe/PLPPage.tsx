@@ -79,10 +79,18 @@ export default function LuxePLPPage({ products, categories, brands, filterFacets
             The Edit
           </span>
           <h1 className="text-5xl font-light" style={{ color: 'var(--sf-text)' }}>
-            {activeCategory ? <span className="capitalize">{activeCategory}</span> : 'All Products'}
+            {activeBrand ? (
+              <span className="capitalize">{(searchParams._brandName as string) || activeBrand}</span>
+            ) : activeCategory ? (
+              <span className="capitalize">{(searchParams._categoryName as string) || activeCategory}</span>
+            ) : (
+              'All Products'
+            )}
           </h1>
-          <p className="mt-3 text-sm font-light" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
-            {products.length} curated pieces
+          <p className="mt-3 text-sm font-light max-w-xl mx-auto" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+            {(searchParams._brandDescription as string) ||
+             (searchParams._categoryDescription as string) ||
+             `${products.length} curated pieces`}
           </p>
         </div>
 

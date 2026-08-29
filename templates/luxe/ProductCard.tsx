@@ -6,6 +6,7 @@ import { useState } from 'react';
 import type { Product, ProductDetail } from '@/lib/api/types';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/hooks/useCurrency';
+import QuickVariantModal from '@/components/shared/QuickVariantModal';
 
 type LuxeProduct = Product & Partial<Pick<ProductDetail, 'colorOptions'>>;
 
@@ -15,9 +16,18 @@ interface LuxeProductCardProps {
 
 export default function LuxeProductCard({ product }: LuxeProductCardProps) {
   const [hovered, setHovered] = useState(false);
+  const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { formatPrice } = useCurrency();
   const isWishlisted = isInWishlist(product.id);
+
+  const hasVariants = Boolean(product.variants && product.variants.length > 0);
+  const variantPrices = hasVariants
+    ? product.variants!.map((v) => Number(v.price)).filter((p) => !isNaN(p))
+    : [];
+  const minVariantPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : Number(product.price);
+  const maxVariantPrice = variantPrices.length > 0 ? Math.max(...variantPrices) : Number(product.price);
+  const hasPriceRange = hasVariants && minVariantPrice !== maxVariantPrice;
 
   const imageUrl = product.image || product.images?.[0];
   const secondImage = product.images?.[1];
@@ -32,7 +42,9 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
     await toggleWishlist(product.id);
   };
 
-  const stock = product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1;
+  const stock = hasVariants
+    ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
+    : (product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1);
   const isOutOfStock = stock <= 0;
 
   return (
@@ -86,6 +98,13 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
 
           {/* Badges */}
           <div className="absolute top-4 left-4 flex flex-col gap-1.5 z-10">
+            {hasVariants && (
+              <span
+                className="px-2.5 py-0.5 text-xs font-semibold tracking-wider uppercase bg-black/80 text-white backdrop-blur-sm"
+              >
+                {product.variants!.length} Editions
+              </span>
+            )}
             {discount > 0 && (
               <span
                 className="px-2.5 py-0.5 text-xs font-light tracking-widest uppercase"
@@ -102,6 +121,21 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
               </span>
             )}
           </div>
+
+          {/* Quick Option Button on Hover */}
+          {hasVariants && !isOutOfStock && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsVariantModalOpen(true);
+              }}
+              className="absolute inset-x-4 bottom-4 py-2.5 px-4 text-xs tracking-widest uppercase font-medium bg-white/95 text-black hover:bg-black hover:text-white transition-all shadow-md backdrop-blur opacity-0 group-hover:opacity-100 z-20 cursor-pointer text-center"
+            >
+              Select Edition ⚡
+            </button>
+          )}
         </div>
 
         {/* Product Info */}
@@ -119,7 +153,7 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
             </div>
             <div className="text-right flex-shrink-0">
               <p className="text-sm font-medium" style={{ color: 'var(--sf-text)' }}>
-                {formatPrice(product.price)}
+                {hasPriceRange ? `From ${formatPrice(minVariantPrice)}` : formatPrice(minVariantPrice)}
               </p>
               {product.compareAtPrice && (
                 <p className="text-xs font-light line-through" style={{ color: 'color-mix(in srgb, var(--sf-text) 30%, transparent)' }}>
@@ -164,6 +198,15 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
       </button>
+
+      {/* Quick Variant Modal */}
+      {hasVariants && (
+        <QuickVariantModal
+          isOpen={isVariantModalOpen}
+          onClose={() => setIsVariantModalOpen(false)}
+          product={product}
+        />
+      )}
     </div>
   );
 }

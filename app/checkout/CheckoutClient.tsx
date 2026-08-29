@@ -14,11 +14,14 @@ import {
   verifyStripePayment,
   processDirectCheckout,
   validateCoupon,
+  getShippingRateQuotes,
+  checkShippingServiceability,
 } from '@/lib/api';
 import {
   AvailablePaymentMethodsResponse,
   CheckoutSummaryResponse,
   ThemeConfig,
+  CarrierRateQuote,
 } from '@/lib/api/types';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useToast } from '@/hooks/useToast';
@@ -200,12 +203,65 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
       city: newCity,
       state: newState,
     });
+
+    if (cleanPin.length === 6) {
+      fetchCarrierQuotes(cleanPin, formData.country, newCity, newState);
+    }
   };
+
+  // Dynamic Carrier Rate Quotes from Nexus Shipping Orchestrator
+  const [rateQuotes, setRateQuotes] = useState<CarrierRateQuote[]>([]);
+  const [selectedQuote, setSelectedQuote] = useState<CarrierRateQuote | null>(null);
+  const [isCheckingQuotes, setIsCheckingQuotes] = useState(false);
+  const [pincodeServiceMsg, setPincodeServiceMsg] = useState<string | null>(null);
+
+  const fetchCarrierQuotes = async (
+    pincode: string,
+    country: string,
+    city?: string,
+    state?: string
+  ) => {
+    setIsCheckingQuotes(true);
+    try {
+      const quotes = await getShippingRateQuotes({
+        destination: {
+          pincode,
+          country,
+          city: city || formData.city,
+          state: state || formData.state,
+          street: formData.street,
+        },
+        cartSubtotal: totalAmount,
+      });
+
+      if (quotes && quotes.length > 0) {
+        setRateQuotes(quotes);
+        setSelectedQuote((prev) => {
+          if (prev && quotes.some((q) => q.carrierCode === prev.carrierCode)) {
+            return quotes.find((q) => q.carrierCode === prev.carrierCode) || quotes[0];
+          }
+          return quotes[0];
+        });
+        setPincodeServiceMsg(`✓ Serviceable via ${quotes[0].carrierName}`);
+      }
+    } catch (err) {
+      console.warn('Error fetching carrier rate quotes:', err);
+    } finally {
+      setIsCheckingQuotes(false);
+    }
+  };
+
+  // Initial fetch for default pincode
+  useEffect(() => {
+    if (formData.zip && formData.zip.length >= 5 && rateQuotes.length === 0) {
+      fetchCarrierQuotes(formData.zip, formData.country);
+    }
+  }, [formData.country, totalAmount]);
 
   // Load gateway configs & pricing
   useEffect(() => {
     loadGatewaysAndPricing(formData.country);
-  }, [formData.country, items, appliedCoupon, selectedShippingMethod]);
+  }, [formData.country, items, appliedCoupon, selectedShippingMethod, selectedQuote]);
 
   const loadGatewaysAndPricing = async (country: string) => {
     if (items.length === 0) return;
@@ -230,6 +286,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
       // 2. Fetch price summary
       const cartItemsPayload = items.map((item) => ({
         productId: item.productId,
+        variantId: item.variantId,
         name: item.name,
         price: item.price,
         quantity: item.quantity,
@@ -244,15 +301,17 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
         state: formData.state,
       });
 
-      // Calculate custom shipping from CMS
-      let customShipping = summaryRes.shippingFee;
-      if (isIndia) {
-        if (selectedShippingMethod === 'EXPRESS_AIR') {
-          customShipping = 89.0;
-        } else if (selectedShippingMethod === 'HYPERLOCAL') {
-          customShipping = 99.0;
-        } else {
-          customShipping = summaryRes.subtotal >= freeShippingThreshold ? 0.0 : standardShippingRate;
+      // Calculate custom shipping from live rate quote or CMS default
+      let customShipping = selectedQuote !== null && selectedQuote !== undefined ? selectedQuote.cost : summaryRes.shippingFee;
+      if (!selectedQuote) {
+        if (isIndia) {
+          if (selectedShippingMethod === 'EXPRESS_AIR') {
+            customShipping = 89.0;
+          } else if (selectedShippingMethod === 'HYPERLOCAL') {
+            customShipping = 99.0;
+          } else {
+            customShipping = summaryRes.subtotal >= freeShippingThreshold ? 0.0 : standardShippingRate;
+          }
         }
       }
 
@@ -265,6 +324,12 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
         shippingFee: customShipping,
         grandTotal: Number(updatedGrandTotal.toFixed(2)),
       });
+
+      if (summaryRes.stockValid === false && summaryRes.stockMessage) {
+        setErrorMessage(summaryRes.stockMessage);
+      } else {
+        setErrorMessage((prev) => (prev && prev.includes('Stock') ? '' : prev));
+      }
     } catch (err) {
       console.error('Error initializing checkout data:', err);
     }
@@ -355,6 +420,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
     const cartItemsPayload = items.map((item) => ({
       productId: item.productId,
+      variantId: item.variantId,
       name: item.name,
       price: item.price,
       quantity: item.quantity,
@@ -404,6 +470,20 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
       return;
     }
 
+    const activeShippingMethod = selectedQuote ? selectedQuote.carrierCode : selectedShippingMethod;
+    const activeShippingFee = selectedQuote ? selectedQuote.cost : summary?.shippingFee;
+
+    // Validate COD availability for selected carrier quote
+    if (selectedPaymentMethod === 'COD' && selectedQuote && !selectedQuote.codAvailable) {
+      toast.error(
+        'Cash on Delivery (COD) is not supported by the selected courier for this PIN code. Please select an eligible courier or pay online.',
+        'COD Unavailable'
+      );
+      setIsProcessing(false);
+      stopLoading();
+      return;
+    }
+
     try {
       // 📱 OPTION 1: UPI & QR CODE
       if (selectedPaymentMethod === 'UPI') {
@@ -415,6 +495,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
           shippingAddress,
           items: cartItemsPayload,
           couponCode: appliedCoupon || undefined,
+          shippingMethod: activeShippingMethod,
+          shippingFee: activeShippingFee,
         });
 
         if (scriptLoaded && window.Razorpay && razorpayOrder.keyId) {
@@ -448,6 +530,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                   shippingAddress,
                   items: cartItemsPayload,
                   couponCode: appliedCoupon || undefined,
+                  shippingMethod: activeShippingMethod,
+                  shippingFee: activeShippingFee,
                 });
 
                 toast.success('UPI Payment verified successfully!', 'Order Placed');
@@ -629,6 +713,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
             items: cartItemsPayload,
             couponCode: appliedCoupon || undefined,
             paymentMethod: 'CREDIT_CARD',
+            shippingMethod: activeShippingMethod,
+            shippingFee: activeShippingFee,
           });
 
           toast.success('Card order confirmed!', 'Order Received');
@@ -649,6 +735,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
           items: cartItemsPayload,
           couponCode: appliedCoupon || undefined,
           paymentMethod: 'COD',
+          shippingMethod: activeShippingMethod,
+          shippingFee: activeShippingFee,
         });
 
         toast.success('Cash on delivery order confirmed!', 'Order Received');
@@ -659,7 +747,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
       }
     } catch (err: any) {
       console.error('Checkout processing error:', err);
-      const msg = err?.response?.data?.message || 'Checkout processing failed. Please try again.';
+      const msg = err?.message || err?.response?.data?.message || 'Checkout processing failed. Please try again.';
       setErrorMessage(msg);
       toast.error(msg, 'Checkout Failed');
     } finally {
@@ -1113,6 +1201,16 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 <h3 className="text-base font-bold flex items-center gap-2">
                   <span>🚚</span>
                   <span>Delivery Method & Carrier</span>
+                  {pincodeServiceMsg && (
+                    <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
+                      {pincodeServiceMsg}
+                    </span>
+                  )}
+                  {isCheckingQuotes && (
+                    <span className="text-[10px] text-indigo-600 animate-pulse">
+                      Rate shopping across couriers...
+                    </span>
+                  )}
                 </h3>
                 {amountNeededForFreeShipping === 0 ? (
                   <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
@@ -1141,64 +1239,120 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <label
-                  onClick={() => setSelectedShippingMethod('STANDARD')}
-                  className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between ${
-                    selectedShippingMethod === 'STANDARD'
-                      ? 'border-gray-900 dark:border-white bg-gray-50/80 dark:bg-gray-800/80'
-                      : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
-                  }`}
-                >
-                  <div>
-                    <span className="text-xs font-bold block text-gray-900 dark:text-gray-100">
-                      Standard Ground
-                    </span>
-                    <span className="text-[11px] text-gray-500 block mt-0.5">3-5 business days</span>
-                  </div>
-                  <span className="text-sm font-black text-emerald-600 mt-2 block">
-                    {totalAmount >= freeShippingThreshold ? 'FREE' : `${currencySymbol}${standardShippingRate}`}
-                  </span>
-                </label>
+              {/* Dynamic Rate-Shopped Carrier Options */}
+              {rateQuotes.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {rateQuotes.map((quote) => {
+                    const isSelected = selectedQuote?.carrierCode === quote.carrierCode;
+                    return (
+                      <label
+                        key={quote.carrierCode}
+                        onClick={() => {
+                          setSelectedQuote(quote);
+                          setSelectedShippingMethod(
+                            quote.serviceType === 'express'
+                              ? 'EXPRESS_AIR'
+                              : quote.serviceType === 'same-day'
+                              ? 'HYPERLOCAL'
+                              : 'STANDARD'
+                          );
+                        }}
+                        className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between relative overflow-hidden ${
+                          isSelected
+                            ? 'border-gray-900 dark:border-white bg-gray-50/90 dark:bg-gray-800/90 shadow-sm'
+                            : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
+                        }`}
+                      >
+                        {quote.badge && (
+                          <span className="absolute top-2.5 right-2.5 text-[9px] font-black px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">
+                            {quote.badge}
+                          </span>
+                        )}
+                        <div>
+                          <span className="text-xs font-bold block text-gray-900 dark:text-gray-100 pr-12">
+                            {quote.carrierName}
+                          </span>
+                          <span className="text-[11px] text-gray-500 block mt-0.5">
+                            {quote.serviceName} • {quote.estimatedDays} {quote.estimatedDays === 1 ? 'day' : 'days'}
+                          </span>
+                        </div>
 
-                <label
-                  onClick={() => setSelectedShippingMethod('EXPRESS_AIR')}
-                  className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between ${
-                    selectedShippingMethod === 'EXPRESS_AIR'
-                      ? 'border-gray-900 dark:border-white bg-gray-50/80 dark:bg-gray-800/80'
-                      : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
-                  }`}
-                >
-                  <div>
-                    <span className="text-xs font-bold block text-gray-900 dark:text-gray-100">
-                      Express Air Priority
+                        <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100 dark:border-gray-800">
+                          <span className="text-sm font-black text-gray-900 dark:text-white">
+                            {quote.cost === 0 ? (
+                              <span className="text-emerald-600">FREE</span>
+                            ) : (
+                              `${currencySymbol}${quote.cost.toFixed(2)}`
+                            )}
+                          </span>
+                          <span className={`text-[10px] font-bold ${quote.codAvailable ? 'text-emerald-600' : 'text-slate-400'}`}>
+                            {quote.codAvailable ? '✓ COD Available' : 'Prepaid Only'}
+                          </span>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <label
+                    onClick={() => setSelectedShippingMethod('STANDARD')}
+                    className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between ${
+                      selectedShippingMethod === 'STANDARD'
+                        ? 'border-gray-900 dark:border-white bg-gray-50/80 dark:bg-gray-800/80'
+                        : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
+                    }`}
+                  >
+                    <div>
+                      <span className="text-xs font-bold block text-gray-900 dark:text-gray-100">
+                        Standard Ground
+                      </span>
+                      <span className="text-[11px] text-gray-500 block mt-0.5">3-5 business days</span>
+                    </div>
+                    <span className="text-sm font-black text-emerald-600 mt-2 block">
+                      {totalAmount >= freeShippingThreshold ? 'FREE' : `${currencySymbol}${standardShippingRate}`}
                     </span>
-                    <span className="text-[11px] text-gray-500 block mt-0.5">1-2 business days</span>
-                  </div>
-                  <span className="text-sm font-black text-gray-900 dark:text-gray-100 mt-2 block">
-                    {currencySymbol}89.00
-                  </span>
-                </label>
+                  </label>
 
-                <label
-                  onClick={() => setSelectedShippingMethod('HYPERLOCAL')}
-                  className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between ${
-                    selectedShippingMethod === 'HYPERLOCAL'
-                      ? 'border-gray-900 dark:border-white bg-gray-50/80 dark:bg-gray-800/80'
-                      : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
-                  }`}
-                >
-                  <div>
-                    <span className="text-xs font-bold block text-gray-900 dark:text-gray-100">
-                      Hyperlocal Same-Day
+                  <label
+                    onClick={() => setSelectedShippingMethod('EXPRESS_AIR')}
+                    className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between ${
+                      selectedShippingMethod === 'EXPRESS_AIR'
+                        ? 'border-gray-900 dark:border-white bg-gray-50/80 dark:bg-gray-800/80'
+                        : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
+                    }`}
+                  >
+                    <div>
+                      <span className="text-xs font-bold block text-gray-900 dark:text-gray-100">
+                        Express Air Priority
+                      </span>
+                      <span className="text-[11px] text-gray-500 block mt-0.5">1-2 business days</span>
+                    </div>
+                    <span className="text-sm font-black text-gray-900 dark:text-gray-100 mt-2 block">
+                      {currencySymbol}89.00
                     </span>
-                    <span className="text-[11px] text-gray-500 block mt-0.5">By 8:00 PM today</span>
-                  </div>
-                  <span className="text-sm font-black text-gray-900 dark:text-gray-100 mt-2 block">
-                    {currencySymbol}99.00
-                  </span>
-                </label>
-              </div>
+                  </label>
+
+                  <label
+                    onClick={() => setSelectedShippingMethod('HYPERLOCAL')}
+                    className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between ${
+                      selectedShippingMethod === 'HYPERLOCAL'
+                        ? 'border-gray-900 dark:border-white bg-gray-50/80 dark:bg-gray-800/80'
+                        : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
+                    }`}
+                  >
+                    <div>
+                      <span className="text-xs font-bold block text-gray-900 dark:text-gray-100">
+                        Hyperlocal Same-Day
+                      </span>
+                      <span className="text-[11px] text-gray-500 block mt-0.5">By 8:00 PM today</span>
+                    </div>
+                    <span className="text-sm font-black text-gray-900 dark:text-gray-100 mt-2 block">
+                      {currencySymbol}99.00
+                    </span>
+                  </label>
+                </div>
+              )}
             </div>
 
             {/* 3. Payment Method Selection */}
@@ -1504,6 +1658,11 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                             </span>
                           )}
                         </div>
+                        {item.options?.variant && (
+                          <span className="inline-block text-[10px] font-semibold text-indigo-600 dark:text-indigo-400">
+                            Edition: {item.options.variant}
+                          </span>
+                        )}
                         <p className="text-gray-400">Qty: {item.quantity} × {currencySymbol}{item.price}</p>
                       </div>
                     </div>

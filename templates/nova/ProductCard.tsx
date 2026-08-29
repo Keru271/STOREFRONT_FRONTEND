@@ -7,6 +7,7 @@ import type { Product } from '@/lib/api/types';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/hooks/useCurrency';
+import QuickVariantModal from '@/components/shared/QuickVariantModal';
 
 interface NovaProductCardProps {
   product: Product;
@@ -17,11 +18,22 @@ export default function NovaProductCard({ product }: NovaProductCardProps) {
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { formatPrice } = useCurrency();
   const [isAdding, setIsAdding] = useState(false);
+  const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+
+  const hasVariants = Boolean(product.variants && product.variants.length > 0);
+  const variantPrices = hasVariants
+    ? product.variants!.map((v) => Number(v.price)).filter((p) => !isNaN(p))
+    : [];
+  const minVariantPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : Number(product.price);
+  const maxVariantPrice = variantPrices.length > 0 ? Math.max(...variantPrices) : Number(product.price);
+  const hasPriceRange = hasVariants && minVariantPrice !== maxVariantPrice;
 
   const isLiked = isInWishlist(product.id);
   const primaryImage = product.images?.[0] || product.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80';
   const hasDiscount = product.compareAtPrice && product.compareAtPrice > product.price;
-  const stock = product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1;
+  const stock = hasVariants
+    ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
+    : (product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1);
   const isOutOfStock = stock <= 0;
   const productHref = `/products/${product.urlSlug || product.id}`;
   const categoryLabel = product.categoryName || (typeof product.category === 'string' ? product.category : '');
@@ -30,6 +42,11 @@ export default function NovaProductCard({ product }: NovaProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
     if (isOutOfStock) return;
+
+    if (hasVariants) {
+      setIsVariantModalOpen(true);
+      return;
+    }
 
     setIsAdding(true);
     try {
@@ -53,6 +70,11 @@ export default function NovaProductCard({ product }: NovaProductCardProps) {
         
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
+          {hasVariants && (
+            <span className="px-2 py-0.5 text-[10px] font-semibold tracking-tight uppercase bg-indigo-600 text-white rounded-[980px]">
+              {product.variants!.length} Options
+            </span>
+          )}
           {hasDiscount && (
             <span className="px-2 py-0.5 text-[10px] font-semibold tracking-tight uppercase bg-[#1d1d1f] text-white rounded-[980px]">
               Special Offer
@@ -118,7 +140,7 @@ export default function NovaProductCard({ product }: NovaProductCardProps) {
         <div className="pt-3 border-t border-[#f5f5f7]">
           <div className="flex items-baseline gap-2 mb-3">
             <span className="text-[16px] font-semibold text-[#1d1d1f]">
-              {formatPrice(product.price)}
+              {hasPriceRange ? `From ${formatPrice(minVariantPrice)}` : formatPrice(minVariantPrice)}
             </span>
             {hasDiscount && (
               <span className="text-[12px] text-[#858585] line-through">
@@ -141,6 +163,8 @@ export default function NovaProductCard({ product }: NovaProductCardProps) {
                 <span>Adding...</span>
               ) : isOutOfStock ? (
                 <span>Out of Stock</span>
+              ) : hasVariants ? (
+                <span>Select Options ⚡</span>
               ) : (
                 <span>Add to Bag</span>
               )}
@@ -157,6 +181,14 @@ export default function NovaProductCard({ product }: NovaProductCardProps) {
 
       </div>
 
+      {/* Quick Variant Modal */}
+      {hasVariants && (
+        <QuickVariantModal
+          isOpen={isVariantModalOpen}
+          onClose={() => setIsVariantModalOpen(false)}
+          product={product}
+        />
+      )}
     </div>
   );
 }

@@ -463,41 +463,20 @@ export function CmsPageRenderer({ page, theme }: CmsPageRendererProps) {
 
   const formattedDate = page.updatedAt
     ? new Date(page.updatedAt).toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      })
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    })
     : null;
 
   return (
     <TemplateLayout theme={theme}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 w-full font-sans">
-        {/* Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-xs opacity-60 mb-8 font-medium">
-          <Link href="/" className="hover:opacity-100 transition">
-            Home
-          </Link>
-          <span>/</span>
-          <span className="opacity-75">{page.pageType === 'POLICY' ? 'Policies' : 'Pages'}</span>
-          <span>/</span>
-          <span className="opacity-100 font-semibold" style={{ color: 'var(--sf-primary)' }}>
-            {page.title}
-          </span>
-        </nav>
+
 
         {/* Page Header */}
         <header className="mb-10 pb-8 border-b border-slate-200/50">
-          <div className="flex items-center gap-3 mb-3">
-            <span
-              className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full text-white"
-              style={{ backgroundColor: 'var(--sf-primary)' }}
-            >
-              {page.pageType || 'PAGE'}
-            </span>
-            {formattedDate && (
-              <span className="text-xs opacity-50">Last updated on {formattedDate}</span>
-            )}
-          </div>
+
           <h1
             className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight font-heading"
             style={{ color: 'var(--sf-text)' }}

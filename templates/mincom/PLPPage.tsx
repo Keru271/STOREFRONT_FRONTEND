@@ -132,12 +132,20 @@ export default function MincomPLPPage({
       <div className="bg-[#23272a] text-white py-12 px-4 border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="text-amber-400 font-bold uppercase tracking-widest text-xs">CATALOG</span>
+            <span className="text-amber-400 font-bold uppercase tracking-widest text-xs">
+              {activeBrand ? 'BRAND SPOTLIGHT' : activeCategory ? 'COLLECTION' : 'CATALOG'}
+            </span>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight mt-1">
-              {activeCategory ? `${activeCategory.toUpperCase()} COLLECTION` : 'All Products & Furniture'}
+              {activeBrand
+                ? `${((searchParams._brandName as string) || activeBrand).toUpperCase()} COLLECTION`
+                : activeCategory
+                  ? `${((searchParams._categoryName as string) || activeCategory).toUpperCase()} COLLECTION`
+                  : 'All Products & Furniture'}
             </h1>
             <p className="text-xs text-slate-400 mt-1">
-              Showing {products.length} crafted items {isPending ? '(Updating...)' : ''}
+              {(searchParams._brandDescription as string) ||
+                (searchParams._categoryDescription as string) ||
+                `Showing ${products.length} crafted items ${isPending ? '(Updating...)' : ''}`}
             </p>
           </div>
 

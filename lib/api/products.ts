@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { Product, ProductDetail, ProductsQueryParams, ProductReview, FilterFacetsResponse, SearchSuggestionsResponse } from './types';
+import type { Product, ProductDetail, ProductsQueryParams, ProductReview, FilterFacetsResponse, SearchSuggestionsResponse, ProductStockResponse, EligibleCoupon } from './types';
 
 // Backend wraps the list response in this shape
 interface ProductsApiResponse {
@@ -193,6 +193,35 @@ export async function upvoteProductReview(
   return await apiClient.post<{ success: boolean; helpfulCount: number }>(
     `api/storefront/products/${encodeURIComponent(productId)}/reviews/${encodeURIComponent(reviewId)}/helpful`,
     {}
+  );
+}
+
+/**
+ * Checks real-time product or variant stock in the database.
+ * Never cached (revalidate: 0).
+ */
+export async function getProductStock(
+  idOrSlug: string,
+  variantId?: string
+): Promise<ProductStockResponse> {
+  const query = variantId ? `?variantId=${encodeURIComponent(variantId)}` : '';
+  return await apiClient.get<ProductStockResponse>(
+    `api/storefront/products/${encodeURIComponent(idOrSlug)}/stock${query}`,
+    { next: { revalidate: 0 } }
+  );
+}
+
+/**
+ * Fetches eligible discounts/coupons applicable to a product in real-time.
+ */
+export async function getProductEligibleCoupons(
+  idOrSlug: string,
+  price?: number
+): Promise<EligibleCoupon[]> {
+  const query = price !== undefined ? `?price=${encodeURIComponent(price)}` : '';
+  return await apiClient.get<EligibleCoupon[]>(
+    `api/storefront/discounts/product/${encodeURIComponent(idOrSlug)}${query}`,
+    { next: { revalidate: 0 } }
   );
 }
 

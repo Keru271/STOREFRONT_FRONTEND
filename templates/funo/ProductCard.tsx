@@ -7,6 +7,7 @@ import type { Product } from '@/lib/api/types';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/hooks/useCurrency';
+import QuickVariantModal from '@/components/shared/QuickVariantModal';
 
 export interface FunoProductCardProps {
   product: Product;
@@ -18,6 +19,15 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
   const { formatPrice } = useCurrency();
   const [isAdding, setIsAdding] = useState(false);
   const [added, setAdded] = useState(false);
+  const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+
+  const hasVariants = Boolean(product.variants && product.variants.length > 0);
+  const variantPrices = hasVariants
+    ? product.variants!.map((v) => Number(v.price)).filter((p) => !isNaN(p))
+    : [];
+  const minVariantPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : Number(product.price);
+  const maxVariantPrice = variantPrices.length > 0 ? Math.max(...variantPrices) : Number(product.price);
+  const hasPriceRange = hasVariants && minVariantPrice !== maxVariantPrice;
 
   const isWishlisted = isInWishlist(product.id);
   const mainImage = product.image || (product.images && product.images[0]);
@@ -25,13 +35,22 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
     : 0;
 
-  const stock = product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1;
+  const stock = hasVariants
+    ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
+    : (product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1);
   const isOutOfStock = stock <= 0;
 
   const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isAdding || isOutOfStock) return;
+    if (isOutOfStock) return;
+
+    if (hasVariants) {
+      setIsVariantModalOpen(true);
+      return;
+    }
+
+    if (isAdding) return;
     setIsAdding(true);
     try {
       await addToCart({ productId: product.id, quantity: 1 });
@@ -60,6 +79,11 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
         
         {/* Badges */}
         <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
+          {hasVariants && (
+            <span className="px-2.5 py-1 font-black text-[10px] uppercase tracking-wider rounded-full shadow-sm text-white bg-indigo-600">
+              {product.variants!.length} Options
+            </span>
+          )}
           {discount > 0 && (
             <span className="px-2.5 py-1 font-black text-[10px] uppercase tracking-wider rounded-full shadow-sm text-white bg-orange-500">
               -{discount}%
@@ -109,10 +133,10 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
           <button
             onClick={handleQuickAdd}
             disabled={isAdding || isOutOfStock}
-            className="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs shadow-md transition flex items-center justify-center gap-1.5 active:scale-95 bg-black hover:bg-orange-500 text-white disabled:opacity-75 disabled:cursor-not-allowed"
+            className="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs shadow-md transition flex items-center justify-center gap-1.5 active:scale-95 bg-black hover:bg-orange-500 text-white disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
           >
-            <span>{added ? 'Added! ✓' : isAdding ? 'Adding...' : isOutOfStock ? 'Sold Out' : 'Quick Add'}</span>
-            <span>🛍️</span>
+            <span>{added ? 'Added! ✓' : isAdding ? 'Adding...' : isOutOfStock ? 'Sold Out' : hasVariants ? 'Select Options' : 'Quick Add'}</span>
+            <span>{hasVariants ? '⚡' : '🛍️'}</span>
           </button>
           <Link
             href={href}
@@ -150,7 +174,7 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
         <div className="pt-2 border-t border-slate-100 flex items-baseline justify-between">
           <div className="flex items-baseline gap-2">
             <span className="text-base font-black text-slate-900 font-heading">
-              {formatPrice(product.price)}
+              {hasPriceRange ? `From ${formatPrice(minVariantPrice)}` : formatPrice(minVariantPrice)}
             </span>
             {product.compareAtPrice && product.compareAtPrice > product.price && (
               <span className="text-xs text-slate-400 line-through">
@@ -173,6 +197,14 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
         </div>
       </div>
 
+      {/* Quick Variant Modal */}
+      {hasVariants && (
+        <QuickVariantModal
+          isOpen={isVariantModalOpen}
+          onClose={() => setIsVariantModalOpen(false)}
+          product={product}
+        />
+      )}
     </div>
   );
 }

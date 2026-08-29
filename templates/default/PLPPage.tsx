@@ -102,25 +102,48 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
             <div className="flex items-center gap-2 text-sm mb-4" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
               <a href="/" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>Home</a>
               <span>/</span>
-              <span style={{ color: 'var(--sf-text)' }}>Products</span>
-              {activeCategory && (
+              <a href="/products" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>Products</a>
+              {activeBrand ? (
                 <>
                   <span>/</span>
-                  <span style={{ color: 'var(--sf-text)' }} className="capitalize">{activeCategory}</span>
+                  <a href="/brands" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>Brands</a>
+                  <span>/</span>
+                  <span style={{ color: 'var(--sf-text)' }} className="capitalize font-bold">
+                    {(searchParams._brandName as string) || activeBrand}
+                  </span>
                 </>
-              )}
+              ) : activeCategory ? (
+                <>
+                  <span>/</span>
+                  <a href="/categories" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>Categories</a>
+                  <span>/</span>
+                  <span style={{ color: 'var(--sf-text)' }} className="capitalize font-bold">
+                    {(searchParams._categoryName as string) || activeCategory}
+                  </span>
+                </>
+              ) : null}
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h1 className="text-3xl font-bold" style={{ color: 'var(--sf-text)' }}>
-                  {activeCategory ? <span className="capitalize">{activeCategory}</span> : 'All Products'}
+                  {activeBrand ? (
+                    <span className="capitalize">{(searchParams._brandName as string) || activeBrand}</span>
+                  ) : activeCategory ? (
+                    <span className="capitalize">{(searchParams._categoryName as string) || activeCategory}</span>
+                  ) : searchQuery ? (
+                    `Search: "${searchQuery}"`
+                  ) : (
+                    'All Products'
+                  )}
                 </h1>
                 <p
                   className="mt-1 text-sm"
                   style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
                 >
-                  {products.length} {products.length === 1 ? 'product' : 'products'}
+                  {(searchParams._brandDescription as string) ||
+                   (searchParams._categoryDescription as string) ||
+                   `${products.length} ${products.length === 1 ? 'product' : 'products'}`}
                 </p>
               </div>
 

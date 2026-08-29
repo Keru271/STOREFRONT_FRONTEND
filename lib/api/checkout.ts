@@ -65,6 +65,8 @@ export async function createRazorpayOrder(payload: {
   shippingAddress: CheckoutAddress;
   items: CheckoutCartItemPayload[];
   couponCode?: string;
+  shippingMethod?: string;
+  shippingFee?: number;
 }): Promise<RazorpayOrderResponse> {
   const response = await apiClient.post<RazorpayOrderResponse>(
     'api/storefront/checkout/razorpay/create-order',
@@ -87,6 +89,8 @@ export async function verifyRazorpayPayment(payload: {
   shippingAddress: CheckoutAddress;
   items: CheckoutCartItemPayload[];
   couponCode?: string;
+  shippingMethod?: string;
+  shippingFee?: number;
 }): Promise<OrderPlacedResponse> {
   const response = await apiClient.post<OrderPlacedResponse>(
     'api/storefront/checkout/razorpay/verify',
@@ -145,6 +149,8 @@ export async function processDirectCheckout(payload: {
   items: CheckoutCartItemPayload[];
   couponCode?: string;
   paymentMethod: 'COD' | 'CREDIT_CARD' | 'RAZORPAY' | 'STRIPE';
+  shippingMethod?: string;
+  shippingFee?: number;
 }): Promise<OrderPlacedResponse> {
   const response = await apiClient.post<OrderPlacedResponse>(
     'api/storefront/checkout/payment',

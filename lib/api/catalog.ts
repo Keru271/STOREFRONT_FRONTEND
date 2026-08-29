@@ -47,6 +47,44 @@ export async function getBrands(): Promise<Brand[]> {
 }
 
 /**
+ * Fetches a single brand by slug or name.
+ */
+export async function getBrandBySlug(slug: string): Promise<Brand | null> {
+  try {
+    const brands = await getBrands();
+    const normalized = slug.toLowerCase().trim();
+    const found = brands.find(
+      (b) =>
+        b.slug?.toLowerCase() === normalized ||
+        b.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') === normalized ||
+        b.name.toLowerCase() === normalized
+    );
+    return found || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetches a single category by slug or name.
+ */
+export async function getCategoryBySlug(slug: string): Promise<Category | null> {
+  try {
+    const categories = await getCategories();
+    const normalized = slug.toLowerCase().trim();
+    const found = categories.find(
+      (c) =>
+        c.slug?.toLowerCase() === normalized ||
+        c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') === normalized ||
+        c.name.toLowerCase() === normalized
+    );
+    return found || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetches all navigation menus.
  * Uses on-demand revalidation (revalidate: 0) for real-time synchronization with CMS.
  */

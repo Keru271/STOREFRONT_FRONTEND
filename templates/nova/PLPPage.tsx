@@ -91,13 +91,21 @@ export default function NovaPLPPage({
           <div className="max-w-[1024px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <span className="text-[11px] font-semibold tracking-wider text-[#0071e3] uppercase block">
-                {activeCategory ? 'Category Filter' : 'All Products'}
+                {activeBrand ? 'Brand Showcase' : activeCategory ? 'Category Filter' : 'All Products'}
               </span>
               <h1 className="text-2xl sm:text-3xl font-semibold text-[#1d1d1f] tracking-tight">
-                {searchQuery ? `Search results for "${searchQuery}"` : activeCategory ? categories.find(c => c.slug === activeCategory)?.name || activeCategory : 'Explore All Hardware & Goods'}
+                {searchQuery
+                  ? `Search results for "${searchQuery}"`
+                  : activeBrand
+                    ? ((searchParams._brandName as string) || activeBrand)
+                    : activeCategory
+                      ? categories.find((c) => c.slug === activeCategory)?.name || activeCategory
+                      : 'Explore All Hardware & Goods'}
               </h1>
               <p className="text-[12px] text-[#707070] mt-1">
-                Showing {products.length} {products.length === 1 ? 'item' : 'items'}
+                {(searchParams._brandDescription as string) ||
+                  (searchParams._categoryDescription as string) ||
+                  `Showing ${products.length} ${products.length === 1 ? 'item' : 'items'}`}
               </p>
             </div>
 

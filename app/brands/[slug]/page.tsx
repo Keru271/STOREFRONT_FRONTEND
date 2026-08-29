@@ -1,63 +1,63 @@
-// ─── Category Detail — /categories/[slug] ─────────────────────────────────────
-// Server Component (SSR). Shows products filtered by category using active template PLPPage.
+// ─── Brand Detail — /brands/[slug] ──────────────────────────────────────────
+// Server Component (SSR). Displays products filtered by brand using active template PLPPage.
 
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { getTheme } from '@/lib/api/theme';
-import { getCategoryBySlug, getCategories, getBrands } from '@/lib/api/catalog';
+import { getBrandBySlug, getBrands, getCategories } from '@/lib/api/catalog';
 import { getProducts, getFilterFacets } from '@/lib/api/products';
 import { resolveTemplate } from '@/templates';
 
 export const dynamic = 'force-dynamic';
 
-interface CategoryPageProps {
+interface BrandPageProps {
   params: Promise<{ slug: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: BrandPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const [theme, category] = await Promise.all([getTheme(), getCategoryBySlug(slug)]);
+  const [theme, brand] = await Promise.all([getTheme(), getBrandBySlug(slug)]);
 
-  const categoryName = category ? category.name : decodeURIComponent(slug).replace(/-/g, ' ');
+  const brandName = brand ? brand.name : decodeURIComponent(slug).replace(/-/g, ' ');
 
   return {
-    title: `${categoryName} | ${theme.storeName}`,
+    title: `${brandName} Collection | ${theme.storeName}`,
     description:
-      category?.description ||
-      `Shop top-rated ${categoryName} products at ${theme.storeName}.`,
+      brand?.description ||
+      `Shop authentic ${brandName} products, clothing, and gear at ${theme.storeName}.`,
     openGraph: {
-      title: `${categoryName} — ${theme.storeName}`,
-      description: category?.description || `Shop ${categoryName} online.`,
-      images: category?.image ? [{ url: category.image }] : [],
+      title: `${brandName} — ${theme.storeName}`,
+      description: brand?.description || `Explore ${brandName} online at ${theme.storeName}.`,
+      images: brand?.logo ? [{ url: brand.logo }] : [],
     },
   };
 }
 
-export default async function CategoryDetailPage({
+export default async function BrandDetailPage({
   params,
   searchParams,
-}: CategoryPageProps) {
+}: BrandPageProps) {
   const { slug } = await params;
   const resolvedParams = await searchParams;
 
   // Server-side parallel API calls
-  const [theme, category, categories, brands, filterFacets] = await Promise.all([
+  const [theme, brand, brands, categories, filterFacets] = await Promise.all([
     getTheme(),
-    getCategoryBySlug(slug),
-    getCategories(),
+    getBrandBySlug(slug),
     getBrands(),
+    getCategories(),
     getFilterFacets(),
   ]);
 
-  // If category not found in list, fall back to decoded slug as name
-  const categoryName = category ? category.name : decodeURIComponent(slug).replace(/-/g, ' ');
+  const brandName = brand ? brand.name : decodeURIComponent(slug).replace(/-/g, ' ');
 
-  // Fetch products for this category with optional additional filters
+  // Fetch products for this brand with optional additional filters (category, sort, price, etc.)
   const products = await getProducts({
-    category:    category ? category.name : categoryName,
+    brand:       brand ? brand.name : brandName,
+    category:    resolvedParams.category as string | undefined,
+    categories:  resolvedParams.categories as string | undefined,
     collection:  resolvedParams.collection as string | undefined,
-    brand:       resolvedParams.brand as string | undefined,
-    brands:      resolvedParams.brands as string | undefined,
     search:      (resolvedParams.search || resolvedParams.q) as string | undefined,
     sort:        resolvedParams.sort as string | undefined,
     minPrice:    resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
@@ -69,6 +69,7 @@ export default async function CategoryDetailPage({
     limit:       24,
   });
 
+  // Resolve template from theme configuration or query preview override
   const previewTemplate = resolvedParams?.previewTemplate as string | undefined;
   const effectiveTheme = previewTemplate
     ? { ...theme, activeTemplateSlug: previewTemplate }
@@ -76,13 +77,14 @@ export default async function CategoryDetailPage({
 
   const { PLPPage } = resolveTemplate(effectiveTheme.activeTemplateSlug);
 
-  // Pass category context via searchParams so PLPPage can render heading & breadcrumbs
+  // Pass brand context via searchParams so PLPPage can render title, breadcrumbs & description
   const enrichedParams: Record<string, string | string[] | undefined> = {
     ...resolvedParams,
-    category:             categoryName,
-    _categoryName:        categoryName,
-    _categoryDescription: category?.description || '',
-    _categorySlug:        category?.slug || slug,
+    brand:             brandName,
+    _brandName:        brandName,
+    _brandDescription: brand?.description || '',
+    _brandSlug:        brand?.slug || slug,
+    _brandLogo:        brand?.logo || '',
   };
 
   return (

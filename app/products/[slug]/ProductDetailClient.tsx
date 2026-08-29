@@ -3,13 +3,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import type { ThemeConfig, ProductDetail, Product, ProductReview } from '@/lib/api/types';
+import type { ThemeConfig, ProductDetail, Product, ProductReview, EligibleCoupon } from '@/lib/api/types';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import DefaultHeader from '@/templates/default/Header';
 import DefaultFooter from '@/templates/default/Footer';
 import DefaultProductCard from '@/templates/default/ProductCard';
-import { getProductReviews, postProductReview, editProductReview, upvoteProductReview } from '@/lib/api';
+import { getProductReviews, postProductReview, editProductReview, upvoteProductReview, getProductEligibleCoupons } from '@/lib/api';
 
 interface ProductDetailClientProps {
   theme: ThemeConfig;
@@ -84,10 +84,26 @@ export default function ProductDetailClient({
 
   const [hoverRating, setHoverRating] = useState(0);
 
+  // Eligible Coupons state
+  const [coupons, setCoupons] = useState<EligibleCoupon[]>(product.eligibleCoupons || []);
+  const [copiedCouponCode, setCopiedCouponCode] = useState<string | null>(null);
+  const [isCouponsExpanded, setIsCouponsExpanded] = useState(false);
+
   const isWishlisted = isInWishlist(product.id);
 
-  const discount = product.compareAtPrice
-    ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
+  const selectedVariant = product.variants?.find((v) => v.id === selectedVariantId);
+  const activePrice = selectedVariant?.price != null ? Number(selectedVariant.price) : Number(product.price);
+  const activeCompareAtPrice = selectedVariant?.compareAtPrice != null
+    ? Number(selectedVariant.compareAtPrice)
+    : product.compareAtPrice ? Number(product.compareAtPrice) : null;
+  const stock = selectedVariant?.inventory != null
+    ? Number(selectedVariant.inventory)
+    : (product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1);
+  const isOutOfStock = stock <= 0;
+  const activeSku = selectedVariant?.sku || product.sku;
+
+  const discount = activeCompareAtPrice && activeCompareAtPrice > activePrice
+    ? Math.round(((activeCompareAtPrice - activePrice) / activeCompareAtPrice) * 100)
     : 0;
 
   // Calculate Average Rating & Distribution
@@ -104,8 +120,28 @@ export default function ProductDetailClient({
     1: reviewsList.filter((r) => r.rating === 1).length,
   };
 
-  const stock = product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1;
-  const isOutOfStock = stock <= 0;
+  useEffect(() => {
+    if (!product.eligibleCoupons || product.eligibleCoupons.length === 0) {
+      getProductEligibleCoupons(product.id || product.urlSlug || '', activePrice)
+        .then((data) => {
+          if (Array.isArray(data)) setCoupons(data);
+        })
+        .catch(() => {});
+    }
+  }, [product.id, product.urlSlug, product.eligibleCoupons, activePrice]);
+
+  const handleCopyCoupon = (code: string) => {
+    if (!code) return;
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(code);
+    }
+    setCopiedCouponCode(code);
+    setToastMessage(`🎉 Coupon "${code}" copied! Paste at checkout to redeem savings.`);
+    setTimeout(() => {
+      setCopiedCouponCode((curr) => (curr === code ? null : curr));
+      setToastMessage(null);
+    }, 3500);
+  };
 
   const handleAddToCart = async () => {
     if (isAdding || isOutOfStock) return;
@@ -118,14 +154,16 @@ export default function ProductDetailClient({
         options: {
           size: selectedSize || undefined,
           color: selectedColor || undefined,
+          variant: selectedVariant?.name || undefined,
         },
       });
       setToastMessage('🎉 Successfully added to cart!');
       setTimeout(() => setToastMessage(null), 3000);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error adding to cart:', err);
-      setToastMessage('❌ Failed to add to cart.');
-      setTimeout(() => setToastMessage(null), 3000);
+      const msg = err?.message || 'Failed to add to cart.';
+      setToastMessage(`❌ ${msg}`);
+      setTimeout(() => setToastMessage(null), 4000);
     } finally {
       setIsAdding(false);
     }
@@ -346,14 +384,69 @@ export default function ProductDetailClient({
             {/* Price section */}
             <div className="flex items-baseline gap-3 pb-6 border-b border-gray-100 dark:border-gray-800">
               <span className="text-3xl font-black text-[var(--sf-primary)]">
-                ₹{product.price.toFixed(2)}
+                ₹{activePrice.toFixed(2)}
               </span>
-              {product.compareAtPrice && product.compareAtPrice > product.price && (
+              {activeCompareAtPrice && activeCompareAtPrice > activePrice && (
                 <span className="text-lg text-gray-400 line-through">
-                  ₹{product.compareAtPrice.toFixed(2)}
+                  ₹{activeCompareAtPrice.toFixed(2)}
+                </span>
+              )}
+              {discount > 0 && (
+                <span className="px-2 py-0.5 rounded-full text-xs font-black bg-rose-500/10 text-rose-600 border border-rose-500/20">
+                  {discount}% OFF
                 </span>
               )}
             </div>
+
+            {/* Variant selector */}
+            {product.variants && product.variants.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                    Select Option / Edition
+                  </span>
+                  {selectedVariant && (
+                    <span className="text-xs font-mono font-bold text-gray-400">
+                      SKU: {selectedVariant.sku}
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {product.variants.map((v) => {
+                    const isSelected = selectedVariantId === v.id;
+                    const vStock = Number(v.inventory ?? 0);
+                    const isVOut = vStock <= 0;
+                    return (
+                      <button
+                        key={v.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedVariantId(v.id);
+                          if (v.image) setSelectedImage(v.image);
+                        }}
+                        className={`px-4 py-2.5 rounded-xl text-xs font-bold border transition flex items-center gap-2 cursor-pointer ${
+                          isVOut ? 'opacity-50' : ''
+                        } ${
+                          isSelected
+                            ? 'border-[var(--sf-primary)] bg-[var(--sf-primary)] text-white shadow-md'
+                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-400'
+                        }`}
+                      >
+                        <span>{v.name}</span>
+                        <span className={`text-[11px] font-mono ${isSelected ? 'text-white/90' : 'text-gray-500'}`}>
+                          ₹{Number(v.price).toFixed(2)}
+                        </span>
+                        {isVOut && (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-500 font-black">
+                            Sold Out
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Size Options */}
             {product.sizeOptions && product.sizeOptions.length > 0 && (
@@ -400,6 +493,96 @@ export default function ProductDetailClient({
                     </button>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* ── Eligible Coupons & Offers ───────────────────────────────── */}
+            {coupons && coupons.length > 0 && (
+              <div className="p-4 rounded-2xl border border-[var(--sf-primary)]/20 bg-[var(--sf-primary)]/5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">🏷️</span>
+                    <span className="text-xs font-black uppercase tracking-wider text-[var(--sf-primary)]">
+                      Eligible Coupons ({coupons.length})
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-medium text-gray-500">Tap code to copy</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {(isCouponsExpanded ? coupons : coupons.slice(0, 4)).map((coupon) => {
+                    const isCopied = copiedCouponCode === coupon.code;
+                    const liveSavings =
+                      coupon.discountType === 'PERCENTAGE'
+                        ? (activePrice * (coupon.value || 0)) / 100
+                        : coupon.discountType === 'FIXED_AMOUNT'
+                        ? Math.min(activePrice, coupon.value || 0)
+                        : 0;
+
+                    return (
+                      <div
+                        key={coupon.id}
+                        className={`p-3 rounded-xl border border-dashed flex flex-col justify-between gap-2 transition hover:shadow-sm bg-white dark:bg-gray-800 ${
+                          isCopied ? 'border-emerald-500' : 'border-[var(--sf-primary)]/30'
+                        }`}
+                      >
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/15 text-amber-600 border border-amber-500/30">
+                              {coupon.badge || (coupon.discountType === 'PERCENTAGE' ? `${coupon.value}% OFF` : 'OFFER')}
+                            </span>
+                            {liveSavings > 0 && (
+                              <span className="text-[11px] font-black text-emerald-600 font-mono">
+                                Save ₹{liveSavings.toFixed(2)}
+                              </span>
+                            )}
+                          </div>
+                          <h4 className="text-xs font-bold truncate text-gray-900 dark:text-gray-100" title={coupon.title}>
+                            {coupon.title}
+                          </h4>
+                          <p className="text-[11px] text-gray-500 line-clamp-1">
+                            {coupon.description || coupon.terms || 'Applicable on this order'}
+                          </p>
+                          {coupon.minOrderAmount != null && coupon.minOrderAmount > 0 && (
+                            <p className="text-[10px] font-medium text-gray-400">
+                              {activePrice >= coupon.minOrderAmount
+                                ? '✓ Min. spend criteria met'
+                                : `Min spend ₹${coupon.minOrderAmount.toFixed(2)}`}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Code + Copy button */}
+                        <div className="flex items-center justify-between pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
+                          <span className="font-mono text-xs font-black tracking-wider px-2 py-0.5 rounded border border-dashed border-[var(--sf-primary)] text-[var(--sf-primary)] bg-[var(--sf-primary)]/5">
+                            {coupon.code}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyCoupon(coupon.code)}
+                            className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
+                              isCopied
+                                ? 'bg-emerald-500 text-white'
+                                : 'bg-[var(--sf-primary)]/10 text-[var(--sf-primary)] hover:bg-[var(--sf-primary)]/20'
+                            }`}
+                          >
+                            {isCopied ? '✓ Copied' : 'Copy 📋'}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {coupons.length > 4 && (
+                  <button
+                    type="button"
+                    onClick={() => setIsCouponsExpanded(!isCouponsExpanded)}
+                    className="w-full text-center text-xs font-bold pt-1 text-[var(--sf-primary)] hover:underline cursor-pointer"
+                  >
+                    {isCouponsExpanded ? 'Show Less Offers ▲' : `View All ${coupons.length} Offers ▼`}
+                  </button>
+                )}
               </div>
             )}
 
