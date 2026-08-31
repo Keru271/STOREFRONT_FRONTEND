@@ -192,12 +192,17 @@ export interface ProductVariant {
 export interface ProductReview {
   id: string;
   productId?: string;
+  customerId?: string | null;
   userName?: string;
   customerName?: string;
   userEmail?: string | null;
   rating: number;
   title?: string | null;
   comment?: string | null;
+  imageUrl?: string | null;
+  likedByJson?: string | null;
+  likedBy?: string[];
+  hasLiked?: boolean;
   verified?: boolean;
   status?: 'APPROVED' | 'PENDING' | 'REJECTED' | 'SPAM' | string;
   adminReply?: string | null;

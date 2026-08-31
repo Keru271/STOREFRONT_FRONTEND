@@ -787,7 +787,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
   return (
     <TemplateLayout theme={theme}>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+      <main
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow"
+        style={{ fontFamily: 'var(--sf-body-font)' }}
+      >
         {/* Sandbox Test Mode Alert Banner */}
         {isTestMode && (
           <div className="mb-6 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-300 text-xs font-semibold flex items-center justify-between shadow-xs">
@@ -805,7 +808,14 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
         {/* Guest Policy Notice if login is required */}
         {!isGuestAllowed && (
-          <div className="mb-6 p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-indigo-900 dark:text-indigo-200 text-xs flex items-center justify-between">
+          <div
+            className="mb-6 p-4 rounded-2xl border text-xs flex items-center justify-between shadow-xs"
+            style={{
+              backgroundColor: 'color-mix(in srgb, var(--sf-primary) 6%, var(--sf-card-bg,#fff))',
+              borderColor: 'color-mix(in srgb, var(--sf-primary) 20%, transparent)',
+              color: 'var(--sf-text)',
+            }}
+          >
             <div className="flex items-center gap-2">
               <span className="text-base">👤</span>
               <span>
@@ -814,7 +824,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
             </div>
             <Link
               href="/auth/login?redirect=/checkout"
-              className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition"
+              className="px-3 py-1.5 rounded-xl text-white font-bold text-xs transition hover:opacity-90 cursor-pointer"
+              style={{ backgroundColor: 'var(--sf-primary)' }}
             >
               Sign In / Register
             </Link>
@@ -824,7 +835,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
         {/* Breadcrumb / Title */}
         <div className="pb-6 border-b border-gray-100 dark:border-gray-800 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black tracking-tight font-serif text-[var(--sf-text)]">
+            <h1
+              className="text-3xl font-black tracking-tight"
+              style={{ fontFamily: 'var(--sf-heading-font)', color: 'var(--sf-text)' }}
+            >
               Express Checkout
             </h1>
             <p className="text-xs text-gray-500 mt-1 flex items-center gap-2">
@@ -863,10 +877,18 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
             <div className="p-6 rounded-3xl bg-[var(--sf-card-bg,#ffffff)] border border-gray-100 dark:border-gray-800 shadow-sm space-y-6">
               <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
                 <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-gray-900 text-white dark:bg-white dark:text-gray-900 flex items-center justify-center font-bold text-xs">
+                  <span
+                    className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs text-white"
+                    style={{ backgroundColor: 'var(--sf-primary)' }}
+                  >
                     1
                   </span>
-                  <h2 className="text-lg font-bold">Contact & Shipping Address</h2>
+                  <h2
+                    className="text-lg font-bold"
+                    style={{ fontFamily: 'var(--sf-heading-font)', color: 'var(--sf-text)' }}
+                  >
+                    Contact & Shipping Address
+                  </h2>
                 </div>
                 <span className="text-xs text-gray-400">Step 1 of 2</span>
               </div>
@@ -894,9 +916,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                     }}
                     className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 ${
                       addressMode === 'SAVED'
-                        ? 'bg-white dark:bg-gray-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
+                        ? 'bg-white dark:bg-gray-900 shadow-xs'
                         : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
                     }`}
+                    style={addressMode === 'SAVED' ? { color: 'var(--sf-primary)' } : {}}
                   >
                     <span>🏢 Use Saved Address ({addresses.length})</span>
                   </button>
@@ -916,9 +939,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                     }}
                     className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 ${
                       addressMode === 'NEW'
-                        ? 'bg-white dark:bg-gray-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
+                        ? 'bg-white dark:bg-gray-900 shadow-xs'
                         : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
                     }`}
+                    style={addressMode === 'NEW' ? { color: 'var(--sf-primary)' } : {}}
                   >
                     <span>➕ Add New Address</span>
                   </button>
@@ -950,16 +974,31 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                           }}
                           className={`p-4 rounded-2xl text-left border cursor-pointer transition text-xs relative flex flex-col justify-between gap-2 ${
                             isSelected
-                              ? 'border-indigo-600 bg-indigo-50/80 dark:bg-indigo-950/40 shadow-xs ring-2 ring-indigo-500/30'
+                              ? 'shadow-xs'
                               : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
                           }`}
+                          style={
+                            isSelected
+                              ? {
+                                  borderColor: 'var(--sf-primary)',
+                                  backgroundColor: 'color-mix(in srgb, var(--sf-primary) 6%, transparent)',
+                                  boxShadow: '0 0 0 2px color-mix(in srgb, var(--sf-primary) 25%, transparent)',
+                                }
+                              : {}
+                          }
                         >
                           <div className="flex items-center justify-between gap-1">
                             <span className="font-black uppercase text-[10px] px-2.5 py-0.5 rounded-full bg-white dark:bg-gray-900 border">
                               {label === 'HOME' ? '🏠 Home' : label === 'OFFICE' ? '🏢 Office' : '📍 Other'}
                             </span>
                             {addr.isDefault && (
-                              <span className="text-[10px] font-extrabold text-indigo-600 bg-indigo-100 dark:bg-indigo-900/60 px-2 py-0.5 rounded-full">
+                              <span
+                                className="text-[10px] font-extrabold px-2 py-0.5 rounded-full"
+                                style={{
+                                  color: 'var(--sf-primary)',
+                                  backgroundColor: 'color-mix(in srgb, var(--sf-primary) 12%, transparent)',
+                                }}
+                              >
                                 Default Primary
                               </span>
                             )}
@@ -1003,7 +1042,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                         required={isPhoneRequired}
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-xs focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition"
+                        placeholder="+91 98765 43210"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition font-mono"
                       />
                     </div>
                   </div>
@@ -1032,9 +1072,18 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                             onClick={() => setNewAddressLabel(item.id as any)}
                             className={`py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border ${
                               isSelected
-                                ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
+                                ? 'shadow-xs'
                                 : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
                             }`}
+                            style={
+                              isSelected
+                                ? {
+                                    backgroundColor: 'var(--sf-primary)',
+                                    borderColor: 'var(--sf-primary)',
+                                    color: '#ffffff',
+                                  }
+                                : {}
+                            }
                           >
                             <span>{item.icon}</span>
                             <span>{item.label}</span>
@@ -1080,27 +1129,28 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                         required={isPhoneRequired}
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition"
+                        placeholder="+91 98765 43210"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition font-mono"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
                       <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Street Address & House / Flat No. <span className="text-rose-500">*</span>
+                        Street Address / Flat / Floor <span className="text-rose-500">*</span>
                       </label>
                       <input
                         type="text"
                         required
                         value={formData.street}
                         onChange={(e) => setFormData({ ...formData, street: e.target.value })}
-                        placeholder="House / Flat / Street address"
+                        placeholder="e.g. 42 Park Avenue, Flat 3B"
                         className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition"
                       />
                     </div>
 
                     <div>
                       <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        PIN / Postal Code <span className="text-rose-500">*</span>
+                        Postal Code / PIN Code <span className="text-rose-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -1108,7 +1158,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                         value={formData.zip}
                         onChange={(e) => handlePincodeChange(e.target.value)}
                         placeholder="e.g. 560038"
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition font-mono font-bold"
                       />
                     </div>
 
@@ -1167,8 +1217,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                         id="saveToAccount"
                         checked={saveAddressToAccount}
                         onChange={(e) => setSaveAddressToAccount(e.target.checked)}
-                        className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500"
-                        style={{ accentColor: 'var(--sf-primary, #6366f1)' }}
+                        className="w-4 h-4 rounded cursor-pointer"
+                        style={{ accentColor: 'var(--sf-primary)' }}
                       />
                       <label htmlFor="saveToAccount" className="text-xs font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
                         Save this address to my account as <strong className="uppercase">{newAddressLabel}</strong> for future orders
@@ -1198,7 +1248,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
             {/* 2. Shipping Carrier & Delivery Method */}
             <div className="p-6 rounded-3xl bg-[var(--sf-card-bg,#ffffff)] border border-gray-100 dark:border-gray-800 shadow-sm space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
-                <h3 className="text-base font-bold flex items-center gap-2">
+                <h3
+                  className="text-base font-bold flex items-center gap-2"
+                  style={{ fontFamily: 'var(--sf-heading-font)', color: 'var(--sf-text)' }}
+                >
                   <span>🚚</span>
                   <span>Delivery Method & Carrier</span>
                   {pincodeServiceMsg && (
@@ -1207,7 +1260,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                     </span>
                   )}
                   {isCheckingQuotes && (
-                    <span className="text-[10px] text-indigo-600 animate-pulse">
+                    <span className="text-[10px] animate-pulse" style={{ color: 'var(--sf-primary)' }}>
                       Rate shopping across couriers...
                     </span>
                   )}
@@ -1232,8 +1285,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                   </div>
                   <div className="w-full h-1.5 rounded-full bg-amber-200 dark:bg-amber-900 overflow-hidden">
                     <div
-                      className="h-full bg-amber-500 transition-all duration-500"
-                      style={{ width: `${freeShippingProgress}%` }}
+                      className="h-full transition-all duration-500"
+                      style={{ width: `${freeShippingProgress}%`, backgroundColor: 'var(--sf-primary)' }}
                     />
                   </div>
                 </div>
@@ -1259,12 +1312,27 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                         }}
                         className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between relative overflow-hidden ${
                           isSelected
-                            ? 'border-gray-900 dark:border-white bg-gray-50/90 dark:bg-gray-800/90 shadow-sm'
+                            ? 'shadow-sm'
                             : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
                         }`}
+                        style={
+                          isSelected
+                            ? {
+                                borderColor: 'var(--sf-primary)',
+                                backgroundColor: 'color-mix(in srgb, var(--sf-primary) 6%, transparent)',
+                                boxShadow: '0 0 0 2px color-mix(in srgb, var(--sf-primary) 25%, transparent)',
+                              }
+                            : {}
+                        }
                       >
                         {quote.badge && (
-                          <span className="absolute top-2.5 right-2.5 text-[9px] font-black px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">
+                          <span
+                            className="absolute top-2.5 right-2.5 text-[9px] font-black px-2 py-0.5 rounded-full"
+                            style={{
+                              backgroundColor: 'color-mix(in srgb, var(--sf-primary) 12%, transparent)',
+                              color: 'var(--sf-primary)',
+                            }}
+                          >
                             {quote.badge}
                           </span>
                         )}
@@ -1299,9 +1367,17 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                     onClick={() => setSelectedShippingMethod('STANDARD')}
                     className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between ${
                       selectedShippingMethod === 'STANDARD'
-                        ? 'border-gray-900 dark:border-white bg-gray-50/80 dark:bg-gray-800/80'
+                        ? 'shadow-sm'
                         : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
                     }`}
+                    style={
+                      selectedShippingMethod === 'STANDARD'
+                        ? {
+                            borderColor: 'var(--sf-primary)',
+                            backgroundColor: 'color-mix(in srgb, var(--sf-primary) 6%, transparent)',
+                          }
+                        : {}
+                    }
                   >
                     <div>
                       <span className="text-xs font-bold block text-gray-900 dark:text-gray-100">
@@ -1318,9 +1394,17 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                     onClick={() => setSelectedShippingMethod('EXPRESS_AIR')}
                     className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between ${
                       selectedShippingMethod === 'EXPRESS_AIR'
-                        ? 'border-gray-900 dark:border-white bg-gray-50/80 dark:bg-gray-800/80'
+                        ? 'shadow-sm'
                         : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
                     }`}
+                    style={
+                      selectedShippingMethod === 'EXPRESS_AIR'
+                        ? {
+                            borderColor: 'var(--sf-primary)',
+                            backgroundColor: 'color-mix(in srgb, var(--sf-primary) 6%, transparent)',
+                          }
+                        : {}
+                    }
                   >
                     <div>
                       <span className="text-xs font-bold block text-gray-900 dark:text-gray-100">
@@ -1337,9 +1421,17 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                     onClick={() => setSelectedShippingMethod('HYPERLOCAL')}
                     className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between ${
                       selectedShippingMethod === 'HYPERLOCAL'
-                        ? 'border-gray-900 dark:border-white bg-gray-50/80 dark:bg-gray-800/80'
+                        ? 'shadow-sm'
                         : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
                     }`}
+                    style={
+                      selectedShippingMethod === 'HYPERLOCAL'
+                        ? {
+                            borderColor: 'var(--sf-primary)',
+                            backgroundColor: 'color-mix(in srgb, var(--sf-primary) 6%, transparent)',
+                          }
+                        : {}
+                    }
                   >
                     <div>
                       <span className="text-xs font-bold block text-gray-900 dark:text-gray-100">
@@ -1359,10 +1451,18 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
             <div className="p-6 rounded-3xl bg-[var(--sf-card-bg,#ffffff)] border border-gray-100 dark:border-gray-800 shadow-sm space-y-5">
               <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
                 <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-gray-900 text-white dark:bg-white dark:text-gray-900 flex items-center justify-center font-bold text-xs">
+                  <span
+                    className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs text-white"
+                    style={{ backgroundColor: 'var(--sf-primary)' }}
+                  >
                     2
                   </span>
-                  <h2 className="text-lg font-bold">Select Payment Method</h2>
+                  <h2
+                    className="text-lg font-bold"
+                    style={{ fontFamily: 'var(--sf-heading-font)', color: 'var(--sf-text)' }}
+                  >
+                    Select Payment Method
+                  </h2>
                 </div>
                 <span className="text-xs text-gray-400">Step 2 of 2</span>
               </div>
@@ -1376,9 +1476,18 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                     onClick={() => setSelectedPaymentMethod('UPI')}
                     className={`p-4 rounded-2xl border-2 text-left transition cursor-pointer relative overflow-hidden flex flex-col justify-between ${
                       selectedPaymentMethod === 'UPI'
-                        ? 'border-indigo-600 bg-indigo-50/60 dark:border-indigo-400 dark:bg-indigo-950/30 ring-2 ring-indigo-500/20'
+                        ? 'shadow-sm'
                         : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
                     }`}
+                    style={
+                      selectedPaymentMethod === 'UPI'
+                        ? {
+                            borderColor: 'var(--sf-primary)',
+                            backgroundColor: 'color-mix(in srgb, var(--sf-primary) 6%, transparent)',
+                            boxShadow: '0 0 0 2px color-mix(in srgb, var(--sf-primary) 25%, transparent)',
+                          }
+                        : {}
+                    }
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
@@ -1407,9 +1516,18 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                     onClick={() => setSelectedPaymentMethod('CARD')}
                     className={`p-4 rounded-2xl border-2 text-left transition cursor-pointer relative overflow-hidden flex flex-col justify-between ${
                       selectedPaymentMethod === 'CARD'
-                        ? 'border-indigo-600 bg-indigo-50/60 dark:border-indigo-400 dark:bg-indigo-950/30 ring-2 ring-indigo-500/20'
+                        ? 'shadow-sm'
                         : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
                     }`}
+                    style={
+                      selectedPaymentMethod === 'CARD'
+                        ? {
+                            borderColor: 'var(--sf-primary)',
+                            backgroundColor: 'color-mix(in srgb, var(--sf-primary) 6%, transparent)',
+                            boxShadow: '0 0 0 2px color-mix(in srgb, var(--sf-primary) 25%, transparent)',
+                          }
+                        : {}
+                    }
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
@@ -1438,9 +1556,18 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                     onClick={() => setSelectedPaymentMethod('COD')}
                     className={`p-4 rounded-2xl border-2 text-left transition cursor-pointer relative overflow-hidden flex flex-col justify-between ${
                       selectedPaymentMethod === 'COD'
-                        ? 'border-indigo-600 bg-indigo-50/60 dark:border-indigo-400 dark:bg-indigo-950/30 ring-2 ring-indigo-500/20'
+                        ? 'shadow-sm'
                         : 'border-gray-100 dark:border-gray-800 hover:border-gray-200'
                     }`}
+                    style={
+                      selectedPaymentMethod === 'COD'
+                        ? {
+                            borderColor: 'var(--sf-primary)',
+                            backgroundColor: 'color-mix(in srgb, var(--sf-primary) 6%, transparent)',
+                            boxShadow: '0 0 0 2px color-mix(in srgb, var(--sf-primary) 25%, transparent)',
+                          }
+                        : {}
+                    }
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
@@ -1510,7 +1637,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                           setCardData({ ...cardData, number: formatted });
                         }}
                         placeholder="4242 4242 4242 4242"
-                        className="w-full px-3.5 py-2 text-xs font-mono rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white font-semibold"
+                        className="w-full px-3.5 py-2 text-xs font-mono rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--sf-primary)] text-gray-900 dark:text-white font-semibold"
                       />
                     </div>
 
@@ -1530,7 +1657,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                             setCardData({ ...cardData, exp: val });
                           }}
                           placeholder="12/28"
-                          className="w-full px-3.5 py-2 text-xs font-mono rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white font-semibold"
+                          className="w-full px-3.5 py-2 text-xs font-mono rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--sf-primary)] text-gray-900 dark:text-white font-semibold"
                         />
                       </div>
 
@@ -1547,7 +1674,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                           }}
                           placeholder="888"
                           maxLength={4}
-                          className="w-full px-3.5 py-2 text-xs font-mono rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white font-semibold"
+                          className="w-full px-3.5 py-2 text-xs font-mono rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--sf-primary)] text-gray-900 dark:text-white font-semibold"
                         />
                       </div>
                     </div>
@@ -1561,7 +1688,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                         value={cardData.nameOnCard}
                         onChange={(e) => setCardData({ ...cardData, nameOnCard: e.target.value })}
                         placeholder={formData.name || 'Full Name'}
-                        className="w-full px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white font-semibold"
+                        className="w-full px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--sf-primary)] text-gray-900 dark:text-white font-semibold"
                       />
                     </div>
                   </div>
@@ -1613,7 +1740,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 type="submit"
                 disabled={isProcessing}
                 className="w-full py-4 rounded-2xl font-bold text-base text-white shadow-xl hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                style={{ backgroundColor: theme.themePrimaryColor || '#191a1b' }}
+                style={{ backgroundColor: 'var(--sf-primary)' }}
               >
                 {isProcessing ? (
                   <>
@@ -1633,7 +1760,12 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
           <div className="lg:col-span-5 space-y-6">
             <div className="p-6 rounded-3xl bg-[var(--sf-card-bg,#ffffff)] border border-gray-100 dark:border-gray-800 shadow-sm space-y-6 sticky top-24">
               <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
-                <h3 className="text-base font-bold">Order Summary</h3>
+                <h3
+                  className="text-base font-bold"
+                  style={{ fontFamily: 'var(--sf-heading-font)', color: 'var(--sf-text)' }}
+                >
+                  Order Summary
+                </h3>
                 <span className="text-xs font-bold text-gray-500">{itemCount} items</span>
               </div>
 
@@ -1659,7 +1791,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                           )}
                         </div>
                         {item.options?.variant && (
-                          <span className="inline-block text-[10px] font-semibold text-indigo-600 dark:text-indigo-400">
+                          <span
+                            className="inline-block text-[10px] font-semibold"
+                            style={{ color: 'var(--sf-primary)' }}
+                          >
                             Edition: {item.options.variant}
                           </span>
                         )}
@@ -1702,7 +1837,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                       type="button"
                       onClick={handleApplyCoupon}
                       disabled={isValidatingCoupon || !couponCode.trim()}
-                      className="px-4 py-2 rounded-xl text-xs font-bold bg-gray-900 hover:bg-black text-white dark:bg-white dark:text-gray-900 transition disabled:opacity-50 cursor-pointer"
+                      className="px-4 py-2 rounded-xl text-xs font-bold transition disabled:opacity-50 cursor-pointer hover:opacity-90"
+                      style={{ backgroundColor: 'var(--sf-text)', color: 'var(--sf-bg)' }}
                     >
                       {isValidatingCoupon ? 'Validating...' : 'Apply'}
                     </button>
@@ -1764,7 +1900,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 {/* Grand Total */}
                 <div className="pt-3 border-t border-gray-100 dark:border-gray-800 flex items-baseline justify-between text-base font-black text-gray-900 dark:text-gray-100">
                   <span>Total Amount</span>
-                  <span className="text-xl font-mono text-emerald-600">
+                  <span className="text-xl font-mono" style={{ color: 'var(--sf-primary)' }}>
                     {currencySymbol}{summary?.grandTotal ?? totalAmount}
                   </span>
                 </div>

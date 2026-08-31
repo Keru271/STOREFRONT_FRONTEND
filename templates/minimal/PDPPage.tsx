@@ -7,9 +7,14 @@ import type { PDPPageProps } from '@/templates';
 
 export default function MinimalPDPPage({ theme, product, relatedProducts }: PDPPageProps) {
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--sf-bg)' }}>
+    <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white antialiased font-sans">
       <MinimalHeader />
-      <PDPBody theme={theme} product={product} relatedProducts={relatedProducts} renderRelatedCard={(p) => <MinimalProductCard key={p.id} product={p} />} />
+      <PDPBody
+        theme={theme}
+        product={product}
+        relatedProducts={relatedProducts}
+        renderRelatedCard={(p) => <MinimalProductCard key={p.id} product={p} />}
+      />
       <MinimalFooter />
     </div>
   );

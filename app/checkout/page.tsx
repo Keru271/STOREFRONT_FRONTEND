@@ -15,8 +15,18 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function CheckoutPage() {
-  const theme = await getTheme();
+interface CheckoutPageProps {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}
 
-  return <CheckoutClient theme={theme} />;
+export default async function CheckoutPage({ searchParams }: CheckoutPageProps) {
+  const resolvedParams = await searchParams;
+  const previewTemplate = resolvedParams?.previewTemplate as string | undefined;
+
+  const theme = await getTheme();
+  const effectiveTheme = previewTemplate
+    ? { ...theme, activeTemplateSlug: previewTemplate }
+    : theme;
+
+  return <CheckoutClient theme={effectiveTheme} />;
 }

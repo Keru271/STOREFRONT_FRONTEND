@@ -9,7 +9,9 @@ import { useWishlist } from '@/context/WishlistContext';
 import DefaultHeader from '@/templates/default/Header';
 import DefaultFooter from '@/templates/default/Footer';
 import DefaultProductCard from '@/templates/default/ProductCard';
-import { getProductReviews, postProductReview, editProductReview, upvoteProductReview, getProductEligibleCoupons } from '@/lib/api';
+import ReviewModal from '@/components/shared/ReviewModal';
+import { useAuth } from '@/hooks/useAuth';
+import { getProductReviews, postProductReview, editProductReview, deleteProductReview, upvoteProductReview, getProductEligibleCoupons } from '@/lib/api';
 
 interface ProductDetailClientProps {
   theme: ThemeConfig;
@@ -24,6 +26,7 @@ export default function ProductDetailClient({
 }: ProductDetailClientProps) {
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { customer, isAuthenticated } = useAuth();
 
   const allImages = product.images.length > 0 ? product.images : (product.image ? [product.image] : []);
   const [selectedImage, setSelectedImage] = useState<string>(allImages[0] || '');
@@ -47,6 +50,7 @@ export default function ProductDetailClient({
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [isReviewsLoading, setIsReviewsLoading] = useState(false);
+  const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
 
   // Guard Ref: Ensures the reviews API is called EXACTLY ONCE, and ONLY when navigating to the reviews tab
   const hasFetchedReviewsRef = useRef(false);
@@ -74,14 +78,21 @@ export default function ProductDetailClient({
   };
 
   // Review Form
-  const [reviewForm, setReviewForm] = useState({
+  const [reviewForm, setReviewForm] = useState<{
+    userName: string;
+    userEmail: string;
+    rating: number;
+    title: string;
+    comment: string;
+    imageUrl?: string;
+  }>({
     userName: '',
     userEmail: '',
     rating: 5,
     title: '',
     comment: '',
+    imageUrl: '',
   });
-
   const [hoverRating, setHoverRating] = useState(0);
 
   // Eligible Coupons state
@@ -173,15 +184,54 @@ export default function ProductDetailClient({
     await toggleWishlist(product.id);
   };
 
+  const isReviewOwner = (rev: ProductReview): boolean => {
+    if (!isAuthenticated || !customer) return false;
+    if (rev.customerId && customer.id && rev.customerId === customer.id) return true;
+    if (rev.userEmail && customer.email && rev.userEmail.toLowerCase() === customer.email.toLowerCase()) return true;
+    return false;
+  };
+
+  const hasUserLiked = (rev: ProductReview): boolean => {
+    if (rev.hasLiked !== undefined) return Boolean(rev.hasLiked);
+    if (!rev.likedByJson) return false;
+    try {
+      const list = JSON.parse(rev.likedByJson);
+      if (!Array.isArray(list)) return false;
+      if (customer?.id && list.includes(customer.id)) return true;
+      if (customer?.email && list.includes(customer.email.toLowerCase())) return true;
+      return false;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleDeleteReview = async (revId: string) => {
+    if (!window.confirm('Are you sure you want to delete your review? This action cannot be undone.')) return;
+    setDeletingReviewId(revId);
+    try {
+      await deleteProductReview(product.id, revId);
+      setReviewsList((prev) => prev.filter((r) => r.id !== revId));
+      setToastMessage('✓ Your review has been deleted.');
+      setTimeout(() => setToastMessage(null), 3500);
+    } catch (err: any) {
+      console.error('Error deleting review:', err);
+      setToastMessage(`❌ ${err?.message || 'Failed to delete review'}`);
+      setTimeout(() => setToastMessage(null), 3500);
+    } finally {
+      setDeletingReviewId(null);
+    }
+  };
+
   // Open Create Review Modal
   const handleOpenWriteReview = () => {
     setEditingReviewId(null);
     setReviewForm({
-      userName: '',
-      userEmail: '',
+      userName: customer?.name || '',
+      userEmail: customer?.email || '',
       rating: 5,
       title: '',
       comment: '',
+      imageUrl: '',
     });
     setIsReviewModalOpen(true);
   };
@@ -195,24 +245,32 @@ export default function ProductDetailClient({
       rating: rev.rating,
       title: rev.title || '',
       comment: rev.comment || '',
+      imageUrl: rev.imageUrl || '',
     });
     setIsReviewModalOpen(true);
   };
 
   // Submit Review Form (POST or EDIT)
-  const handleSubmitReview = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!reviewForm.userName.trim() || !reviewForm.comment.trim()) return;
+  const handleSubmitReview = async (form: {
+    userName: string;
+    userEmail: string;
+    rating: number;
+    title: string;
+    comment: string;
+    imageUrl?: string;
+  }) => {
+    if (!form.comment.trim()) return;
 
     setIsSubmittingReview(true);
     try {
       if (editingReviewId) {
         // Edit existing review
         const res = await editProductReview(product.id, editingReviewId, {
-          userName: reviewForm.userName,
-          rating: reviewForm.rating,
-          title: reviewForm.title,
-          comment: reviewForm.comment,
+          userName: form.userName,
+          rating: form.rating,
+          title: form.title,
+          comment: form.comment,
+          imageUrl: form.imageUrl,
         });
 
         setReviewsList((prev) =>
@@ -222,11 +280,12 @@ export default function ProductDetailClient({
       } else {
         // Post new review
         const res = await postProductReview(product.id, {
-          userName: reviewForm.userName,
-          userEmail: reviewForm.userEmail || undefined,
-          rating: reviewForm.rating,
-          title: reviewForm.title || undefined,
-          comment: reviewForm.comment,
+          userName: form.userName,
+          userEmail: form.userEmail || undefined,
+          rating: form.rating,
+          title: form.title || undefined,
+          comment: form.comment,
+          imageUrl: form.imageUrl,
         });
 
         setReviewsList((prev) => [res.review, ...prev]);
@@ -244,15 +303,25 @@ export default function ProductDetailClient({
     }
   };
 
-  // Upvote Review Helpful
-  const handleHelpfulUpvote = async (revId: string) => {
+  // Toggle Review Helpful / Like
+  const handleHelpfulToggle = async (revId: string) => {
     try {
-      const res = await upvoteProductReview(product.id, revId);
+      const userIdentifier = customer?.id || customer?.email || undefined;
+      const res = await upvoteProductReview(product.id, revId, userIdentifier);
       setReviewsList((prev) =>
-        prev.map((r) => (r.id === revId ? { ...r, helpfulCount: res.helpfulCount } : r))
+        prev.map((r) =>
+          r.id === revId
+            ? {
+                ...r,
+                helpfulCount: res.helpfulCount,
+                hasLiked: res.hasLiked,
+                likedByJson: res.likedBy ? JSON.stringify(res.likedBy) : r.likedByJson,
+              }
+            : r
+        )
       );
     } catch (err) {
-      console.error('Error upvoting review:', err);
+      console.error('Error toggling review helpfulness:', err);
     }
   };
 
@@ -826,19 +895,36 @@ export default function ProductDetailClient({
                           </div>
 
                           <div className="flex items-center gap-2">
+                            {isReviewOwner(rev) && (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEditReview(rev)}
+                                  className="text-xs font-semibold text-gray-600 hover:text-[var(--sf-primary)] px-2.5 py-1 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 transition flex items-center gap-1"
+                                >
+                                  ✏️ Edit
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={deletingReviewId === rev.id}
+                                  onClick={() => handleDeleteReview(rev.id)}
+                                  className="text-xs font-semibold text-rose-600 hover:text-rose-700 px-2.5 py-1 rounded-xl bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 transition flex items-center gap-1 disabled:opacity-50"
+                                >
+                                  🗑️ {deletingReviewId === rev.id ? 'Deleting…' : 'Delete'}
+                                </button>
+                              </>
+                            )}
                             <button
                               type="button"
-                              onClick={() => handleOpenEditReview(rev)}
-                              className="text-xs font-semibold text-gray-500 hover:text-[var(--sf-primary)] px-2.5 py-1 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 transition"
+                              onClick={() => handleHelpfulToggle(rev.id)}
+                              className={`text-xs font-semibold px-2.5 py-1 rounded-xl transition flex items-center gap-1 ${
+                                hasUserLiked(rev)
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/40 dark:border-emerald-700 dark:text-emerald-300 font-bold'
+                                  : 'text-gray-500 hover:text-emerald-600 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100'
+                              }`}
+                              title={hasUserLiked(rev) ? 'Click to unlike' : 'Mark as helpful'}
                             >
-                              ✏️ Edit
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleHelpfulUpvote(rev.id)}
-                              className="text-xs font-semibold text-gray-500 hover:text-emerald-600 px-2.5 py-1 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 transition flex items-center gap-1"
-                            >
-                              <span>👍</span>
+                              <span>{hasUserLiked(rev) ? '👍 Liked' : '👍'}</span>
                               <span>{rev.helpfulCount || 0}</span>
                             </button>
                           </div>
@@ -853,6 +939,22 @@ export default function ProductDetailClient({
                         <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
                           {rev.comment}
                         </p>
+
+                        {/* Customer Uploaded Review Photo */}
+                        {rev.imageUrl && (
+                          <div className="pt-2">
+                            <div className="inline-block relative group">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={rev.imageUrl}
+                                alt="Customer review photo"
+                                className="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm transition hover:opacity-90 cursor-pointer"
+                                onClick={() => window.open(rev.imageUrl!, '_blank')}
+                              />
+                              <span className="text-[10px] text-gray-400 block mt-1">🔍 Click to expand</span>
+                            </div>
+                          </div>
+                        )}
 
                         {/* Merchant Official Reply Display */}
                         {rev.adminReply && (
@@ -893,129 +995,17 @@ export default function ProductDetailClient({
 
         {/* WRITE / EDIT REVIEW MODAL */}
         {isReviewModalOpen && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-gray-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-5 animate-in fade-in zoom-in-95">
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
-                <div>
-                  <h3 className="font-bold text-base">
-                    {editingReviewId ? 'Edit Your Review' : 'Write a Product Review'}
-                  </h3>
-                  <p className="text-xs text-gray-400 truncate max-w-xs">{product.name}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsReviewModalOpen(false)}
-                  className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-gray-900 flex items-center justify-center"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <form onSubmit={handleSubmitReview} className="space-y-4 text-xs">
-                {/* Star Picker */}
-                <div>
-                  <label className="block font-bold text-gray-700 dark:text-gray-300 mb-1">
-                    Overall Rating
-                  </label>
-                  <div className="flex items-center gap-1 text-2xl cursor-pointer">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        type="button"
-                        key={star}
-                        onMouseEnter={() => setHoverRating(star)}
-                        onMouseLeave={() => setHoverRating(0)}
-                        onClick={() => setReviewForm({ ...reviewForm, rating: star })}
-                        className={`transition-transform hover:scale-125 ${
-                          star <= (hoverRating || reviewForm.rating)
-                            ? 'text-amber-400'
-                            : 'text-gray-300 dark:text-gray-700'
-                        }`}
-                      >
-                        ★
-                      </button>
-                    ))}
-                    <span className="ml-2 text-xs font-bold text-gray-500">
-                      {reviewForm.rating} of 5 Stars
-                    </span>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                    Your Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={reviewForm.userName}
-                    onChange={(e) => setReviewForm({ ...reviewForm, userName: e.target.value })}
-                    placeholder="e.g. Priya Sharma"
-                    className="sf-input w-full py-2.5 text-xs"
-                  />
-                </div>
-
-                {!editingReviewId && (
-                  <div>
-                    <label className="block font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                      Email Address (Optional)
-                    </label>
-                    <input
-                      type="email"
-                      value={reviewForm.userEmail}
-                      onChange={(e) => setReviewForm({ ...reviewForm, userEmail: e.target.value })}
-                      placeholder="priya@example.com"
-                      className="sf-input w-full py-2.5 text-xs"
-                    />
-                  </div>
-                )}
-
-                <div>
-                  <label className="block font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                    Review Headline / Title
-                  </label>
-                  <input
-                    type="text"
-                    value={reviewForm.title}
-                    onChange={(e) => setReviewForm({ ...reviewForm, title: e.target.value })}
-                    placeholder="e.g. Amazing comfort and build quality!"
-                    className="sf-input w-full py-2.5 text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                    Review Comment *
-                  </label>
-                  <textarea
-                    required
-                    rows={4}
-                    value={reviewForm.comment}
-                    onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
-                    placeholder="Share what you liked, sizing feedback, and overall experience..."
-                    className="sf-input w-full py-2 text-xs"
-                  />
-                </div>
-
-                <div className="flex gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsReviewModalOpen(false)}
-                    className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 font-bold hover:bg-gray-200 transition"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmittingReview}
-                    className="flex-1 py-3 rounded-xl text-white font-bold shadow-lg transition hover:opacity-90 disabled:opacity-50"
-                    style={{ backgroundColor: 'var(--sf-primary)' }}
-                  >
-                    {isSubmittingReview ? 'Submitting...' : editingReviewId ? 'Save Changes' : 'Submit Review'}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+          <ReviewModal
+            isOpen={isReviewModalOpen}
+            onClose={() => setIsReviewModalOpen(false)}
+            productName={product.name}
+            editingReviewId={editingReviewId}
+            isAuthenticated={isAuthenticated}
+            currentUser={customer}
+            initialForm={reviewForm}
+            onSubmit={handleSubmitReview}
+            isSubmitting={isSubmittingReview}
+          />
         )}
 
         {/* Related Products */}

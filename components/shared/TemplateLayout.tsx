@@ -14,6 +14,8 @@ import LuxeHeader from '@/templates/luxe/Header';
 import LuxeFooter from '@/templates/luxe/Footer';
 import MinimalHeader from '@/templates/minimal/Header';
 import MinimalFooter from '@/templates/minimal/Footer';
+import FunoHeader from '@/templates/funo/Header';
+import FunoFooter from '@/templates/funo/Footer';
 
 interface TemplateLayoutProps {
   theme: ThemeConfig;
@@ -36,6 +38,8 @@ export function TemplateLayout({ theme, children }: TemplateLayoutProps) {
       case 'default':
       case 'pulse-streetwear':
         return <DefaultHeader />;
+      case 'funo':
+        return <FunoHeader />;
       case 'mincom':
       case 'mincom-furniture':
       case 'mincom-theme':
@@ -58,6 +62,8 @@ export function TemplateLayout({ theme, children }: TemplateLayoutProps) {
       case 'default':
       case 'pulse-streetwear':
         return <DefaultFooter />;
+      case 'funo':
+        return <FunoFooter />;
       case 'mincom':
       case 'mincom-furniture':
       case 'mincom-theme':

@@ -20,6 +20,7 @@ export {
   getProductReviews,
   postProductReview,
   editProductReview,
+  deleteProductReview,
   upvoteProductReview,
   getProductStock,
   getProductEligibleCoupons,

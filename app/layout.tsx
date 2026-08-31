@@ -18,6 +18,7 @@ import { WishlistProvider } from '@/context/WishlistContext';
 import { MenuProvider } from '@/context/MenuContext';
 import { ThemeToastContainer } from '@/components/shared/ThemeToastContainer';
 import { ThemeLoader } from '@/components/shared/ThemeLoader';
+import { MobileBottomNav } from '@/components/shared/MobileBottomNav';
 import { getTheme } from '@/lib/api/theme';
 import { getMenu } from '@/lib/api/catalog';
 import { generateDynamicFontStyles } from '@/lib/fonts';
@@ -152,7 +153,7 @@ export default async function RootLayout({
         )}
       </head>
       <body
-        className="min-h-full flex flex-col font-sans"
+        className="min-h-full flex flex-col font-sans pb-16 lg:pb-0"
         style={{ backgroundColor: 'var(--sf-bg)', color: 'var(--sf-text)' }}
       >
         <ThemeProvider theme={theme}>
@@ -164,6 +165,7 @@ export default async function RootLayout({
                     <ThemeLoader />
                     <ThemeToastContainer />
                     {children}
+                    <MobileBottomNav />
                   </MenuProvider>
                 </WishlistProvider>
               </CartProvider>

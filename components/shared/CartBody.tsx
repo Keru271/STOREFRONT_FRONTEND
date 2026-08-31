@@ -222,14 +222,20 @@ export function CartBody({ theme }: CartBodyProps) {
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+    <main
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow"
+      style={{ fontFamily: 'var(--sf-body-font)' }}
+    >
       {/* Top Header */}
       <div
         className="flex items-center justify-between pb-6 border-b mb-8"
         style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
       >
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: 'var(--sf-text)' }}>
+          <h1
+            className="text-3xl font-extrabold tracking-tight"
+            style={{ fontFamily: 'var(--sf-heading-font)', color: 'var(--sf-text)' }}
+          >
             Shopping Bag
           </h1>
           <p className="text-xs mt-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
@@ -257,7 +263,10 @@ export function CartBody({ theme }: CartBodyProps) {
           }}
         >
           <div className="text-5xl mb-4">🛍️</div>
-          <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--sf-text)' }}>
+          <h2
+            className="text-xl font-bold mb-2"
+            style={{ fontFamily: 'var(--sf-heading-font)', color: 'var(--sf-text)' }}
+          >
             Your bag is empty
           </h2>
           <p className="text-xs max-w-sm mx-auto mb-6" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
@@ -265,7 +274,7 @@ export function CartBody({ theme }: CartBodyProps) {
           </p>
           <Link
             href="/products"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl font-bold text-xs text-white shadow-lg transition hover:opacity-90 active:scale-95"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl font-bold text-xs text-white shadow-lg transition hover:opacity-90 active:scale-95 cursor-pointer"
             style={{ backgroundColor: 'var(--sf-primary)' }}
           >
             Explore Catalog →
@@ -275,6 +284,46 @@ export function CartBody({ theme }: CartBodyProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Cart Items List */}
           <div className="lg:col-span-8 space-y-4">
+            {/* Free Shipping Milestone Progress Bar */}
+            {freeThreshold > 0 && (
+              <div
+                className="p-4 rounded-3xl border transition"
+                style={{
+                  backgroundColor: 'color-mix(in srgb, var(--sf-text) 2%, var(--sf-bg))',
+                  borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)',
+                }}
+              >
+                <div className="flex items-center justify-between text-xs mb-2">
+                  <span className="font-semibold" style={{ color: 'var(--sf-text)' }}>
+                    {discountedSubtotal >= freeThreshold ? (
+                      <span className="flex items-center gap-1.5 font-bold text-emerald-600">
+                        <span>🎉</span> You unlocked <strong>FREE Express Shipping</strong>!
+                      </span>
+                    ) : (
+                      <span>
+                        Add <strong>{formatPrice(freeThreshold - discountedSubtotal)}</strong> more to unlock <strong>FREE Shipping</strong>!
+                      </span>
+                    )}
+                  </span>
+                  <span className="font-bold text-[11px]" style={{ color: 'var(--sf-primary)' }}>
+                    {Math.min(100, Math.round((discountedSubtotal / freeThreshold) * 100))}%
+                  </span>
+                </div>
+                <div
+                  className="w-full h-2 rounded-full overflow-hidden"
+                  style={{ backgroundColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)' }}
+                >
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${Math.min(100, Math.round((discountedSubtotal / freeThreshold) * 100))}%`,
+                      backgroundColor: 'var(--sf-primary)',
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
             {items.map((item) => (
               <div
                 key={`${item.productId}-${item.variantId || 'base'}`}
@@ -308,7 +357,7 @@ export function CartBody({ theme }: CartBodyProps) {
                     <Link
                       href={`/products/${item.productId}`}
                       className="font-bold text-base transition line-clamp-1 hover:underline"
-                      style={{ color: 'var(--sf-text)' }}
+                      style={{ fontFamily: 'var(--sf-heading-font)', color: 'var(--sf-text)' }}
                     >
                       {item.name}
                     </Link>
@@ -333,7 +382,13 @@ export function CartBody({ theme }: CartBodyProps) {
                   {item.options && (
                     <div className="flex flex-wrap items-center gap-2 mt-1 justify-center sm:justify-start text-xs" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
                       {item.options.variant && (
-                        <span className="font-semibold px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                        <span
+                          className="font-semibold px-2 py-0.5 rounded-md"
+                          style={{
+                            backgroundColor: 'color-mix(in srgb, var(--sf-primary) 12%, transparent)',
+                            color: 'var(--sf-primary)',
+                          }}
+                        >
                           Option: {item.options.variant}
                         </span>
                       )}
@@ -412,7 +467,12 @@ export function CartBody({ theme }: CartBodyProps) {
                 borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
               }}
             >
-              <h2 className="text-lg font-bold mb-4" style={{ color: 'var(--sf-text)' }}>Order Summary</h2>
+              <h2
+                className="text-lg font-bold mb-4"
+                style={{ fontFamily: 'var(--sf-heading-font)', color: 'var(--sf-text)' }}
+              >
+                Order Summary
+              </h2>
 
               {/* Promo Code Form & Automatic Promo Banner */}
               <div className="mb-6 space-y-3">

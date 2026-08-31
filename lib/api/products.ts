@@ -151,11 +151,12 @@ export async function getProductReviews(productIdOrSlug: string): Promise<{
 export async function postProductReview(
   productId: string,
   review: {
-    userName: string;
+    userName?: string;
     userEmail?: string;
     rating: number;
     title?: string;
     comment: string;
+    imageUrl?: string;
   }
 ): Promise<{ success: boolean; message: string; review: ProductReview }> {
   return await apiClient.post<{ success: boolean; message: string; review: ProductReview }>(
@@ -175,6 +176,7 @@ export async function editProductReview(
     rating?: number;
     title?: string;
     comment?: string;
+    imageUrl?: string;
   }
 ): Promise<{ success: boolean; message: string; review: ProductReview }> {
   return await apiClient.put<{ success: boolean; message: string; review: ProductReview }>(
@@ -184,15 +186,28 @@ export async function editProductReview(
 }
 
 /**
- * Upvote a review's helpfulness.
+ * Delete a customer review (only author allowed).
+ */
+export async function deleteProductReview(
+  productId: string,
+  reviewId: string
+): Promise<{ success: boolean; message: string }> {
+  return await apiClient.delete<{ success: boolean; message: string }>(
+    `api/storefront/products/${encodeURIComponent(productId)}/reviews/${encodeURIComponent(reviewId)}`
+  );
+}
+
+/**
+ * Upvote or toggle like on a review's helpfulness.
  */
 export async function upvoteProductReview(
   productId: string,
-  reviewId: string
-): Promise<{ success: boolean; helpfulCount: number }> {
-  return await apiClient.post<{ success: boolean; helpfulCount: number }>(
+  reviewId: string,
+  userIdentifier?: string
+): Promise<{ success: boolean; helpfulCount: number; hasLiked?: boolean; likedBy?: string[] }> {
+  return await apiClient.post<{ success: boolean; helpfulCount: number; hasLiked?: boolean; likedBy?: string[] }>(
     `api/storefront/products/${encodeURIComponent(productId)}/reviews/${encodeURIComponent(reviewId)}/helpful`,
-    {}
+    userIdentifier ? { userIdentifier } : {}
   );
 }
 

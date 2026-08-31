@@ -18,6 +18,7 @@ interface SearchAutocompleteProps {
   inputClassName?: string;
   buttonClassName?: string;
   showCategoryDropdown?: boolean;
+  onSelect?: () => void;
 }
 
 export function SearchAutocomplete({
@@ -29,6 +30,7 @@ export function SearchAutocomplete({
   inputClassName = '',
   buttonClassName = '',
   showCategoryDropdown = true,
+  onSelect,
 }: SearchAutocompleteProps) {
   const router = useRouter();
   const { formatPrice } = useCurrency();
@@ -93,6 +95,7 @@ export function SearchAutocomplete({
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setIsOpen(false);
+    onSelect?.();
 
     if (selectedIndex >= 0 && data?.products[selectedIndex]) {
       const selectedProd = data.products[selectedIndex];
@@ -153,10 +156,10 @@ export function SearchAutocomplete({
             <option value="all">All Categories</option>
             {categories.length > 0
               ? categories.map((c) => (
-                  <option key={c.slug || c.name} value={c.slug || c.name}>
-                    {c.name}
-                  </option>
-                ))
+                <option key={c.slug || c.name} value={c.slug || c.name}>
+                  {c.name}
+                </option>
+              ))
               : (
                 <>
                   <option value="living-room">Living Room</option>
@@ -212,7 +215,7 @@ export function SearchAutocomplete({
       {/* ── Auto-Complete Suggestions Dropdown Menu ─────────────────────────── */}
       {isOpen && (
         <div className="absolute left-0 right-0 top-full mt-2 bg-white text-slate-900 rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-[100] text-xs divide-y divide-slate-100 max-h-[80vh] overflow-y-auto">
-          
+
           {/* 1. Popular / Trending Suggestions (when query is empty) */}
           {!query && popularSearches.length > 0 && (
             <div className="p-4 bg-slate-50/70">
@@ -293,9 +296,8 @@ export function SearchAutocomplete({
                     href={`/products/${item.urlSlug || item.id}`}
                     onClick={() => setIsOpen(false)}
                     onMouseEnter={() => setSelectedIndex(idx)}
-                    className={`flex items-center gap-3 p-2.5 rounded-xl transition ${
-                      isSelected ? 'bg-amber-50/80 text-slate-950' : 'hover:bg-slate-50 text-slate-800'
-                    }`}
+                    className={`flex items-center gap-3 p-2.5 rounded-xl transition ${isSelected ? 'bg-amber-50/80 text-slate-950' : 'hover:bg-slate-50 text-slate-800'
+                      }`}
                   >
                     {/* Thumbnail */}
                     <div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-100 relative">

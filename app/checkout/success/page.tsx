@@ -17,7 +17,10 @@ function CheckoutSuccessContent({ theme }: { theme: ThemeConfig }) {
   const symbol = currency === 'INR' ? '₹' : '$';
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-16 text-center space-y-8">
+    <div
+      className="max-w-3xl mx-auto px-4 py-16 text-center space-y-8"
+      style={{ fontFamily: 'var(--sf-body-font)' }}
+    >
       {/* Success Icon */}
       <div className="w-24 h-24 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner border border-emerald-200 dark:border-emerald-800">
         ✓
@@ -27,7 +30,10 @@ function CheckoutSuccessContent({ theme }: { theme: ThemeConfig }) {
         <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
           Payment Confirmed & Verified
         </span>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight mt-3 font-serif">
+        <h1
+          className="text-3xl sm:text-4xl font-black tracking-tight mt-3"
+          style={{ fontFamily: 'var(--sf-heading-font)', color: 'var(--sf-text)' }}
+        >
           Thank you for your order!
         </h1>
         <p className="text-sm text-gray-500 max-w-md mx-auto">
@@ -63,7 +69,7 @@ function CheckoutSuccessContent({ theme }: { theme: ThemeConfig }) {
 
           <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl space-y-1">
             <span className="text-gray-400 font-semibold uppercase text-[10px]">Total Paid</span>
-            <p className="font-bold text-base text-emerald-600">
+            <p className="font-bold text-base" style={{ color: 'var(--sf-primary)' }}>
               {symbol}{parseFloat(total).toFixed(2)} {currency}
             </p>
           </div>
@@ -82,7 +88,7 @@ function CheckoutSuccessContent({ theme }: { theme: ThemeConfig }) {
         <Link
           href="/products"
           className="w-full sm:w-auto px-8 py-3.5 rounded-2xl font-bold text-sm text-white shadow-lg transition hover:opacity-90 cursor-pointer"
-          style={{ backgroundColor: theme.themePrimaryColor || 'var(--sf-primary)' }}
+          style={{ backgroundColor: 'var(--sf-primary)' }}
         >
           Continue Shopping at {theme.storeName} →
         </Link>

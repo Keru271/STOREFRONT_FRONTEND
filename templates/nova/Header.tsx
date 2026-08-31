@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/context/ThemeContext';
 import { useCart } from '@/context/CartContext';
@@ -25,25 +25,34 @@ export default function NovaHeader() {
   const { itemCount, openCart } = useCart();
   const { wishlistCount } = useWishlist();
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/products?search=${encodeURIComponent(searchQuery.trim())}`;
-    }
-  };
+  const [expandedSubmenus, setExpandedSubmenus] = useState<Record<string, boolean>>({});
 
   const { items: menuItems } = useMenu('header', { fallbackItems: defaultNavLinks });
   const navLinks = menuItems.length > 0 ? menuItems : defaultNavLinks;
+
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
+  const toggleSubmenu = (id: string) => {
+    setExpandedSubmenus((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   return (
     <>
       {/* Announcement Bar */}
       {theme.headerAnnouncement && (
-        <div className="w-full py-2 px-4 text-center text-xs font-medium tracking-tight bg-[#1d1d1f] text-[#f5f5f7]">
+        <div className="w-full py-1.5 px-3 text-center text-xs font-medium tracking-tight bg-[#1d1d1f] text-[#f5f5f7]">
           <span>{theme.headerAnnouncement}</span>
           <Link href="/products" className="ml-2 text-[#2997ff] hover:underline inline-flex items-center gap-0.5">
             Shop now &gt;
@@ -53,25 +62,19 @@ export default function NovaHeader() {
 
       {/* Global Apple-Style Nav Header */}
       <header
-        className="w-full sticky top-0 z-50 transition-all duration-200 backdrop-blur-md bg-[#f5f5f7]/85 border-b border-[#e2e2e5]"
-        style={{
-          height: '48px',
-        }}
+        className="w-full sticky top-0 z-40 transition-all duration-200 backdrop-blur-md bg-[#f5f5f7]/90 border-b border-[#e2e2e5]"
+        style={{ height: '48px' }}
       >
-        <div className="max-w-[1024px] mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
-          
+        <div className="max-w-[1024px] mx-auto px-3 sm:px-6 h-full flex items-center justify-between">
           {/* Mobile Menu Button */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-1.5 text-[#1d1d1f] hover:text-[#0071e3] transition-colors"
-            aria-label="Toggle Navigation"
+            onClick={() => setMobileMenuOpen(true)}
+            className="md:hidden min-w-[36px] min-h-[36px] flex items-center justify-center p-1.5 text-[#1d1d1f] hover:text-[#0071e3] transition-colors cursor-pointer"
+            aria-label="Open Navigation Menu"
+            aria-expanded={mobileMenuOpen}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
 
@@ -118,9 +121,8 @@ export default function NovaHeader() {
                       </svg>
                     </Link>
 
-                    {/* Dropdown Menu */}
-                    <div className="absolute left-0 top-full hidden group-hover:block pt-1.5 z-50 min-w-[180px]">
-                      <div className="bg-white/95 backdrop-blur-md border border-[#e2e2e5] rounded-xl py-1.5 shadow-xl">
+                    <div className="absolute left-0 top-full hidden group-hover:block pt-1 z-50 min-w-[180px] shadow-xl">
+                      <div className="bg-white/95 backdrop-blur-md rounded-2xl py-2 shadow-2xl border border-[#e2e2e5] overflow-hidden">
                         {link.children!.map((sub, sIdx) => {
                           const subHref = sub.href || sub.url || '#';
                           const subLabel = sub.label || sub.title || 'Sublink';
@@ -128,7 +130,7 @@ export default function NovaHeader() {
                             <Link
                               key={sub.id || subHref || sIdx}
                               href={subHref}
-                              className="block px-3.5 py-1.5 text-xs text-[#1d1d1f] hover:bg-[#f5f5f7] hover:text-[#0071e3] transition-colors"
+                              className="block px-4 py-2 text-[12px] text-[#1d1d1f] hover:bg-[#f5f5f7] hover:text-[#0071e3] transition"
                             >
                               {subLabel}
                             </Link>
@@ -153,122 +155,100 @@ export default function NovaHeader() {
           </nav>
 
           {/* Right Action Icons */}
-          <div className="flex items-center gap-3">
-            
-            {/* Search Trigger */}
+          <div className="flex items-center gap-1 sm:gap-4 text-[#1d1d1f]">
+            {/* Search Icon */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="p-1 text-[#1d1d1f]/80 hover:text-[#0071e3] transition-colors"
-              title="Search"
+              className="min-w-[34px] min-h-[34px] flex items-center justify-center p-1.5 hover:text-[#0071e3] transition-colors cursor-pointer"
+              aria-label="Search"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7" />
-                <path strokeLinecap="round" d="m21 21-4.35-4.35" />
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
 
-            {/* Wishlist Link */}
+            {/* Wishlist */}
             <Link
               href="/wishlist"
-              className="p-1 text-[#1d1d1f]/80 hover:text-[#0071e3] transition-colors relative"
-              title="Wishlist"
+              className="min-w-[34px] min-h-[34px] flex items-center justify-center p-1.5 hover:text-[#0071e3] transition-colors relative"
+              aria-label="Wishlist"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
               {wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1.5 w-3.5 h-3.5 bg-[#0071e3] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute 0 top-0.5 right-0.5 bg-[#0071e3] text-white text-[9px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center">
                   {wishlistCount}
                 </span>
               )}
             </Link>
 
-            {/* Bag / Cart Trigger */}
+            {/* Shopping Bag Cart Icon */}
             <button
               onClick={openCart}
-              className="p-1 text-[#1d1d1f]/80 hover:text-[#0071e3] transition-colors relative"
-              title="Shopping Bag"
+              className="min-w-[34px] min-h-[34px] flex items-center justify-center p-1.5 hover:text-[#0071e3] transition-colors relative cursor-pointer"
+              aria-label="Cart Bag"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
               {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1.5 w-3.5 h-3.5 bg-[#0071e3] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 bg-[#0071e3] text-white text-[9px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center">
                   {itemCount}
                 </span>
               )}
             </button>
 
-            {/* Account / User Menu */}
-            <div className="relative">
-              {isAuthenticated ? (
-                <button
-                  onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="w-6 h-6 rounded-full bg-[#e2e2e5] text-[#1d1d1f] text-[11px] font-semibold flex items-center justify-center hover:ring-2 hover:ring-[#0071e3] transition-all"
-                >
-                  {customer?.name?.[0] || 'U'}
-                </button>
-              ) : (
-                <Link
-                  href="/auth/login"
-                  className="text-[12px] font-normal text-[#1d1d1f]/80 hover:text-[#0071e3] transition-colors"
-                >
-                  Sign in
-                </Link>
-              )}
+            {/* User Account Dropdown (Desktop) */}
+            <div className="relative hidden sm:block">
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="p-1.5 hover:text-[#0071e3] transition-colors cursor-pointer"
+                aria-label="Account"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </button>
 
-              {/* User Dropdown */}
-              {userMenuOpen && isAuthenticated && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-[#e2e2e5] rounded-lg shadow-lg py-1.5 z-50 text-[13px]">
-                  <div className="px-3.5 py-2 border-b border-[#f5f5f7]">
-                    <div className="font-semibold text-[#1d1d1f] truncate">
-                      {customer?.name}
-                    </div>
-                    <div className="text-[11px] text-[#707070] truncate">{customer?.email}</div>
-                  </div>
-                  <Link
-                    href="/account"
-                    onClick={() => setUserMenuOpen(false)}
-                    className="block px-3.5 py-1.5 text-[#1d1d1f] hover:bg-[#f5f5f7]"
-                  >
-                    Account Settings
-                  </Link>
-                  <Link
-                    href="/account/orders"
-                    onClick={() => setUserMenuOpen(false)}
-                    className="block px-3.5 py-1.5 text-[#1d1d1f] hover:bg-[#f5f5f7]"
-                  >
-                    Orders
-                  </Link>
-                  <button
-                    onClick={() => {
-                      logout();
-                      setUserMenuOpen(false);
-                    }}
-                    className="w-full text-left px-3.5 py-1.5 text-[#e11d48] hover:bg-[#f5f5f7]"
-                  >
-                    Sign out
-                  </button>
+              {userMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-[#e2e2e5] rounded-xl shadow-lg py-1.5 z-50 text-xs animate-in fade-in zoom-in-95 duration-150">
+                  {isAuthenticated ? (
+                    <>
+                      <div className="px-3.5 py-2 border-b border-[#e2e2e5]">
+                        <p className="text-[10px] text-[#86868b]">Signed in as</p>
+                        <p className="font-semibold text-[#1d1d1f] truncate">{customer?.email}</p>
+                      </div>
+                      <Link href="/account" onClick={() => setUserMenuOpen(false)} className="block px-3.5 py-1.5 text-[#1d1d1f] hover:bg-[#f5f5f7]">Account Settings</Link>
+                      <Link href="/account/orders" onClick={() => setUserMenuOpen(false)} className="block px-3.5 py-1.5 text-[#1d1d1f] hover:bg-[#f5f5f7]">Orders</Link>
+                      <button onClick={() => { logout(); setUserMenuOpen(false); }} className="w-full text-left px-3.5 py-1.5 text-[#e11d48] hover:bg-[#f5f5f7] cursor-pointer">Sign out</button>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/auth/login" onClick={() => setUserMenuOpen(false)} className="block px-3.5 py-2 text-[#0071e3] font-medium hover:bg-[#f5f5f7]">Sign in</Link>
+                      <Link href="/auth/signup" onClick={() => setUserMenuOpen(false)} className="block px-3.5 py-1.5 text-[#1d1d1f] hover:bg-[#f5f5f7]">Create Apple ID</Link>
+                    </>
+                  )}
                 </div>
               )}
             </div>
-
           </div>
         </div>
 
-        {/* Expandable Search Input Bar with Auto-Complete Suggestions */}
+        {/* Expandable Search Input Bar */}
         {searchOpen && (
-          <div className="w-full bg-[#f5f5f7] border-b border-[#e2e2e5] py-2 px-4 shadow-sm animate-fadeIn">
+          <div className="w-full bg-[#f5f5f7] border-b border-[#e2e2e5] py-2 px-4 shadow-sm animate-in slide-in-from-top duration-200">
             <div className="max-w-[640px] mx-auto flex items-center gap-2">
               <SearchAutocomplete
                 placeholder="Search products, models, or categories..."
                 showCategoryDropdown={false}
                 buttonClassName="!bg-[#0071e3] !hover:bg-[#0077ed] !text-white"
+                onSelect={() => setSearchOpen(false)}
               />
               <button
                 type="button"
                 onClick={() => setSearchOpen(false)}
-                className="text-[#858585] hover:text-[#1d1d1f] text-xs font-semibold p-1.5"
+                className="text-[#858585] hover:text-[#1d1d1f] text-xs font-semibold p-1.5 cursor-pointer"
                 title="Close search"
               >
                 ✕
@@ -276,64 +256,162 @@ export default function NovaHeader() {
             </div>
           </div>
         )}
+      </header>
 
-        {/* Mobile Navigation Drawer */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-white border-b border-[#e2e2e5] px-6 py-4 space-y-3">
-            {navLinks.map((link, idx) => {
-              const href = link.href || link.url || '/';
-              const label = link.label || link.title || 'Link';
-              const hasChildren = link.children && link.children.length > 0;
+      {/* ─── Apple-Style Slide-in Mobile Drawer ───────────────────────────── */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          {/* Dimmed Backdrop */}
+          <div
+            className="fixed inset-0 bg-[#1d1d1f]/60 backdrop-blur-sm animate-in fade-in duration-200"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
 
-              if (hasChildren) {
-                return (
-                  <div key={link.id || href || idx} className="space-y-1.5">
+          {/* Drawer Container */}
+          <div
+            className="relative w-full max-w-[320px] bg-white h-full flex flex-col shadow-2xl z-10 overflow-hidden animate-in slide-in-from-left duration-300 ease-out border-r border-[#e2e2e5]"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation Drawer"
+          >
+            {/* Drawer Top Bar */}
+            <div className="p-4 border-b border-[#e2e2e5] flex items-center justify-between bg-[#f5f5f7]">
+              <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-1.5">
+                <span className="text-sm font-semibold tracking-tight text-[#1d1d1f]">
+                  {theme.storeName || 'NOVA'}
+                </span>
+              </Link>
+
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-[#1d1d1f] transition cursor-pointer"
+                aria-label="Close menu"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* In-Drawer Search */}
+            <div className="p-3 border-b border-[#e2e2e5]">
+              <SearchAutocomplete
+                placeholder="Search products..."
+                showCategoryDropdown={false}
+                onSelect={() => setMobileMenuOpen(false)}
+              />
+            </div>
+
+            {/* Links */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+              <nav className="space-y-1">
+                {navLinks.map((link, idx) => {
+                  const href = link.href || link.url || '/';
+                  const label = link.label || link.title || 'Link';
+                  const linkId = link.id || href || String(idx);
+                  const hasChildren = link.children && link.children.length > 0;
+                  const isExpanded = !!expandedSubmenus[linkId];
+
+                  if (hasChildren) {
+                    return (
+                      <div key={linkId} className="rounded-xl overflow-hidden bg-[#f5f5f7]">
+                        <div className="flex items-center justify-between">
+                          <Link
+                            href={href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="flex-1 px-3.5 py-2.5 text-sm font-medium text-[#1d1d1f] hover:text-[#0071e3]"
+                          >
+                            {label}
+                          </Link>
+                          <button
+                            onClick={() => toggleSubmenu(linkId)}
+                            className="p-2.5 text-[#86868b] hover:text-[#1d1d1f] cursor-pointer"
+                            aria-label={`Toggle ${label} sublinks`}
+                          >
+                            <svg className={`w-3.5 h-3.5 transition-transform ${isExpanded ? 'rotate-180 text-[#0071e3]' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                        </div>
+
+                        {isExpanded && (
+                          <div className="pl-4 pr-2 pb-2 space-y-1 border-t border-[#e2e2e5]">
+                            {link.children!.map((sub, sIdx) => {
+                              const subHref = sub.href || sub.url || '#';
+                              const subLabel = sub.label || sub.title || 'Sublink';
+                              return (
+                                <Link
+                                  key={sub.id || subHref || sIdx}
+                                  href={subHref}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  className="block px-3 py-1.5 text-xs text-[#555] hover:text-[#0071e3]"
+                                >
+                                  {subLabel}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
+                  return (
                     <Link
+                      key={linkId}
                       href={href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block text-sm font-semibold text-[#1d1d1f] hover:text-[#0071e3]"
+                      className="block px-3.5 py-2.5 text-sm font-medium text-[#1d1d1f] hover:text-[#0071e3] rounded-xl hover:bg-[#f5f5f7] transition"
                     >
                       {label}
                     </Link>
-                    <div className="pl-3 space-y-1 border-l border-[#e2e2e5]">
-                      {link.children!.map((sub, sIdx) => {
-                        const subHref = sub.href || sub.url || '#';
-                        const subLabel = sub.label || sub.title || 'Sublink';
-                        return (
-                          <Link
-                            key={sub.id || subHref || sIdx}
-                            href={subHref}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="block text-xs font-normal text-[#555] hover:text-[#0071e3] py-0.5"
-                          >
-                            {subLabel}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              }
+                  );
+                })}
+              </nav>
+            </div>
 
-              return (
-                <Link
-                  key={link.id || href || idx}
-                  href={href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm font-medium text-[#1d1d1f] hover:text-[#0071e3]"
-                >
-                  {label}
-                </Link>
-              );
-            })}
-            <div className="pt-2 border-t border-[#f5f5f7] flex items-center justify-between text-xs text-[#707070]">
-              <Link href="/wishlist" onClick={() => setMobileMenuOpen(false)}>Wishlist ({wishlistCount})</Link>
-              <Link href="/cart" onClick={() => setMobileMenuOpen(false)}>Bag ({itemCount})</Link>
-              <Link href="/account" onClick={() => setMobileMenuOpen(false)}>Account</Link>
+            {/* Auth status footer */}
+            <div className="p-4 border-t border-[#e2e2e5] bg-[#f5f5f7] space-y-2.5">
+              {isAuthenticated ? (
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-[#1d1d1f] truncate">{customer?.name || customer?.email}</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link
+                      href="/account"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-center py-2 px-3 rounded-lg text-xs font-medium bg-white border border-[#e2e2e5] text-[#1d1d1f]"
+                    >
+                      Account
+                    </Link>
+                    <button
+                      onClick={() => { logout(); setMobileMenuOpen(false); }}
+                      className="text-center py-2 px-3 rounded-lg text-xs font-medium text-[#e11d48] bg-white border border-[#e2e2e5] cursor-pointer"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center py-2 px-3 rounded-lg text-xs font-medium bg-[#0071e3] text-white"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/auth/signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center py-2 px-3 rounded-lg text-xs font-medium bg-white border border-[#e2e2e5] text-[#1d1d1f]"
+                  >
+                    Register
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
-        )}
-      </header>
+        </div>
+      )}
     </>
   );
 }
