@@ -3,21 +3,7 @@
 import { useEffect } from 'react';
 import type { ThemeConfig } from '@/lib/api/types';
 import { ThemeContext } from '@/context/ThemeContext';
-
-const NEXT_FONT_MAP: Record<string, string> = {
-  'inter': 'var(--font-inter)',
-  'plus jakarta sans': 'var(--font-plus-jakarta)',
-  'plus_jakarta_sans': 'var(--font-plus-jakarta)',
-  'playfair display': 'var(--font-playfair)',
-  'playfair_display': 'var(--font-playfair)',
-  'outfit': 'var(--font-outfit)',
-  'space grotesk': 'var(--font-space-grotesk)',
-  'space_grotesk': 'var(--font-space-grotesk)',
-  'cinzel': 'var(--font-cinzel)',
-  'geist': 'var(--font-geist-sans)',
-  'geist sans': 'var(--font-geist-sans)',
-  'geist mono': 'var(--font-geist-mono)',
-};
+import { parseFontName, NEXT_FONT_MAP } from '@/lib/fonts';
 
 interface ThemeProviderProps {
   theme: ThemeConfig;
@@ -64,19 +50,34 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps) {
     root.style.setProperty('--sf-font-size', fontSize);
 
     // Typography
-    const headingFont = (theme.themeHeadingFont || 'Inter').trim();
-    const bodyFont = (theme.themeBodyFont || 'Inter').trim();
-    const headingVar = theme.themeHeadingFontUrl
-      ? `'StoreHeadingFont', system-ui, -apple-system, sans-serif`
-      : NEXT_FONT_MAP[headingFont.toLowerCase()] || `'${headingFont}', system-ui, -apple-system, sans-serif`;
-    const bodyVar = theme.themeBodyFontUrl
-      ? `'StoreBodyFont', system-ui, -apple-system, sans-serif`
-      : NEXT_FONT_MAP[bodyFont.toLowerCase()] || `'${bodyFont}', system-ui, -apple-system, sans-serif`;
+    const { cleanName: headingName, fallback: headingFallback } = parseFontName(theme.themeHeadingFont);
+    const { cleanName: bodyName, fallback: bodyFallback } = parseFontName(theme.themeBodyFont);
 
-    root.style.setProperty('--font-heading', headingVar);
-    root.style.setProperty('--font-body', bodyVar);
-    root.style.setProperty('--sf-heading-font', headingVar);
-    root.style.setProperty('--sf-body-font', bodyVar);
+    const headingKey = headingName.toLowerCase().replace(/_/g, ' ');
+    const bodyKey = bodyName.toLowerCase().replace(/_/g, ' ');
+
+    const headingVar = theme.themeHeadingFontUrl
+      ? `'StoreHeadingFont', ${headingFallback}`
+      : NEXT_FONT_MAP[headingKey]
+      ? `${NEXT_FONT_MAP[headingKey]}, ${headingFallback}`
+      : `'${headingName}', ${headingFallback}`;
+
+    const bodyVar = theme.themeBodyFontUrl
+      ? `'StoreBodyFont', ${bodyFallback}`
+      : NEXT_FONT_MAP[bodyKey]
+      ? `${NEXT_FONT_MAP[bodyKey]}, ${bodyFallback}`
+      : `'${bodyName}', ${bodyFallback}`;
+
+    root.style.setProperty('--font-heading', headingVar, 'important');
+    root.style.setProperty('--font-body', bodyVar, 'important');
+    root.style.setProperty('--sf-heading-font', headingVar, 'important');
+    root.style.setProperty('--sf-body-font', bodyVar, 'important');
+
+    if (theme.themeBackgroundImage) {
+      root.style.setProperty('--sf-bg-image', `url('${theme.themeBackgroundImage}')`);
+    } else {
+      root.style.setProperty('--sf-bg-image', 'none');
+    }
 
     // Layout Width
     let layoutWidth = '1280px';

@@ -104,13 +104,72 @@ export async function getMenus(): Promise<Menu[]> {
  */
 export async function getMenu(handle: string = 'main-menu'): Promise<Menu | null> {
   try {
-    return await apiClient.get<Menu>(
+    const menu = await apiClient.get<Menu>(
       `api/storefront/catalog/menus/${encodeURIComponent(handle)}`,
       { next: { revalidate: 0, tags: ['menus', `menu-${handle}`] } }
     );
-  } catch {
-    return null;
+    if (menu && menu.items && menu.items.length > 0) {
+      return menu;
+    }
+  } catch (err) {
+    // try fallback
   }
+
+  // Resilient fallback to CMS backend directly
+  try {
+    const cmsBase = process.env.NEXT_PUBLIC_CMS_API_URL || 'http://localhost:5000/api';
+    const storeId = process.env.NEXT_PUBLIC_STORE_ID || '';
+    const res = await fetch(`${cmsBase}/menus/${encodeURIComponent(handle)}${storeId ? `?storeId=${encodeURIComponent(storeId)}` : ''}`, {
+      headers: storeId ? { 'x-store-id': storeId } : {},
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const rawItems = data.itemsJson
+        ? typeof data.itemsJson === 'string'
+          ? JSON.parse(data.itemsJson)
+          : data.itemsJson
+        : data.items || [];
+
+      return {
+        id: data.id || `menu-${handle}`,
+        title: data.title || handle,
+        handle: data.handle || handle,
+        location: data.location || handle.toUpperCase(),
+        items: rawItems.map((item: any) => ({
+          id: item.id || Math.random().toString(36).substring(2, 9),
+          label: item.label || item.title || 'Link',
+          title: item.title || item.label || 'Link',
+          url: item.url || item.href || '#',
+          href: item.href || item.url || '#',
+          target: item.target || '_self',
+          type: item.type || 'LINK',
+          isMegaMenu: Boolean(item.isMegaMenu),
+          megaMenuConfig: item.megaMenuConfig || (item.isMegaMenu ? {
+            bannerImage: item.bannerImage,
+            headline: item.headline,
+            buttonLabel: item.buttonLabel,
+            buttonUrl: item.buttonUrl,
+          } : null),
+          children: Array.isArray(item.children)
+            ? item.children.map((c: any) => ({
+                id: c.id,
+                label: c.label || c.title || 'Sublink',
+                title: c.title || c.label || 'Sublink',
+                url: c.url || c.href || '#',
+                href: c.href || c.url || '#',
+                target: c.target || '_self',
+              }))
+            : [],
+        })),
+        storeId: data.storeId || storeId || null,
+      };
+    }
+  } catch {
+    // fallback
+  }
+
+  return null;
 }
 
 /**

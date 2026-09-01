@@ -194,16 +194,22 @@ export default function DefaultFooter() {
                 Navigation
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {cmsFooterItems.map((item, idx) => (
-                  <Link
-                    key={item.id || idx}
-                    href={item.href || item.url || '/'}
-                    className="text-sm transition-all duration-200 hover:translate-x-1 inline-block"
-                    style={{ color: 'rgba(255,255,255,0.7)' }}
-                  >
-                    {item.label || item.title}
-                  </Link>
-                ))}
+                {cmsFooterItems.map((item, idx) => {
+                  const target = item.target || '_self';
+                  const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
+                  return (
+                    <Link
+                      key={item.id || idx}
+                      href={item.href || item.url || '/'}
+                      target={target}
+                      rel={rel}
+                      className="text-sm transition-all duration-200 hover:translate-x-1 inline-block"
+                      style={{ color: 'rgba(255,255,255,0.7)' }}
+                    >
+                      {item.label || item.title}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           ) : (

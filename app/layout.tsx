@@ -8,6 +8,9 @@ import {
   Cinzel,
   Geist,
   Geist_Mono,
+  Roboto,
+  DM_Sans,
+  Lora,
 } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/shared/ThemeProvider';
@@ -60,6 +63,25 @@ const cinzel = Cinzel({
   variable: '--font-cinzel',
 });
 
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '700'],
+  display: 'swap',
+  variable: '--font-roboto',
+});
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-dm-sans',
+});
+
+const lora = Lora({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-lora',
+});
+
 const geistSans = Geist({
   subsets: ['latin'],
   display: 'swap',
@@ -109,6 +131,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function RootLayout({
   children,
 }: {
@@ -135,7 +160,7 @@ export default async function RootLayout({
     }
   }
 
-  const fontVariables = `${inter.variable} ${plusJakarta.variable} ${playfair.variable} ${outfit.variable} ${spaceGrotesk.variable} ${cinzel.variable} ${geistSans.variable} ${geistMono.variable}`;
+  const fontVariables = `${inter.variable} ${plusJakarta.variable} ${playfair.variable} ${outfit.variable} ${spaceGrotesk.variable} ${cinzel.variable} ${roboto.variable} ${dmSans.variable} ${lora.variable} ${geistSans.variable} ${geistMono.variable}`;
 
   return (
     <html lang={theme.language || 'en'} className={`h-full antialiased ${fontVariables}`}>
@@ -153,8 +178,8 @@ export default async function RootLayout({
         )}
       </head>
       <body
-        className="min-h-full flex flex-col font-sans pb-16 lg:pb-0"
-        style={{ backgroundColor: 'var(--sf-bg)', color: 'var(--sf-text)' }}
+        className="min-h-full flex flex-col pb-16 lg:pb-0"
+        style={{ backgroundColor: 'var(--sf-bg)', color: 'var(--sf-text)', fontFamily: 'var(--sf-body-font)' }}
       >
         <ThemeProvider theme={theme}>
           <LoadingProvider>

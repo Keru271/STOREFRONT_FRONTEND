@@ -9,6 +9,7 @@ import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useMenu } from '@/hooks/useMenu';
 import { SearchAutocomplete } from '@/components/shared/SearchAutocomplete';
+import MegaMenuDropdown from '@/components/shared/MegaMenuDropdown';
 import type { MenuItem } from '@/lib/api/types';
 
 const defaultNavLinks: MenuItem[] = [
@@ -106,13 +107,41 @@ export default function NovaHeader() {
             {navLinks.map((link, idx) => {
               const href = link.href || link.url || '/';
               const label = link.label || link.title || 'Link';
+              const target = link.target || '_self';
+              const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
               const hasChildren = link.children && link.children.length > 0;
+              const isMegaMenu = Boolean(link.isMegaMenu);
+
+              if (isMegaMenu) {
+                return (
+                  <div key={link.id || href || idx} className="relative group">
+                    <Link
+                      href={href}
+                      target={target}
+                      rel={rel}
+                      className="text-[12px] font-normal text-[#1d1d1f]/80 hover:text-[#0071e3] transition-colors duration-150 tracking-[-0.01em] inline-flex items-center gap-1 py-1"
+                    >
+                      <span>{label}</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 inline-block" />
+                      <svg className="w-3 h-3 opacity-60 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </Link>
+
+                    <div className="hidden group-hover:block">
+                      <MegaMenuDropdown item={link} isOpen={true} variant="light" />
+                    </div>
+                  </div>
+                );
+              }
 
               if (hasChildren) {
                 return (
                   <div key={link.id || href || idx} className="relative group">
                     <Link
                       href={href}
+                      target={target}
+                      rel={rel}
                       className="text-[12px] font-normal text-[#1d1d1f]/80 hover:text-[#0071e3] transition-colors duration-150 tracking-[-0.01em] inline-flex items-center gap-1 py-1"
                     >
                       <span>{label}</span>
@@ -126,10 +155,14 @@ export default function NovaHeader() {
                         {link.children!.map((sub, sIdx) => {
                           const subHref = sub.href || sub.url || '#';
                           const subLabel = sub.label || sub.title || 'Sublink';
+                          const subTarget = sub.target || '_self';
+                          const subRel = subTarget === '_blank' ? 'noopener noreferrer' : undefined;
                           return (
                             <Link
                               key={sub.id || subHref || sIdx}
                               href={subHref}
+                              target={subTarget}
+                              rel={subRel}
                               className="block px-4 py-2 text-[12px] text-[#1d1d1f] hover:bg-[#f5f5f7] hover:text-[#0071e3] transition"
                             >
                               {subLabel}
@@ -146,6 +179,8 @@ export default function NovaHeader() {
                 <Link
                   key={link.id || href || idx}
                   href={href}
+                  target={target}
+                  rel={rel}
                   className="text-[12px] font-normal text-[#1d1d1f]/80 hover:text-[#0071e3] transition-colors duration-150 tracking-[-0.01em]"
                 >
                   {label}
@@ -309,18 +344,24 @@ export default function NovaHeader() {
                   const label = link.label || link.title || 'Link';
                   const linkId = link.id || href || String(idx);
                   const hasChildren = link.children && link.children.length > 0;
+                  const isMegaMenu = Boolean(link.isMegaMenu);
+                  const target = link.target || '_self';
+                  const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
                   const isExpanded = !!expandedSubmenus[linkId];
 
-                  if (hasChildren) {
+                  if (hasChildren || isMegaMenu) {
                     return (
                       <div key={linkId} className="rounded-xl overflow-hidden bg-[#f5f5f7]">
                         <div className="flex items-center justify-between">
                           <Link
                             href={href}
+                            target={target}
+                            rel={rel}
                             onClick={() => setMobileMenuOpen(false)}
-                            className="flex-1 px-3.5 py-2.5 text-sm font-medium text-[#1d1d1f] hover:text-[#0071e3]"
+                            className="flex-1 px-3.5 py-2.5 text-sm font-medium text-[#1d1d1f] hover:text-[#0071e3] flex items-center gap-1.5"
                           >
-                            {label}
+                            <span>{label}</span>
+                            {isMegaMenu && <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />}
                           </Link>
                           <button
                             onClick={() => toggleSubmenu(linkId)}
@@ -334,21 +375,64 @@ export default function NovaHeader() {
                         </div>
 
                         {isExpanded && (
-                          <div className="pl-4 pr-2 pb-2 space-y-1 border-t border-[#e2e2e5]">
-                            {link.children!.map((sub, sIdx) => {
-                              const subHref = sub.href || sub.url || '#';
-                              const subLabel = sub.label || sub.title || 'Sublink';
-                              return (
+                          <div className="pl-3 pr-3 pb-3 space-y-2 border-t border-[#e2e2e5]">
+                            {/* Mega Menu Promo Card for Mobile */}
+                            {isMegaMenu && link.megaMenuConfig?.bannerImage && (
+                              <div className="relative rounded-xl overflow-hidden aspect-[16/8] mt-2 mb-2 shadow-xs">
+                                <img
+                                  src={link.megaMenuConfig.bannerImage}
+                                  alt="Promo"
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-3">
+                                  <span className="text-[11px] font-bold text-white leading-tight">
+                                    {link.megaMenuConfig.headline}
+                                  </span>
+                                  <Link
+                                    href={link.megaMenuConfig.buttonUrl || href}
+                                    target={target}
+                                    rel={rel}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="text-[10px] font-extrabold text-[#2997ff] mt-1 hover:underline"
+                                  >
+                                    {link.megaMenuConfig.buttonLabel || 'Shop Now'} &rarr;
+                                  </Link>
+                                </div>
+                              </div>
+                            )}
+
+                            {link.children && link.children.length > 0 ? (
+                              link.children.map((sub, sIdx) => {
+                                const subHref = sub.href || sub.url || '#';
+                                const subLabel = sub.label || sub.title || 'Sublink';
+                                const subTarget = sub.target || '_self';
+                                const subRel = subTarget === '_blank' ? 'noopener noreferrer' : undefined;
+                                return (
+                                  <Link
+                                    key={sub.id || subHref || sIdx}
+                                    href={subHref}
+                                    target={subTarget}
+                                    rel={subRel}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="block px-3 py-1.5 text-xs text-[#555] hover:text-[#0071e3]"
+                                  >
+                                    {subLabel}
+                                  </Link>
+                                );
+                              })
+                            ) : isMegaMenu ? (
+                              <div className="py-1">
                                 <Link
-                                  key={sub.id || subHref || sIdx}
-                                  href={subHref}
+                                  href={href}
+                                  target={target}
+                                  rel={rel}
                                   onClick={() => setMobileMenuOpen(false)}
-                                  className="block px-3 py-1.5 text-xs text-[#555] hover:text-[#0071e3]"
+                                  className="block text-xs font-semibold text-[#0071e3] hover:underline"
                                 >
-                                  {subLabel}
+                                  View all in {label} &rarr;
                                 </Link>
-                              );
-                            })}
+                              </div>
+                            ) : null}
                           </div>
                         )}
                       </div>
@@ -359,6 +443,8 @@ export default function NovaHeader() {
                     <Link
                       key={linkId}
                       href={href}
+                      target={target}
+                      rel={rel}
                       onClick={() => setMobileMenuOpen(false)}
                       className="block px-3.5 py-2.5 text-sm font-medium text-[#1d1d1f] hover:text-[#0071e3] rounded-xl hover:bg-[#f5f5f7] transition"
                     >

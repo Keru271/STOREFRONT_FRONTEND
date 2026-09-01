@@ -16,9 +16,12 @@
   --sf-accent:        #f59e0b;
 
   /* Typography — overwritten by ThemeProvider */
-  --sf-heading-font: 'Inter', system-ui, sans-serif;
-  --sf-body-font:    'Inter', system-ui, sans-serif;
+  --sf-heading-font: var(--font-heading, 'Inter', system-ui, sans-serif);
+  --sf-body-font:    var(--font-body, 'Inter', system-ui, sans-serif);
   --sf-font-size:    16px;
+
+  /* Background Image — overwritten by ThemeProvider */
+  --sf-bg-image:     none;
 
   /* Shape — overwritten by ThemeProvider */
   --sf-radius: 0.5rem;
@@ -32,8 +35,10 @@
    ─────────────────────────────────────────────────────────────────────────── */
 
 @theme inline {
-  /* Fonts (passed through from Next.js / system) */
-  --font-sans: var(--font-geist-sans);
+  /* Fonts (passed through from Next.js / system & dynamic merchant theme) */
+  --font-sans: var(--sf-body-font);
+  --font-heading: var(--sf-heading-font);
+  --font-serif: var(--sf-heading-font);
   --font-mono: var(--font-geist-mono);
 
   /* Storefront brand palette */
@@ -58,7 +63,7 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
+body, [class*="font-sans"], .font-sans {
   background-color: var(--sf-bg);
   color: var(--sf-text);
   font-family: var(--sf-body-font);
@@ -67,17 +72,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading, var(--sf-heading-font));
+h1, h2, h3, h4, h5, h6, .font-heading, [class*="font-heading"] {
+  font-family: var(--sf-heading-font) !important;
   line-height: 1.2;
 }
 
-.font-heading {
-  font-family: var(--font-heading, var(--sf-heading-font));
-}
-
 .font-body {
-  font-family: var(--font-body, var(--sf-body-font));
+  font-family: var(--sf-body-font);
 }
 
 /* ─── Utility: Theme Button Base ─────────────────────────────────────────────

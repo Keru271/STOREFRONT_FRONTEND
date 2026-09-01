@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/context/ThemeContext';
 import { useMenu } from '@/hooks/useMenu';
+import MegaMenuDropdown from '@/components/shared/MegaMenuDropdown';
 import type { MenuItem } from '@/lib/api/types';
 
 const defaultNavLinks: MenuItem[] = [
@@ -102,13 +103,42 @@ export default function MinimalHeader() {
             {navLinks.map((link, idx) => {
               const href = link.href || link.url || '/';
               const label = link.label || link.title || 'Link';
+              const target = link.target || '_self';
+              const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
               const hasChildren = link.children && link.children.length > 0;
+              const isMegaMenu = Boolean(link.isMegaMenu);
+
+              if (isMegaMenu) {
+                return (
+                  <div key={link.id || href || idx} className="relative group">
+                    <Link
+                      href={href}
+                      target={target}
+                      rel={rel}
+                      className="text-xs tracking-widest uppercase transition-opacity hover:opacity-50 inline-flex items-center gap-1.5 py-1"
+                      style={{ color: 'var(--sf-text)' }}
+                    >
+                      <span>{label}</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block" />
+                      <svg className="w-3 h-3 opacity-60 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </Link>
+
+                    <div className="hidden group-hover:block">
+                      <MegaMenuDropdown item={link} isOpen={true} variant="light" />
+                    </div>
+                  </div>
+                );
+              }
 
               if (hasChildren) {
                 return (
                   <div key={link.id || href || idx} className="relative group">
                     <Link
                       href={href}
+                      target={target}
+                      rel={rel}
                       className="text-xs tracking-widest uppercase transition-opacity hover:opacity-50 inline-flex items-center gap-1 py-1"
                       style={{ color: 'var(--sf-text)' }}
                     >
@@ -131,10 +161,14 @@ export default function MinimalHeader() {
                         {link.children!.map((sub, sIdx) => {
                           const subHref = sub.href || sub.url || '#';
                           const subLabel = sub.label || sub.title || 'Sublink';
+                          const subTarget = sub.target || '_self';
+                          const subRel = subTarget === '_blank' ? 'noopener noreferrer' : undefined;
                           return (
                             <Link
                               key={sub.id || subHref || sIdx}
                               href={subHref}
+                              target={subTarget}
+                              rel={subRel}
                               className="block px-4 py-2 text-xs tracking-widest uppercase hover:opacity-50 transition-opacity"
                               style={{ color: 'var(--sf-text)' }}
                             >
@@ -152,6 +186,8 @@ export default function MinimalHeader() {
                 <Link
                   key={link.id || href || idx}
                   href={href}
+                  target={target}
+                  rel={rel}
                   className="text-xs tracking-widest uppercase transition-opacity hover:opacity-50"
                   style={{ color: 'var(--sf-text)' }}
                 >

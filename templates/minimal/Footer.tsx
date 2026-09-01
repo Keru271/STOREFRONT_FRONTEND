@@ -95,16 +95,22 @@ export default function MinimalFooter() {
               Quick Links
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-xs">
-              {cmsFooterItems.map((item, idx) => (
-                <Link
-                  key={item.id || idx}
-                  href={item.href || item.url || '/'}
-                  className="transition-opacity hover:opacity-50"
-                  style={{ color: 'var(--sf-text)' }}
-                >
-                  {item.label || item.title}
-                </Link>
-              ))}
+              {cmsFooterItems.map((item, idx) => {
+                const target = item.target || '_self';
+                const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
+                return (
+                  <Link
+                    key={item.id || idx}
+                    href={item.href || item.url || '/'}
+                    target={target}
+                    rel={rel}
+                    className="transition-opacity hover:opacity-50"
+                    style={{ color: 'var(--sf-text)' }}
+                  >
+                    {item.label || item.title}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         ) : (

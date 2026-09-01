@@ -173,15 +173,21 @@ export default function MincomFooter() {
               <div className="space-y-3 col-span-2 sm:col-span-3">
                 <h4 className="text-white font-bold uppercase tracking-wider text-xs">Quick Links</h4>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                  {cmsFooterItems.map((item, idx) => (
-                    <Link
-                      key={item.id || idx}
-                      href={item.href || item.url || '/'}
-                      className="hover:text-amber-400 transition"
-                    >
-                      {item.label || item.title}
-                    </Link>
-                  ))}
+                  {cmsFooterItems.map((item, idx) => {
+                    const target = item.target || '_self';
+                    const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
+                    return (
+                      <Link
+                        key={item.id || idx}
+                        href={item.href || item.url || '/'}
+                        target={target}
+                        rel={rel}
+                        className="hover:text-amber-400 transition"
+                      >
+                        {item.label || item.title}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             </div>

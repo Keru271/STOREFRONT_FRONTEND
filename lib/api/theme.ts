@@ -18,6 +18,7 @@ export const DEFAULT_THEME: ThemeConfig = {
   themeBackgroundColor: '#ffffff',
   themeTextColor: '#111827',
   themeAccentColor: '#f59e0b',
+  themeBackgroundImage: null,
   themeHeadingFont: 'Inter',
   themeBodyFont: 'Inter',
   themeFontSize: '16px',
@@ -36,16 +37,41 @@ export const DEFAULT_THEME: ThemeConfig = {
 /**
  * Fetches the storefront theme config from the backend.
  * Uses on-demand revalidation so changes saved in the CMS reflect immediately.
+ * Falls back to CMS backend if storefront-backend is not running.
  */
 export async function getTheme(): Promise<ThemeConfig> {
   try {
     const theme = await apiClient.get<ThemeConfig>('api/storefront/theme', {
       next: { revalidate: 0, tags: ['theme'] },
     });
-    return theme;
-  } catch {
-    return DEFAULT_THEME;
+    if (theme && (theme.themeHeadingFont || theme.themePrimaryColor || theme.activeTemplateSlug)) {
+      return theme;
+    }
+  } catch (err) {
+    console.warn('Storefront backend theme endpoint unreachable, trying CMS backend fallback...');
   }
+
+  // Resilient fallback: Query CMS backend directly if storefront-backend is offline
+  try {
+    const cmsBase = process.env.NEXT_PUBLIC_CMS_API_URL || 'http://localhost:5000/api';
+    const storeId = process.env.NEXT_PUBLIC_STORE_ID || '';
+    const res = await fetch(`${cmsBase}/stores/theme${storeId ? `?storeId=${encodeURIComponent(storeId)}` : ''}`, {
+      headers: storeId ? { 'x-store-id': storeId } : {},
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return {
+        ...DEFAULT_THEME,
+        ...data,
+        storeName: data.name || DEFAULT_THEME.storeName,
+      };
+    }
+  } catch {
+    // ignore
+  }
+
+  return DEFAULT_THEME;
 }
 
 /**

@@ -31,6 +31,7 @@ export interface ThemeConfig {
   themeBackgroundColor?: string | null;
   themeTextColor?: string | null;
   themeAccentColor?: string | null;
+  themeBackgroundImage?: string | null;
 
   // Typography
   themeHeadingFont?: string | null;
@@ -418,6 +419,13 @@ export interface Brand {
   website?: string | null;
 }
 
+export interface MegaMenuConfig {
+  bannerImage?: string | null;
+  headline?: string | null;
+  buttonLabel?: string | null;
+  buttonUrl?: string | null;
+}
+
 export interface MenuItem {
   id?: string;
   label?: string;
@@ -426,6 +434,8 @@ export interface MenuItem {
   href?: string;
   target?: string;
   type?: string;
+  isMegaMenu?: boolean;
+  megaMenuConfig?: MegaMenuConfig | null;
   children?: MenuItem[];
 }
 

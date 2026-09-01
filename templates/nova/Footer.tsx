@@ -75,15 +75,21 @@ export default function NovaFooter() {
           <div className="mb-8">
             <h4 className="text-[12px] font-semibold text-[#1d1d1f] mb-3">Directory</h4>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {cmsFooterItems.map((item, idx) => (
-                <Link
-                  key={item.id || idx}
-                  href={item.href || item.url || '/'}
-                  className="hover:text-[#1d1d1f] transition-colors"
-                >
-                  {item.label || item.title}
-                </Link>
-              ))}
+              {cmsFooterItems.map((item, idx) => {
+                const target = item.target || '_self';
+                const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
+                return (
+                  <Link
+                    key={item.id || idx}
+                    href={item.href || item.url || '/'}
+                    target={target}
+                    rel={rel}
+                    className="hover:text-[#1d1d1f] transition-colors"
+                  >
+                    {item.label || item.title}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         ) : (
