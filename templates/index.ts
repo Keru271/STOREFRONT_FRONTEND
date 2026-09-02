@@ -234,29 +234,56 @@ const funoComponents: TemplateComponents = {
 };
 
 const TEMPLATE_REGISTRY: Record<string, TemplateComponents> = {
-  funo: funoComponents,
-  funie: funoComponents,
-  'funo-furniture': funoComponents,
+  // Fashion & Luxury
+  fashion: luxeComponents,
+  luxury: luxeComponents,
+  luxe: luxeComponents,
+  'velvet-luxury': luxeComponents,
+  'haute-couture': luxeComponents,
+
+  // Electronics, Tech & Apple Design
+  electronics: novaComponents,
+  tech: novaComponents,
+  nova: novaComponents,
+  'nova-tech': novaComponents,
+  gadgets: novaComponents,
+
+  // Minimalist & Monochrome
+  minimal: minimalComponents,
+  minimalist: minimalComponents,
+  clean: minimalComponents,
+  scandinavian: minimalComponents,
+
+  // Modern Living, Commercial & Furniture
+  furniture: mincomComponents,
   mincom: mincomComponents,
   'mincom-furniture': mincomComponents,
   'mincom-theme': mincomComponents,
   'artisan-craft': mincomComponents,
-  nova: novaComponents,
-  'nova-tech': novaComponents,
+  modern: mincomComponents,
+
+  // Playful Nordic
+  funo: funoComponents,
+  funie: funoComponents,
+  'funo-furniture': funoComponents,
+  nordic: funoComponents,
+
+  // Default & Streetwear
   default: defaultComponents,
+  general: defaultComponents,
   'pulse-streetwear': defaultComponents,
-  minimal: minimalComponents,
-  luxe: luxeComponents,
-  'velvet-luxury': luxeComponents,
 };
 
 /**
  * Resolves the active template components from the slug.
- * Falls back to 'mincom', 'nova', or 'default' if slug is unknown or not provided.
+ * Case-insensitive, trimmed, and gracefully falls back to mincom/nova/default.
  */
 export function resolveTemplate(slug?: string | null): TemplateComponents {
-  if (slug && TEMPLATE_REGISTRY[slug]) {
-    return TEMPLATE_REGISTRY[slug];
+  if (slug) {
+    const normalized = slug.toLowerCase().trim();
+    if (TEMPLATE_REGISTRY[normalized]) {
+      return TEMPLATE_REGISTRY[normalized];
+    }
   }
   return TEMPLATE_REGISTRY['mincom'] || TEMPLATE_REGISTRY['nova'] || TEMPLATE_REGISTRY['default'];
 }

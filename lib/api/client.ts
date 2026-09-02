@@ -63,15 +63,55 @@ function getClientStoreSlug(): string {
   }
 }
 
+async function getServerRequestHeaders(): Promise<Record<string, string>> {
+  if (typeof window !== 'undefined') return {};
+  try {
+    const { headers } = await import('next/headers');
+    const h = await headers();
+    const result: Record<string, string> = {};
+    const storeHost = h.get('x-store-host') || h.get('host') || h.get('x-forwarded-host');
+    const storeSlug = h.get('x-store-slug');
+    const storeId = h.get('x-store-id');
+    const previewTemplate = h.get('x-preview-template');
+
+    if (storeHost) result['x-store-host'] = storeHost;
+    if (storeSlug) result['x-store-slug'] = storeSlug;
+    if (storeId) result['x-store-id'] = storeId;
+    if (previewTemplate) result['x-preview-template'] = previewTemplate;
+
+    return result;
+  } catch {
+    return {};
+  }
+}
+
+function getBrowserTenantHeaders(): Record<string, string> {
+  if (typeof window === 'undefined') return {};
+  const result: Record<string, string> = {};
+  try {
+    const host = window.location.hostname;
+    if (host) {
+      result['x-store-host'] = host;
+    }
+    const storeSlug = localStorage.getItem('storeSlug');
+    if (storeSlug) result['x-store-slug'] = storeSlug;
+    const storeId = localStorage.getItem('activeStoreId') || localStorage.getItem('storeId');
+    if (storeId) result['x-store-id'] = storeId;
+  } catch {}
+  return result;
+}
+
 // ── Fetch Options ─────────────────────────────────────────────────────────────
 
 export interface ClientFetchOptions extends Omit<RequestInit, 'body'> {
   /** Bearer token for authenticated requests */
   token?: string;
-  /** Explicit store ID header override (skips localStorage lookup) */
+  /** Explicit store ID header override */
   storeId?: string;
   /** Explicit store slug header override */
   storeSlug?: string;
+  /** Explicit store host header override */
+  storeHost?: string;
   /** Next.js cache / revalidation options */
   next?: {
     revalidate?: number | false;
@@ -85,7 +125,7 @@ async function apiFetch<T>(
   endpoint: string,
   options: ClientFetchOptions & { body?: string } = {}
 ): Promise<T> {
-  const { token, storeId, storeSlug, next, ...fetchOptions } = options;
+  const { token, storeId, storeSlug, storeHost, next, ...fetchOptions } = options;
 
   const headers: Record<string, string> = {
     ...(fetchOptions.headers as Record<string, string>),
@@ -100,19 +140,47 @@ async function apiFetch<T>(
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  // Resolve store identity — caller override → localStorage (client only) → env
-  const resolvedStoreId = storeId || getClientStoreId() || 'default-store-id';
-  const resolvedStoreSlug = storeSlug || getClientStoreSlug();
+  // Resolve multi-tenant identity dynamically:
+  // 1. Caller explicit overrides
+  // 2. Server request headers (from Next.js Edge Middleware)
+  // 3. Browser window context & localStorage
+  // 4. Fallback environment variables
+  const serverHeaders = await getServerRequestHeaders();
+  const browserHeaders = getBrowserTenantHeaders();
 
-  console.log({ resolvedStoreId, resolvedStoreSlug })
+  const resolvedHost =
+    storeHost ||
+    headers['x-store-host'] ||
+    serverHeaders['x-store-host'] ||
+    browserHeaders['x-store-host'];
 
-  // Multi-tenant store identification headers
-  headers['x-store-id'] = resolvedStoreId;
-  headers['store-id'] = resolvedStoreId;
-  headers['x-tenant-id'] = resolvedStoreId;
+  const resolvedStoreSlug =
+    storeSlug ||
+    headers['x-store-slug'] ||
+    serverHeaders['x-store-slug'] ||
+    browserHeaders['x-store-slug'] ||
+    getClientStoreSlug();
 
-  if (resolvedStoreSlug) {
+  const resolvedStoreId =
+    storeId ||
+    headers['x-store-id'] ||
+    serverHeaders['x-store-id'] ||
+    browserHeaders['x-store-id'] ||
+    getClientStoreId();
+
+  if (resolvedHost) {
+    headers['x-store-host'] = resolvedHost;
+    headers['x-store-domain'] = resolvedHost;
+  }
+
+  if (resolvedStoreSlug && resolvedStoreSlug !== 'default-store-slug') {
     headers['x-store-slug'] = resolvedStoreSlug;
+  }
+
+  if (resolvedStoreId && resolvedStoreId !== 'default-store-id') {
+    headers['x-store-id'] = resolvedStoreId;
+    headers['store-id'] = resolvedStoreId;
+    headers['x-tenant-id'] = resolvedStoreId;
   }
 
   // Remove leading slash if present
