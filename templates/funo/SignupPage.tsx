@@ -16,6 +16,7 @@ export default function FunoSignupPage({ theme }: AuthPageProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
+  const [acceptsMarketing, setAcceptsMarketing] = useState(true);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,7 +25,7 @@ export default function FunoSignupPage({ theme }: AuthPageProps) {
     setError('');
     setIsLoading(true);
     try {
-      await register({ name, email, password, phone: phone || undefined });
+      await register({ name, email, password, phone: phone || undefined, acceptsMarketing });
       router.push('/');
     } catch (err) {
       if (err instanceof ApiError) {
@@ -117,6 +118,19 @@ export default function FunoSignupPage({ theme }: AuthPageProps) {
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
               />
             </div>
+
+            <label className="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer pt-1">
+              <input
+                id="funo-signup-marketing-consent"
+                type="checkbox"
+                checked={acceptsMarketing}
+                onChange={(e) => setAcceptsMarketing(e.target.checked)}
+                className="mt-0.5 rounded border-slate-300 text-orange-500 focus:ring-orange-400"
+              />
+              <span className="leading-relaxed">
+                Send me news about new design drops, furniture collections, and subscriber-only discounts.
+              </span>
+            </label>
 
             <button
               type="submit"

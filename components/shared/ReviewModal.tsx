@@ -50,6 +50,55 @@ export default function ReviewModal({
 
   if (!isOpen) return null;
 
+  if (!isAuthenticated) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+          className="rounded-3xl max-w-md w-full p-6 text-center shadow-2xl border space-y-4 animate-scaleIn"
+          style={{
+            backgroundColor: 'var(--sf-bg)',
+            borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
+          }}
+        >
+          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto text-2xl">
+            🔒
+          </div>
+          <h3 className="font-bold text-lg" style={{ color: 'var(--sf-text)' }}>
+            Sign In to Post a Review
+          </h3>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Only logged-in customers are able to share verified reviews.
+          </p>
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 py-2.5 rounded-xl border text-xs font-semibold hover:opacity-80 transition cursor-pointer"
+              style={{
+                borderColor: 'color-mix(in srgb, var(--sf-text) 20%, transparent)',
+                color: 'var(--sf-text)',
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  window.location.href = `/auth/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+                }
+              }}
+              className="flex-1 py-2.5 rounded-xl text-xs font-bold text-white shadow hover:opacity-90 transition cursor-pointer"
+              style={{ backgroundColor: 'var(--sf-primary)' }}
+            >
+              Sign In
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -77,12 +126,12 @@ export default function ReviewModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const resolvedName = isAuthenticated
-      ? currentUser?.name || form.userName || 'Customer'
-      : form.userName.trim() || 'Anonymous';
-    const resolvedEmail = isAuthenticated
-      ? currentUser?.email || form.userEmail || ''
-      : form.userEmail.trim();
+    if (!isAuthenticated) {
+      alert('You must be signed in to post a review.');
+      return;
+    }
+    const resolvedName = currentUser?.name || form.userName || 'Verified Customer';
+    const resolvedEmail = currentUser?.email || form.userEmail || '';
 
     await onSubmit({
       ...form,

@@ -22,6 +22,7 @@ export default function NovaSignupPage({ theme }: AuthPageProps) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [acceptsMarketing, setAcceptsMarketing] = useState(true);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -47,6 +48,7 @@ export default function NovaSignupPage({ theme }: AuthPageProps) {
         email: formData.email,
         password: formData.password,
         phone: formData.phone || undefined,
+        acceptsMarketing,
       });
       router.push('/');
     } catch (err) {
@@ -163,6 +165,21 @@ export default function NovaSignupPage({ theme }: AuthPageProps) {
                 />
                 <span>
                   I agree to the <Link href="/terms" className="text-[#0066cc] hover:underline">Terms of Service</Link> and acknowledge the <Link href="/privacy" className="text-[#0066cc] hover:underline">Privacy Policy</Link>.
+                </span>
+              </label>
+            </div>
+
+            <div className="pt-1">
+              <label className="flex items-start gap-2.5 text-[12px] text-[#707070] cursor-pointer">
+                <input
+                  id="nova-signup-marketing-consent"
+                  type="checkbox"
+                  checked={acceptsMarketing}
+                  onChange={(e) => setAcceptsMarketing(e.target.checked)}
+                  className="mt-0.5 rounded border-[#d2d2d7] text-[#0071e3] focus:ring-[#0071e3]"
+                />
+                <span>
+                  Stay informed about announcements, special offers, and software updates for your products.
                 </span>
               </label>
             </div>

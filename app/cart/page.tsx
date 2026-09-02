@@ -4,13 +4,13 @@
 
 import type { Metadata } from 'next';
 import { getTheme } from '@/lib/api/theme';
-import { resolveTemplate } from '@/templates';
+import CommonCartPage from '@/components/cart/CommonCartPage';
 
 export async function generateMetadata(): Promise<Metadata> {
   const theme = await getTheme();
   return {
-    title: `Shopping Bag — ${theme.storeName}`,
-    description: `Review your shopping bag and proceed to checkout at ${theme.storeName}.`,
+    title: `Shopping Cart — ${theme.storeName}`,
+    description: `Review your shopping cart and proceed to checkout at ${theme.storeName}.`,
     robots: { index: false, follow: false },
   };
 }
@@ -28,8 +28,6 @@ export default async function CartPage({ searchParams }: CartPageProps) {
     ? { ...theme, activeTemplateSlug: previewTemplate }
     : theme;
 
-  const { CartPage: TemplateCartPage } = resolveTemplate(effectiveTheme.activeTemplateSlug);
-
-  return <TemplateCartPage theme={effectiveTheme} />;
+  return <CommonCartPage theme={effectiveTheme} />;
 }
 

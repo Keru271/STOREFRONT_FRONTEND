@@ -87,15 +87,19 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
   const [isCouponsExpanded, setIsCouponsExpanded] = useState(false);
 
   useEffect(() => {
-    if (activeTab === 'reviews' && !hasFetchedReviewsRef.current) {
+    if (!hasFetchedReviewsRef.current && (product.id || product.urlSlug)) {
       hasFetchedReviewsRef.current = true;
       setIsReviewsLoading(true);
       getProductReviews(product.id || product.urlSlug || '')
-        .then((data) => { if (data?.reviews) setReviewsList(data.reviews); })
-        .catch((err) => { console.warn('Using pre-loaded reviews fallback:', err); })
+        .then((data) => {
+          if (data?.reviews) setReviewsList(data.reviews);
+        })
+        .catch((err) => {
+          console.warn('Using pre-loaded reviews fallback:', err);
+        })
         .finally(() => setIsReviewsLoading(false));
     }
-  }, [activeTab, product.id, product.urlSlug]);
+  }, [product.id, product.urlSlug]);
 
   const isWishlisted = isInWishlist(product.id);
 
@@ -265,6 +269,13 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
   };
 
   const openWriteReview = () => {
+    if (!isAuthenticated) {
+      toast.info('Please sign in to your account to post a review.', 'Authentication Required');
+      if (typeof window !== 'undefined') {
+        window.location.href = `/auth/login?redirect=/products/${product.urlSlug || product.id}`;
+      }
+      return;
+    }
     setEditingReviewId(null);
     setReviewForm({
       userName: customer?.name || '',
@@ -1016,16 +1027,29 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                   </div>
 
                   <div className="md:col-span-3 text-center md:text-right">
-                    <button
-                      type="button"
-                      onClick={openWriteReview}
-                      className={`w-full sm:w-auto px-5 py-3 font-bold text-xs text-white shadow-lg transition hover:opacity-90 cursor-pointer ${
-                        isMinimal ? 'rounded-none bg-black text-white dark:bg-white dark:text-black uppercase tracking-wider' : isLuxe ? 'rounded-none bg-stone-900 uppercase tracking-widest' : isNova ? 'rounded-full bg-[#0071e3]' : isFuno ? 'rounded-full bg-slate-900' : 'rounded-2xl'
-                      }`}
-                      style={isMinimal || isLuxe || isNova || isFuno ? undefined : { backgroundColor: 'var(--sf-primary)' }}
-                    >
-                      ✏️ Write a Review
-                    </button>
+                    {isAuthenticated ? (
+                      <button
+                        type="button"
+                        onClick={openWriteReview}
+                        className={`w-full sm:w-auto px-5 py-3 font-bold text-xs text-white shadow-lg transition hover:opacity-90 cursor-pointer ${
+                          isMinimal ? 'rounded-none bg-black text-white dark:bg-white dark:text-black uppercase tracking-wider' : isLuxe ? 'rounded-none bg-stone-900 uppercase tracking-widest' : isNova ? 'rounded-full bg-[#0071e3]' : isFuno ? 'rounded-full bg-slate-900' : 'rounded-2xl'
+                        }`}
+                        style={isMinimal || isLuxe || isNova || isFuno ? undefined : { backgroundColor: 'var(--sf-primary)' }}
+                      >
+                        ✏️ Write a Review
+                      </button>
+                    ) : (
+                      <Link
+                        href={`/auth/login?redirect=/products/${product.urlSlug || product.id}`}
+                        className={`inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold border transition hover:opacity-80 ${radiusPill}`}
+                        style={{
+                          borderColor: 'color-mix(in srgb, var(--sf-text) 18%, transparent)',
+                          color: 'var(--sf-primary)',
+                        }}
+                      >
+                        <span>🔒</span> Log in to write a review
+                      </Link>
+                    )}
                   </div>
                 </div>
 
@@ -1180,15 +1204,25 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                       <p className="text-xs mb-4" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
                         Be the first to share your experience with this item!
                       </p>
-                      <button
-                        onClick={openWriteReview}
-                        className={`px-5 py-2.5 text-xs font-bold text-white shadow cursor-pointer ${
-                          isMinimal ? 'rounded-none bg-black text-white uppercase' : isLuxe ? 'rounded-none bg-stone-900 uppercase' : 'rounded-2xl'
-                        }`}
-                        style={isMinimal || isLuxe ? undefined : { backgroundColor: 'var(--sf-primary)' }}
-                      >
-                        Write First Review
-                      </button>
+                      {isAuthenticated ? (
+                        <button
+                          onClick={openWriteReview}
+                          className={`px-5 py-2.5 text-xs font-bold text-white shadow cursor-pointer ${
+                            isMinimal ? 'rounded-none bg-black text-white uppercase' : isLuxe ? 'rounded-none bg-stone-900 uppercase' : 'rounded-2xl'
+                          }`}
+                          style={isMinimal || isLuxe ? undefined : { backgroundColor: 'var(--sf-primary)' }}
+                        >
+                          Write First Review
+                        </button>
+                      ) : (
+                        <Link
+                          href={`/auth/login?redirect=/products/${product.urlSlug || product.id}`}
+                          className={`inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold text-white shadow transition hover:opacity-90 ${radiusBox}`}
+                          style={{ backgroundColor: 'var(--sf-primary)' }}
+                        >
+                          Sign in to write first review →
+                        </Link>
+                      )}
                     </div>
                   )}
                 </div>

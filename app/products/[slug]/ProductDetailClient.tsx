@@ -11,6 +11,7 @@ import DefaultFooter from '@/templates/default/Footer';
 import DefaultProductCard from '@/templates/default/ProductCard';
 import ReviewModal from '@/components/shared/ReviewModal';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/useToast';
 import { getProductReviews, postProductReview, editProductReview, deleteProductReview, upvoteProductReview, getProductEligibleCoupons } from '@/lib/api';
 
 interface ProductDetailClientProps {
@@ -27,6 +28,7 @@ export default function ProductDetailClient({
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { customer, isAuthenticated } = useAuth();
+  const toast = useToast();
 
   const allImages = product.images.length > 0 ? product.images : (product.image ? [product.image] : []);
   const [selectedImage, setSelectedImage] = useState<string>(allImages[0] || '');
@@ -55,13 +57,13 @@ export default function ProductDetailClient({
   // Guard Ref: Ensures the reviews API is called EXACTLY ONCE, and ONLY when navigating to the reviews tab
   const hasFetchedReviewsRef = useRef(false);
 
-  // Lazy Review Fetcher: Triggered ONLY once when the user navigates to the 'reviews' tab
+  // Ensures the reviews API is called to fetch all posted reviews
   useEffect(() => {
-    if (activeTab === 'reviews' && !hasFetchedReviewsRef.current) {
+    if (!hasFetchedReviewsRef.current && (product.id || product.urlSlug)) {
       hasFetchedReviewsRef.current = true;
       fetchProductReviewsOnce();
     }
-  }, [activeTab]);
+  }, [product.id, product.urlSlug]);
 
   const fetchProductReviewsOnce = async () => {
     setIsReviewsLoading(true);
@@ -224,6 +226,13 @@ export default function ProductDetailClient({
 
   // Open Create Review Modal
   const handleOpenWriteReview = () => {
+    if (!isAuthenticated) {
+      toast.info('Please sign in to your account to post a review.', 'Authentication Required');
+      if (typeof window !== 'undefined') {
+        window.location.href = `/auth/login?redirect=/products/${product.urlSlug || product.id}`;
+      }
+      return;
+    }
     setEditingReviewId(null);
     setReviewForm({
       userName: customer?.name || '',
@@ -848,14 +857,24 @@ export default function ProductDetailClient({
 
                   {/* Write a Review Button */}
                   <div className="md:col-span-3 text-center md:text-right">
-                    <button
-                      type="button"
-                      onClick={handleOpenWriteReview}
-                      className="w-full sm:w-auto px-5 py-3 rounded-2xl font-bold text-xs text-white shadow-lg transition hover:opacity-90 active:scale-95"
-                      style={{ backgroundColor: 'var(--sf-primary)' }}
-                    >
-                      ✏️ Write a Review
-                    </button>
+                    {isAuthenticated ? (
+                      <button
+                        type="button"
+                        onClick={handleOpenWriteReview}
+                        className="w-full sm:w-auto px-5 py-3 rounded-2xl font-bold text-xs text-white shadow-lg transition hover:opacity-90 active:scale-95 cursor-pointer"
+                        style={{ backgroundColor: 'var(--sf-primary)' }}
+                      >
+                        ✏️ Write a Review
+                      </button>
+                    ) : (
+                      <Link
+                        href={`/auth/login?redirect=/products/${product.urlSlug || product.id}`}
+                        className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-bold border border-gray-200 dark:border-gray-700 transition hover:bg-gray-50 dark:hover:bg-gray-800"
+                        style={{ color: 'var(--sf-primary)' }}
+                      >
+                        <span>🔒</span> Log in to write a review
+                      </Link>
+                    )}
                   </div>
                 </div>
 
@@ -977,14 +996,24 @@ export default function ProductDetailClient({
                       <p className="text-xs text-gray-400 max-w-sm mx-auto">
                         Be the first to share your thoughts and help other shoppers!
                       </p>
-                      <button
-                        type="button"
-                        onClick={handleOpenWriteReview}
-                        className="px-5 py-2.5 rounded-2xl text-xs font-bold text-white shadow"
-                        style={{ backgroundColor: 'var(--sf-primary)' }}
-                      >
-                        Write First Review
-                      </button>
+                      {isAuthenticated ? (
+                        <button
+                          type="button"
+                          onClick={handleOpenWriteReview}
+                          className="px-5 py-2.5 rounded-2xl text-xs font-bold text-white shadow cursor-pointer hover:opacity-90 transition"
+                          style={{ backgroundColor: 'var(--sf-primary)' }}
+                        >
+                          Write First Review
+                        </button>
+                      ) : (
+                        <Link
+                          href={`/auth/login?redirect=/products/${product.urlSlug || product.id}`}
+                          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl text-xs font-bold text-white shadow hover:opacity-90 transition"
+                          style={{ backgroundColor: 'var(--sf-primary)' }}
+                        >
+                          Log in to write first review →
+                        </Link>
+                      )}
                     </div>
                   )}
                 </div>

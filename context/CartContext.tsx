@@ -92,6 +92,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
 
         setCart(response);
+        setIsOpen(true);
         toast.success(
           `Added to shopping bag (Qty: ${input.quantity || 1})`,
           'Bag Updated',
@@ -119,8 +120,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const deleteToCart = useCallback(
     async (productId: string, variantId?: string) => {
       if (!cartToken) return;
-      setIsLoading(true);
       try {
+        // Optimistic UI update
+        setCart((prev) => {
+          if (!prev) return prev;
+          const newItems = prev.items.filter(
+            (it) => !(it.productId === productId && (it.variantId || '') === (variantId || ''))
+          );
+          const totalAmount = newItems.reduce((s, it) => s + it.price * it.quantity, 0);
+          const itemCount = newItems.reduce((c, it) => c + it.quantity, 0);
+          return { ...prev, items: newItems, totalAmount, itemCount };
+        });
+
         const response = await apiDeleteToCart({
           cartToken,
           productId,
@@ -131,19 +142,42 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         console.error('Error in deleteToCart context:', err);
         toast.error('Could not remove item from bag.');
+        refreshCart();
         throw err;
-      } finally {
-        setIsLoading(false);
       }
     },
-    [cartToken, toast]
+    [cartToken, toast, refreshCart]
   );
 
   const updateQuantity = useCallback(
     async (productId: string, quantity: number, variantId?: string) => {
       if (!cartToken) return;
-      setIsLoading(true);
       try {
+        // Optimistic UI update
+        setCart((prev) => {
+          if (!prev) return prev;
+          let newItems = [...prev.items];
+          if (quantity <= 0) {
+            newItems = newItems.filter(
+              (it) => !(it.productId === productId && (it.variantId || '') === (variantId || ''))
+            );
+          } else {
+            const idx = newItems.findIndex(
+              (it) => it.productId === productId && (it.variantId || '') === (variantId || '')
+            );
+            if (idx > -1) {
+              newItems[idx] = {
+                ...newItems[idx],
+                quantity,
+                totalPrice: newItems[idx].price * quantity,
+              };
+            }
+          }
+          const totalAmount = newItems.reduce((s, it) => s + it.price * it.quantity, 0);
+          const itemCount = newItems.reduce((c, it) => c + it.quantity, 0);
+          return { ...prev, items: newItems, totalAmount, itemCount };
+        });
+
         const response = await apiUpdateCartItem({
           cartToken,
           productId,
@@ -155,27 +189,26 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         console.error('Error in updateQuantity context:', err);
         const msg = err?.message || 'Failed to update item quantity.';
         toast.error(msg, 'Stock Alert');
+        refreshCart();
         throw err;
-      } finally {
-        setIsLoading(false);
       }
     },
-    [cartToken, toast]
+    [cartToken, toast, refreshCart]
   );
 
   const clearCart = useCallback(async () => {
     if (!cartToken) return;
-    setIsLoading(true);
     try {
+      // Optimistic clear
+      setCart((prev) => (prev ? { ...prev, items: [], totalAmount: 0, itemCount: 0 } : null));
       const response = await apiClearCart(cartToken);
       setCart(response);
     } catch (err) {
       console.error('Error in clearCart context:', err);
+      refreshCart();
       throw err;
-    } finally {
-      setIsLoading(false);
     }
-  }, [cartToken]);
+  }, [cartToken, refreshCart]);
 
   const openCart = () => setIsOpen(true);
   const closeCart = () => setIsOpen(false);

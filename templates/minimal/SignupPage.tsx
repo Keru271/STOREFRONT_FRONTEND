@@ -11,6 +11,7 @@ export default function MinimalSignupPage({ theme }: AuthPageProps) {
   const router = useRouter();
   const { register } = useAuth();
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [acceptsMarketing, setAcceptsMarketing] = useState(true);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,7 +24,7 @@ export default function MinimalSignupPage({ theme }: AuthPageProps) {
     setError('');
     setIsLoading(true);
     try {
-      await register(formData);
+      await register({ ...formData, acceptsMarketing });
       router.push('/');
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Something went wrong.');
@@ -88,6 +89,19 @@ export default function MinimalSignupPage({ theme }: AuthPageProps) {
               </label>
             </div>
           ))}
+
+          <label className="flex items-start gap-3 cursor-pointer pt-2 group">
+            <input
+              id="min-signup-marketing-consent"
+              type="checkbox"
+              checked={acceptsMarketing}
+              onChange={(e) => setAcceptsMarketing(e.target.checked)}
+              className="mt-0.5 rounded cursor-pointer accent-current"
+            />
+            <span className="text-xs font-light leading-relaxed" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+              Keep me updated with newsletters, exclusive drops, and private offers.
+            </span>
+          </label>
 
           <button
             id="min-signup-submit"

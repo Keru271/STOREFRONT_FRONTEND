@@ -468,6 +468,7 @@ export interface CustomerRegisterInput {
   email: string;
   password: string;
   phone?: string;
+  acceptsMarketing?: boolean;
 }
 
 export interface CustomerLoginInput {

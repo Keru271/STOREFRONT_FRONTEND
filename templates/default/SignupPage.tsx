@@ -15,6 +15,7 @@ export default function DefaultSignupPage({ theme }: AuthPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [acceptsMarketing, setAcceptsMarketing] = useState(true);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -52,6 +53,7 @@ export default function DefaultSignupPage({ theme }: AuthPageProps) {
         email: formData.email,
         password: formData.password,
         phone: formData.phone || undefined,
+        acceptsMarketing,
       });
       router.push('/');
     } catch (err) {
@@ -301,6 +303,28 @@ export default function DefaultSignupPage({ theme }: AuthPageProps) {
                 <Link href="/terms" className="font-medium" style={{ color: 'var(--sf-primary)' }}>Terms of Service</Link>
                 {' '}and{' '}
                 <Link href="/privacy" className="font-medium" style={{ color: 'var(--sf-primary)' }}>Privacy Policy</Link>
+              </span>
+            </label>
+
+            {/* Marketing Consent */}
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <div
+                id="signup-marketing-consent"
+                className="w-4 h-4 rounded mt-0.5 flex-shrink-0 flex items-center justify-center transition-all"
+                style={{
+                  border: acceptsMarketing ? 'none' : '1.5px solid color-mix(in srgb, var(--sf-text) 30%, transparent)',
+                  backgroundColor: acceptsMarketing ? 'var(--sf-primary)' : 'transparent',
+                }}
+                onClick={() => setAcceptsMarketing(!acceptsMarketing)}
+              >
+                {acceptsMarketing && (
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
+              <span className="text-xs leading-relaxed" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+                Keep me updated with exclusive member discounts, promo rewards, and product launches via email & SMS.
               </span>
             </label>
 

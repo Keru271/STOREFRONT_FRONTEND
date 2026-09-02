@@ -11,6 +11,7 @@ export default function LuxeSignupPage({ theme }: AuthPageProps) {
   const router = useRouter();
   const { register } = useAuth();
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '' });
+  const [acceptsMarketing, setAcceptsMarketing] = useState(true);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,7 +24,7 @@ export default function LuxeSignupPage({ theme }: AuthPageProps) {
     setError('');
     setIsLoading(true);
     try {
-      await register({ name: formData.name, email: formData.email, password: formData.password, phone: formData.phone || undefined });
+      await register({ name: formData.name, email: formData.email, password: formData.password, phone: formData.phone || undefined, acceptsMarketing });
       router.push('/');
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Registration failed.');
@@ -137,6 +138,27 @@ export default function LuxeSignupPage({ theme }: AuthPageProps) {
                 />
               </div>
             ))}
+
+            <label className="flex items-start gap-3 cursor-pointer pt-2 group">
+              <div
+                id="luxe-signup-marketing-consent"
+                className="w-4 h-4 mt-0.5 flex items-center justify-center flex-shrink-0 transition-all"
+                style={{
+                  border: acceptsMarketing ? 'none' : '1px solid var(--sf-primary)',
+                  backgroundColor: acceptsMarketing ? 'var(--sf-primary)' : 'transparent',
+                }}
+                onClick={() => setAcceptsMarketing(!acceptsMarketing)}
+              >
+                {acceptsMarketing && (
+                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
+              <span className="text-xs font-light leading-relaxed" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                I wish to receive private salon invitations, new collection previews, and personalized curations.
+              </span>
+            </label>
 
             <button
               id="luxe-signup-submit"

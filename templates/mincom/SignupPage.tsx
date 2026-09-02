@@ -16,6 +16,7 @@ export default function MincomSignupPage({ theme }: AuthPageProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
+  const [acceptsMarketing, setAcceptsMarketing] = useState(true);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,7 +25,7 @@ export default function MincomSignupPage({ theme }: AuthPageProps) {
     setError('');
     setIsLoading(true);
     try {
-      await register({ name, email, password, phone: phone || undefined });
+      await register({ name, email, password, phone: phone || undefined, acceptsMarketing });
       router.push('/');
     } catch (err) {
       if (err instanceof ApiError) {
@@ -117,6 +118,19 @@ export default function MincomSignupPage({ theme }: AuthPageProps) {
                 className="sf-input w-full p-3 text-xs"
               />
             </div>
+
+            <label className="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer pt-1">
+              <input
+                id="mincom-signup-marketing-consent"
+                type="checkbox"
+                checked={acceptsMarketing}
+                onChange={(e) => setAcceptsMarketing(e.target.checked)}
+                className="mt-0.5 rounded border-slate-300 text-amber-500 focus:ring-amber-400"
+              />
+              <span className="leading-relaxed">
+                Send me special promos, early seasonal clearance alerts, and home styling tips.
+              </span>
+            </label>
 
             <button
               type="submit"
