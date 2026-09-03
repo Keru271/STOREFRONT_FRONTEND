@@ -20,23 +20,34 @@ import type {
 export async function registerCustomer(
   data: CustomerRegisterInput
 ): Promise<AuthResponse> {
-  return apiClient.post<AuthResponse>('api/storefront/account/register', data);
+  const res = await apiClient.post<AuthResponse>('api/storefront/account/register', data);
+  if (res?.accessToken && typeof window !== 'undefined') {
+    localStorage.setItem('customer_token', res.accessToken);
+  }
+  return res;
 }
 
 /**
  * Authenticates a customer with email + password.
- * Automatically sets the HttpOnly session cookie.
+ * Automatically sets the HttpOnly session cookie and stores client fallback token.
  */
 export async function loginCustomer(
   data: CustomerLoginInput
 ): Promise<AuthResponse> {
-  return apiClient.post<AuthResponse>('api/storefront/account/login', data);
+  const res = await apiClient.post<AuthResponse>('api/storefront/account/login', data);
+  if (res?.accessToken && typeof window !== 'undefined') {
+    localStorage.setItem('customer_token', res.accessToken);
+  }
+  return res;
 }
 
 /**
- * Logs out the authenticated customer by clearing the HttpOnly cookie on backend.
+ * Logs out the authenticated customer by clearing the session.
  */
 export async function logoutCustomer(): Promise<{ message: string }> {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('customer_token');
+  }
   return apiClient.post<{ message: string }>('api/storefront/account/logout', {});
 }
 

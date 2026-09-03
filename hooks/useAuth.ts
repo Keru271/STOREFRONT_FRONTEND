@@ -46,6 +46,13 @@ export function useAuth(): UseAuthReturn {
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProfile = useCallback(async () => {
+    // For guest visitors with no stored customer token, skip calling /account/me
+    // to prevent unwanted 401 unauthorized errors in console
+    if (typeof window !== 'undefined' && !localStorage.getItem('customer_token')) {
+      setCustomer(null);
+      return null;
+    }
+
     try {
       const profile = await apiGetInfo();
       setCustomer(profile);
@@ -56,7 +63,7 @@ export function useAuth(): UseAuthReturn {
     }
   }, []);
 
-  // On mount, check if HttpOnly session is valid
+  // On mount, check if HttpOnly session or customer_token is valid
   useEffect(() => {
     fetchProfile().finally(() => setIsLoading(false));
   }, [fetchProfile]);
@@ -64,7 +71,10 @@ export function useAuth(): UseAuthReturn {
   const login = useCallback(async (data: CustomerLoginInput) => {
     setIsLoading(true);
     try {
-      await loginCustomer(data);
+      const res = await loginCustomer(data);
+      if (res?.accessToken && typeof window !== 'undefined') {
+        localStorage.setItem('customer_token', res.accessToken);
+      }
       await fetchProfile();
     } finally {
       setIsLoading(false);
@@ -74,7 +84,10 @@ export function useAuth(): UseAuthReturn {
   const register = useCallback(async (data: CustomerRegisterInput) => {
     setIsLoading(true);
     try {
-      await registerCustomer(data);
+      const res = await registerCustomer(data);
+      if (res?.accessToken && typeof window !== 'undefined') {
+        localStorage.setItem('customer_token', res.accessToken);
+      }
       await fetchProfile();
     } finally {
       setIsLoading(false);
@@ -84,6 +97,9 @@ export function useAuth(): UseAuthReturn {
   const logout = useCallback(async () => {
     setIsLoading(true);
     try {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('customer_token');
+      }
       await apiLogoutCustomer().catch(() => {});
     } finally {
       setCustomer(null);

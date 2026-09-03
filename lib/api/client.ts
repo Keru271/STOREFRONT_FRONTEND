@@ -136,8 +136,14 @@ async function apiFetch<T>(
     headers['Content-Type'] = 'application/json';
   }
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+  const resolvedToken =
+    token ||
+    (typeof window !== 'undefined'
+      ? localStorage.getItem('customer_token') || localStorage.getItem('sf_access_token')
+      : undefined);
+
+  if (resolvedToken) {
+    headers['Authorization'] = `Bearer ${resolvedToken}`;
   }
 
   // Resolve multi-tenant identity dynamically:
