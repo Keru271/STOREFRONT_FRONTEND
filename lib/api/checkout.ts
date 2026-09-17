@@ -8,6 +8,7 @@ import {
   StripeIntentResponse,
   OrderPlacedResponse,
   ValidateCouponResponse,
+  GiftCardBalanceResponse,
 } from './types';
 
 /**
@@ -27,6 +28,17 @@ export async function validateCoupon(payload: {
 }
 
 /**
+ * Check gift card validity and live balance
+ */
+export async function checkGiftCardBalance(code: string): Promise<GiftCardBalanceResponse> {
+  const response = await apiClient.post<GiftCardBalanceResponse>(
+    'api/storefront/gift-cards/check-balance',
+    { code }
+  );
+  return response;
+}
+
+/**
  * Fetch available payment gateways and regional recommendation (India: Razorpay, Int: Stripe)
  */
 export async function getAvailablePaymentMethods(
@@ -40,11 +52,12 @@ export async function getAvailablePaymentMethods(
 }
 
 /**
- * Calculate cart taxes, regional shipping rates, and coupon discounts
+ * Calculate cart taxes, regional shipping rates, coupon discounts, and gift cards
  */
 export async function getCheckoutSummary(payload: {
   items: CheckoutCartItemPayload[];
   couponCode?: string;
+  giftCardCode?: string;
   country?: string;
   state?: string;
 }): Promise<CheckoutSummaryResponse> {
@@ -65,6 +78,7 @@ export async function createRazorpayOrder(payload: {
   shippingAddress: CheckoutAddress;
   items: CheckoutCartItemPayload[];
   couponCode?: string;
+  giftCardCode?: string;
   cartToken?: string;
   shippingMethod?: string;
   shippingFee?: number;
@@ -90,6 +104,7 @@ export async function verifyRazorpayPayment(payload: {
   shippingAddress: CheckoutAddress;
   items: CheckoutCartItemPayload[];
   couponCode?: string;
+  giftCardCode?: string;
   cartToken?: string;
   shippingMethod?: string;
   shippingFee?: number;
@@ -111,6 +126,7 @@ export async function createStripePaymentIntent(payload: {
   shippingAddress: CheckoutAddress;
   items: CheckoutCartItemPayload[];
   couponCode?: string;
+  giftCardCode?: string;
   cartToken?: string;
   currency?: string;
 }): Promise<StripeIntentResponse> {
@@ -133,6 +149,7 @@ export async function verifyStripePayment(payload: {
   shippingAddress: CheckoutAddress;
   items: CheckoutCartItemPayload[];
   couponCode?: string;
+  giftCardCode?: string;
   cartToken?: string;
 }): Promise<OrderPlacedResponse> {
   const response = await apiClient.post<OrderPlacedResponse>(
@@ -143,7 +160,7 @@ export async function verifyStripePayment(payload: {
 }
 
 /**
- * 💵 COD / Direct Checkout
+ * 💵 COD / Direct / Gift Card Checkout
  */
 export async function processDirectCheckout(payload: {
   customerName: string;
@@ -152,8 +169,9 @@ export async function processDirectCheckout(payload: {
   shippingAddress: CheckoutAddress;
   items: CheckoutCartItemPayload[];
   couponCode?: string;
+  giftCardCode?: string;
   cartToken?: string;
-  paymentMethod: 'COD' | 'CREDIT_CARD' | 'RAZORPAY' | 'STRIPE';
+  paymentMethod: 'COD' | 'CREDIT_CARD' | 'RAZORPAY' | 'STRIPE' | 'GIFT_CARD';
   shippingMethod?: string;
   shippingFee?: number;
 }): Promise<OrderPlacedResponse> {
@@ -163,3 +181,4 @@ export async function processDirectCheckout(payload: {
   );
   return response;
 }
+

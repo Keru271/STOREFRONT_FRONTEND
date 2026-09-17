@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
+import NotifyMeModal from '@/components/shared/NotifyMeModal';
 
 interface DefaultProductCardProps {
   product: Product;
@@ -20,6 +21,7 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
   const [isAdding, setIsAdding] = useState(false);
   const [addedToast, setAddedToast] = useState(false);
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+  const [isNotifyMeOpen, setIsNotifyMeOpen] = useState(false);
 
   const hasVariants = Boolean(product.variants && product.variants.length > 0);
   const variantPrices = hasVariants
@@ -45,7 +47,10 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
   const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isOutOfStock) return;
+    if (isOutOfStock) {
+      setIsNotifyMeOpen(true);
+      return;
+    }
 
     if (hasVariants) {
       setIsVariantModalOpen(true);
@@ -115,7 +120,7 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
       {/* Card Click Link */}
       <Link href={productHref} className="block">
         {/* Image Container */}
-        <div className="relative w-full aspect-square bg-gray-50 dark:bg-gray-800/50 overflow-hidden">
+        <div className="relative aspect-square w-full bg-gray-50 dark:bg-gray-900 overflow-hidden">
           {imageUrl ? (
             <Image
               src={imageUrl}
@@ -125,62 +130,46 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
               className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div
-              className="w-full h-full flex items-center justify-center"
-              style={{
-                background: `linear-gradient(135deg, color-mix(in srgb, var(--sf-primary) 10%, transparent), color-mix(in srgb, var(--sf-accent) 10%, transparent))`,
-              }}
-            >
-              <svg
-                className="w-12 h-12 opacity-25"
-                style={{ color: 'var(--sf-primary)' }}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1}
-                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
+            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+              No Image
             </div>
           )}
 
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
-            {hasVariants && (
-              <span className="px-2.5 py-1 rounded-full text-xs font-black tracking-wide text-white bg-indigo-600 shadow-sm">
-                {product.variants!.length} Options
-              </span>
-            )}
             {discount > 0 && (
-              <span
-                className="px-2.5 py-1 rounded-full text-xs font-bold text-white shadow-sm"
-                style={{ backgroundColor: 'var(--sf-accent, #EC4899)' }}
-              >
+              <span className="bg-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
                 -{discount}%
               </span>
             )}
-            {!isOutOfStock && stock <= 5 && stock > 0 && (
-              <span className="px-2.5 py-1 rounded-full text-xs font-bold text-white bg-amber-500 shadow-sm">
-                Only {stock} Left
+            {(product as any).isFeatured && (
+              <span className="bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
+                Featured
+              </span>
+            )}
+            {(product as any).isNew && (
+              <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
+                New
               </span>
             )}
             {isOutOfStock && (
-              <span className="px-2.5 py-1 rounded-full text-xs font-bold text-white bg-rose-600 shadow-sm uppercase tracking-wider">
-                Out of Stock
+              <span className="bg-slate-900/80 backdrop-blur-md text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
+                Sold Out
               </span>
             )}
           </div>
 
-          {/* Quick Add Overlay Button */}
+          {/* Quick Add / Notify Me Overlay Button */}
           <button
+            type="button"
             onClick={handleQuickAdd}
-            disabled={isAdding || isOutOfStock}
-            className="absolute inset-x-0 bottom-0 py-3 px-4 translate-y-full group-hover:translate-y-0 transition-all duration-300 font-semibold text-sm text-white flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
-            style={{ backgroundColor: isOutOfStock ? '#64748b' : 'var(--sf-primary)' }}
+            disabled={isAdding}
+            className={`absolute inset-x-0 bottom-0 py-3 px-4 translate-y-full group-hover:translate-y-0 transition-all duration-300 font-semibold text-sm text-white flex items-center justify-center gap-2 cursor-pointer ${
+              isOutOfStock
+                ? 'bg-amber-600 hover:bg-amber-700'
+                : ''
+            }`}
+            style={isOutOfStock ? undefined : { backgroundColor: 'var(--sf-primary)' }}
           >
             {isAdding ? (
               <span className="flex items-center gap-2">
@@ -191,7 +180,10 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
                 Adding...
               </span>
             ) : isOutOfStock ? (
-              <span>Out of Stock</span>
+              <>
+                <span>🔔</span>
+                <span>Notify Me</span>
+              </>
             ) : hasVariants ? (
               <>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -266,6 +258,16 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
           isOpen={isVariantModalOpen}
           onClose={() => setIsVariantModalOpen(false)}
           product={product}
+        />
+      )}
+
+      {/* Notify Me Modal */}
+      {isNotifyMeOpen && (
+        <NotifyMeModal
+          isOpen={isNotifyMeOpen}
+          onClose={() => setIsNotifyMeOpen(false)}
+          product={product}
+          activeTemplate="default"
         />
       )}
     </div>
