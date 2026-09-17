@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
+import NotifyMeModal from '@/components/shared/NotifyMeModal';
 
 export interface FunoProductCardProps {
   product: Product;
@@ -20,6 +21,7 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [added, setAdded] = useState(false);
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+  const [isNotifyMeOpen, setIsNotifyMeOpen] = useState(false);
 
   const hasVariants = Boolean(product.variants && product.variants.length > 0);
   const variantPrices = hasVariants
@@ -50,7 +52,10 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
   const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isOutOfStock) return;
+    if (isOutOfStock) {
+      setIsNotifyMeOpen(true);
+      return;
+    }
 
     if (hasVariants) {
       setIsVariantModalOpen(true);
@@ -104,7 +109,7 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
         {/* Wishlist Button */}
         <button
           onClick={handleWishlistClick}
-          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 hover:bg-white shadow-sm flex items-center justify-center text-slate-800 transition-transform hover:scale-110"
+          className="absolute top-3 right-3 z-10 w-9 h-9 bg-white/90 hover:bg-white rounded-full flex items-center justify-center text-sm shadow-md transition-transform hover:scale-110"
           title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
         >
           {isWishlisted ? (
@@ -126,8 +131,8 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
           )}
         </button>
 
-        {/* Main Image */}
-        <Link href={href} className="block w-full h-full p-6 relative">
+        {/* Product Image */}
+        <Link href={href} className="block w-full h-full p-4 relative">
           {mainImage ? (
             <Image
               src={mainImage}
@@ -147,8 +152,10 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
         <div className="absolute inset-x-3 bottom-3 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 flex gap-2">
           <button
             onClick={handleQuickAdd}
-            disabled={isAdding || isOutOfStock}
-            className="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs shadow-md transition flex items-center justify-center gap-1.5 active:scale-95 bg-black hover:bg-orange-500 text-white disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
+            disabled={isAdding}
+            className={`flex-1 py-2.5 px-3 rounded-xl font-bold text-xs shadow-md transition flex items-center justify-center gap-1.5 active:scale-95 text-white cursor-pointer ${
+              isOutOfStock ? 'bg-amber-600 hover:bg-amber-700' : 'bg-black hover:bg-orange-500'
+            }`}
           >
             <span>
               {added
@@ -230,6 +237,16 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
           isOpen={isVariantModalOpen}
           onClose={() => setIsVariantModalOpen(false)}
           product={product}
+        />
+      )}
+
+      {/* Notify Me Modal */}
+      {isNotifyMeOpen && (
+        <NotifyMeModal
+          isOpen={isNotifyMeOpen}
+          onClose={() => setIsNotifyMeOpen(false)}
+          product={product}
+          activeTemplate="funo"
         />
       )}
     </div>

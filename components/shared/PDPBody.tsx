@@ -36,6 +36,7 @@ import {
 } from '@/lib/api';
 
 const ReviewModal = dynamic(() => import('./ReviewModal'), { ssr: false });
+const NotifyMeModal = dynamic(() => import('./NotifyMeModal'), { ssr: false });
 
 export interface PDPBodyProps {
   theme: ThemeConfig;
@@ -74,6 +75,7 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
     product.variants && product.variants.length > 0 ? product.variants[0].id : '',
   );
   const [isAdding, setIsAdding] = useState(false);
+  const [isNotifyMeOpen, setIsNotifyMeOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'description' | 'specs' | 'reviews'>('description');
 
@@ -830,7 +832,7 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
               </div>
             )}
 
-            {/* ── Quantity & Add to Cart Action Area ───────────────────── */}
+            {/* ── Quantity & Add to Cart / Notify Me Action Area ───────────────────── */}
             <div className="space-y-4 pt-2">
               <div className="flex items-center gap-4">
                 {/* Stepper */}
@@ -852,10 +854,20 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                 >
                   <button
                     type="button"
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    disabled={isOutOfStock || quantity <= 1}
-                    className="w-9 h-9 flex items-center justify-center font-bold text-sm transition hover:opacity-70 disabled:opacity-30 disabled:cursor-not-allowed"
-                    style={{ color: 'var(--sf-text)' }}
+                    onClick={() => setIsNotifyMeOpen(true)}
+                    className={`w-full py-4 font-bold text-sm shadow-xl transition active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer ${
+                      isLuxe
+                        ? 'rounded-none uppercase tracking-[0.25em] text-xs py-4.5 bg-stone-950 hover:bg-stone-800 text-white'
+                        : isMinimal
+                        ? 'rounded-none uppercase tracking-widest text-xs py-4 bg-black dark:bg-white text-white dark:text-black hover:opacity-85'
+                        : isNova
+                        ? 'rounded-full py-4 text-sm bg-gradient-to-r from-amber-500 to-rose-500 hover:opacity-95 text-white'
+                        : isFuno
+                        ? 'rounded-full py-4 text-sm bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/20'
+                        : isMincom
+                        ? 'rounded-xl py-3.5 text-sm bg-amber-600 hover:bg-amber-700 text-white'
+                        : 'rounded-2xl py-4 text-sm bg-slate-900 hover:bg-black text-white dark:bg-white dark:text-slate-900'
+                    }`}
                   >
                     -
                   </button>
@@ -875,6 +887,42 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                     +
                   </button>
                 </div>
+              ) : (
+                /* In Stock: Standard Stepper & Add to Bag */
+                <>
+                  <div className="flex items-center gap-4">
+                    {/* Stepper */}
+                    <div
+                      className={`flex items-center p-1 ${
+                        isMinimal ? 'rounded-none border border-black dark:border-white' : isLuxe ? 'rounded-none border border-stone-300 dark:border-stone-700' : 'rounded-2xl border'
+                      }`}
+                      style={{
+                        backgroundColor: 'color-mix(in srgb, var(--sf-text) 4%, var(--sf-bg))',
+                        borderColor: isMinimal || isLuxe ? undefined : 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        disabled={quantity <= 1}
+                        className="w-9 h-9 flex items-center justify-center font-bold text-sm transition hover:opacity-70 disabled:opacity-30 disabled:cursor-not-allowed"
+                        style={{ color: 'var(--sf-text)' }}
+                      >
+                        -
+                      </button>
+                      <span className="w-10 text-center font-bold text-sm" style={{ color: 'var(--sf-text)' }}>
+                        {quantity}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => Math.min(stock, q + 1))}
+                        disabled={quantity >= stock}
+                        className="w-9 h-9 flex items-center justify-center font-bold text-sm transition hover:opacity-70 disabled:opacity-30 disabled:cursor-not-allowed"
+                        style={{ color: 'var(--sf-text)' }}
+                      >
+                        +
+                      </button>
+                    </div>
 
                 {/* Primary Add to Cart Button */}
                 <button
@@ -1581,6 +1629,28 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
           initialForm={reviewForm}
           onSubmit={handleSubmitReview}
           isSubmitting={isSubmittingReview}
+        />
+      )}
+
+      {/* Back-in-Stock Notify Me Modal */}
+      {isNotifyMeOpen && (
+        <NotifyMeModal
+          isOpen={isNotifyMeOpen}
+          onClose={() => setIsNotifyMeOpen(false)}
+          product={{
+            id: product.id,
+            name: product.name,
+            image: selectedImage || (product.images && product.images[0]) || product.image,
+            sku: product.sku,
+            price: activePrice,
+          }}
+          variant={selectedVariant ? {
+            id: selectedVariant.id,
+            name: selectedVariant.name,
+            sku: selectedVariant.sku,
+            price: selectedVariant.price,
+          } : null}
+          activeTemplate={activeTemplate}
         />
       )}
     </>

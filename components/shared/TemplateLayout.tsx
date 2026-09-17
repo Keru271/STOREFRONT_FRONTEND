@@ -8,14 +8,15 @@ import DefaultHeader from '@/templates/default/Header';
 import DefaultFooter from '@/templates/default/Footer';
 import MincomHeader from '@/templates/mincom/Header';
 import MincomFooter from '@/templates/mincom/Footer';
-import NovaHeader from '@/templates/nova/Header';
-import NovaFooter from '@/templates/nova/Footer';
 import LuxeHeader from '@/templates/luxe/Header';
 import LuxeFooter from '@/templates/luxe/Footer';
 import MinimalHeader from '@/templates/minimal/Header';
 import MinimalFooter from '@/templates/minimal/Footer';
 import FunoHeader from '@/templates/funo/Header';
 import FunoFooter from '@/templates/funo/Footer';
+
+const NovaHeader = MinimalHeader;
+const NovaFooter = MinimalFooter;
 
 interface TemplateLayoutProps {
   theme: ThemeConfig;

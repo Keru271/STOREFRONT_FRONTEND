@@ -6,6 +6,7 @@ import { useState } from 'react';
 import type { Product } from '@/lib/api/types';
 import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
+import NotifyMeModal from '@/components/shared/NotifyMeModal';
 
 interface MinimalProductCardProps {
   product: Product;
@@ -14,6 +15,7 @@ interface MinimalProductCardProps {
 export default function MinimalProductCard({ product }: MinimalProductCardProps) {
   const { formatPrice } = useCurrency();
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+  const [isNotifyMeOpen, setIsNotifyMeOpen] = useState(false);
 
   const hasVariants = Boolean(product.variants && product.variants.length > 0);
   const variantPrices = hasVariants
@@ -110,7 +112,20 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
             className="absolute inset-0 flex items-end justify-center pb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
             style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.4), transparent)' }}
           >
-            {hasVariants && !isOutOfStock ? (
+            {isOutOfStock ? (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsNotifyMeOpen(true);
+                }}
+                className="text-xs tracking-widest uppercase font-bold px-5 py-2.5 shadow-md cursor-pointer transition hover:scale-105 flex items-center gap-1.5 bg-black dark:bg-white text-white dark:text-black"
+              >
+                <span>🔔</span>
+                <span>NOTIFY ME</span>
+              </button>
+            ) : hasVariants ? (
               <button
                 type="button"
                 onClick={(e) => {
@@ -128,7 +143,7 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
                 className="text-xs tracking-widest uppercase font-medium px-5 py-2.5"
                 style={{ backgroundColor: 'var(--sf-bg)', color: 'var(--sf-text)' }}
               >
-                {isOutOfStock ? 'Out of Stock' : 'View Product'}
+                View Product
               </span>
             )}
           </div>
@@ -177,6 +192,16 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
           isOpen={isVariantModalOpen}
           onClose={() => setIsVariantModalOpen(false)}
           product={product}
+        />
+      )}
+
+      {/* Notify Me Modal */}
+      {isNotifyMeOpen && (
+        <NotifyMeModal
+          isOpen={isNotifyMeOpen}
+          onClose={() => setIsNotifyMeOpen(false)}
+          product={product}
+          activeTemplate="minimal"
         />
       )}
     </div>

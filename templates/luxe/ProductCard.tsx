@@ -7,6 +7,7 @@ import type { Product, ProductDetail } from '@/lib/api/types';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
+import NotifyMeModal from '@/components/shared/NotifyMeModal';
 
 type LuxeProduct = Product & Partial<Pick<ProductDetail, 'colorOptions'>>;
 
@@ -17,6 +18,7 @@ interface LuxeProductCardProps {
 export default function LuxeProductCard({ product }: LuxeProductCardProps) {
   const [hovered, setHovered] = useState(false);
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+  const [isNotifyMeOpen, setIsNotifyMeOpen] = useState(false);
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { formatPrice } = useCurrency();
   const isWishlisted = isInWishlist(product.id);
@@ -135,8 +137,21 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
             )}
           </div>
 
-          {/* Quick Option Button on Hover */}
-          {hasVariants && !isOutOfStock && (
+          {/* Quick Option or Notify Me Button on Hover */}
+          {isOutOfStock ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsNotifyMeOpen(true);
+              }}
+              className="absolute inset-x-4 bottom-4 py-2.5 px-4 text-xs tracking-widest uppercase font-medium bg-black text-white hover:bg-stone-800 transition-all shadow-md backdrop-blur opacity-0 group-hover:opacity-100 z-20 cursor-pointer text-center flex items-center justify-center gap-1.5"
+            >
+              <span>🔔</span>
+              <span>Notify Me</span>
+            </button>
+          ) : hasVariants ? (
             <button
               type="button"
               onClick={(e) => {
@@ -148,7 +163,7 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
             >
               Select Edition ⚡
             </button>
-          )}
+          ) : null}
         </div>
 
         {/* Product Info */}
@@ -238,6 +253,16 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
           isOpen={isVariantModalOpen}
           onClose={() => setIsVariantModalOpen(false)}
           product={product}
+        />
+      )}
+
+      {/* Notify Me Modal */}
+      {isNotifyMeOpen && (
+        <NotifyMeModal
+          isOpen={isNotifyMeOpen}
+          onClose={() => setIsNotifyMeOpen(false)}
+          product={product}
+          activeTemplate="luxe"
         />
       )}
     </div>

@@ -12,6 +12,7 @@ import {
   verifyStripePayment,
   processDirectCheckout,
   validateCoupon,
+  checkGiftCardBalance,
 } from '@/lib/api';
 import { ThemeConfig } from '@/lib/api/types';
 import { useCurrency } from '@/hooks/useCurrency';
@@ -30,6 +31,7 @@ import {
   Zap,
   CreditCard,
   Tag,
+  Gift,
   Info,
   X,
   Check,
@@ -130,11 +132,23 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
   } | null>(null);
   const [couponError, setCouponError] = useState('');
 
+  // Gift Card state
+  const [giftCardCodeInput, setGiftCardCodeInput] = useState('');
+  const [isValidatingGiftCard, setIsValidatingGiftCard] = useState(false);
+  const [appliedGiftCard, setAppliedGiftCard] = useState<{
+    code: string;
+    maskedCode: string;
+    balance: number;
+    initialValue?: number;
+  } | null>(null);
+  const [giftCardError, setGiftCardError] = useState('');
+
   // UI Interactive Modals
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showDropoffModal, setShowDropoffModal] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showPromotionsModal, setShowPromotionsModal] = useState(false);
+  const [showGiftCardModal, setShowGiftCardModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showCardErrorModal, setShowCardErrorModal] = useState(false);
   const [showTaxesModal, setShowTaxesModal] = useState(false);
@@ -163,6 +177,11 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
   const totalOrderAmount = Number(
     (discountedSubtotal + deliveryFee + taxesAndOtherFees).toFixed(2),
   );
+
+  // Gift card deduction
+  const giftCardDeduction = appliedGiftCard ? Math.min(appliedGiftCard.balance, totalOrderAmount) : 0;
+  const finalPayableTotal = Math.max(0, Number((totalOrderAmount - giftCardDeduction).toFixed(2)));
+  const isFullyPaidByGiftCard = finalPayableTotal === 0 && Boolean(appliedGiftCard);
 
   // Auto-fill from customer or address book
   useEffect(() => {
@@ -233,6 +252,39 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
     setCouponError('');
   };
 
+  const handleApplyGiftCardCode = async (code: string) => {
+    const clean = code.trim().toUpperCase();
+    if (!clean) return;
+    setIsValidatingGiftCard(true);
+    setGiftCardError('');
+    try {
+      const res = await checkGiftCardBalance(clean);
+      if (res.valid && res.balance !== undefined && res.balance > 0) {
+        setAppliedGiftCard({
+          code: res.code || clean,
+          maskedCode: res.maskedCode || clean,
+          balance: res.balance,
+          initialValue: res.initialValue,
+        });
+        setGiftCardCodeInput('');
+        setShowGiftCardModal(false);
+        toast.success(`Gift Card ${res.maskedCode || clean} applied!`);
+      } else {
+        setGiftCardError(res.message || 'Gift card is invalid or has zero balance.');
+      }
+    } catch (err: any) {
+      setGiftCardError(err.response?.data?.message || 'Unable to apply gift card.');
+    } finally {
+      setIsValidatingGiftCard(false);
+    }
+  };
+
+  const handleRemoveGiftCard = () => {
+    setAppliedGiftCard(null);
+    setGiftCardCodeInput('');
+    setGiftCardError('');
+  };
+
   // Order Placement Handler
   const handlePlaceOrder = async () => {
     if (items.length === 0) {
@@ -272,6 +324,27 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
         image: i.image,
       }));
 
+      // If order is fully covered by gift card
+      if (isFullyPaidByGiftCard && appliedGiftCard) {
+        const result = await processDirectCheckout({
+          customerName: contactData.name,
+          customerEmail: contactData.email,
+          customerPhone: contactData.phone,
+          shippingAddress,
+          items: cartItemsPayload,
+          couponCode: appliedDiscount?.code,
+          giftCardCode: appliedGiftCard.code,
+          cartToken,
+          paymentMethod: 'GIFT_CARD',
+          shippingMethod: deliverySpeed,
+          shippingFee: deliveryFee,
+        });
+
+        await clearCart();
+        router.push(`/checkout/success?orderNumber=${result.order?.orderNumber || 'GC-' + Date.now()}`);
+        return;
+      }
+
       // 1. Razorpay
       if (paymentMethod === 'RAZORPAY') {
         const orderRes = await createRazorpayOrder({
@@ -281,6 +354,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
           shippingAddress,
           items: cartItemsPayload,
           couponCode: appliedDiscount?.code,
+          giftCardCode: appliedGiftCard?.code,
           cartToken,
           shippingMethod: deliverySpeed,
           shippingFee: deliveryFee,
@@ -305,6 +379,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 shippingAddress,
                 items: cartItemsPayload,
                 couponCode: appliedDiscount?.code,
+                giftCardCode: appliedGiftCard?.code,
                 cartToken,
                 shippingMethod: deliverySpeed,
                 shippingFee: deliveryFee,
@@ -335,6 +410,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
           shippingAddress,
           items: cartItemsPayload,
           couponCode: appliedDiscount?.code,
+          giftCardCode: appliedGiftCard?.code,
           cartToken,
           currency: storeCurrency || 'USD',
         });
@@ -347,6 +423,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
           shippingAddress,
           items: cartItemsPayload,
           couponCode: appliedDiscount?.code,
+          giftCardCode: appliedGiftCard?.code,
           cartToken,
         });
 
@@ -366,6 +443,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
         shippingAddress,
         items: cartItemsPayload,
         couponCode: appliedDiscount?.code,
+        giftCardCode: appliedGiftCard?.code,
         cartToken,
         paymentMethod: directMethod,
         shippingMethod: deliverySpeed,
@@ -843,7 +921,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 )}
               </div>
 
-              {/* Promotion Row (Matching Step 2 / Step 6) */}
+              {/* Promotion Row */}
               <div className="border-t border-neutral-100 dark:border-neutral-800 pt-4">
                 <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2">
                   Promotion
@@ -868,6 +946,38 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 </div>
               </div>
 
+              {/* Gift Card Row */}
+              <div className="border-t border-neutral-100 dark:border-neutral-800 pt-4">
+                <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                  <span>Gift Card</span>
+                  {appliedGiftCard && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveGiftCard}
+                      className="text-rose-500 hover:text-rose-600 text-[11px] font-bold"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+                <div
+                  onClick={() => setShowGiftCardModal(true)}
+                  className="flex items-center justify-between p-3 rounded-2xl bg-neutral-50 dark:bg-neutral-800/40 border border-neutral-200/60 dark:border-neutral-700/60 cursor-pointer hover:border-neutral-300 dark:hover:border-neutral-600 transition"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Gift className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <span className="text-sm font-semibold text-neutral-900 dark:text-white">
+                      {appliedGiftCard ? (
+                        <span className="text-indigo-600 font-bold">{appliedGiftCard.maskedCode} (-{formatPrice(giftCardDeduction)})</span>
+                      ) : (
+                        'Redeem Gift Card'
+                      )}
+                    </span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-neutral-400" />
+                </div>
+              </div>
+
               {/* Order Total Breakdown (Matching Step 2 / Step 8) */}
               <div className="border-t border-neutral-100 dark:border-neutral-800 pt-4 space-y-3 text-sm">
                 <h4 className="text-base font-bold text-neutral-900 dark:text-white">
@@ -885,6 +995,13 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                   <div className="flex items-center justify-between text-emerald-600 font-semibold">
                     <span>Promotion ({appliedDiscount.code})</span>
                     <span>-{formatPrice(appliedDiscount.savings)}</span>
+                  </div>
+                )}
+
+                {appliedGiftCard && (
+                  <div className="flex items-center justify-between text-indigo-600 font-semibold">
+                    <span>Gift Card ({appliedGiftCard.maskedCode})</span>
+                    <span>-{formatPrice(giftCardDeduction)}</span>
                   </div>
                 )}
 
@@ -945,9 +1062,16 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
                 {/* Grand Total */}
                 <div className="flex items-center justify-between pt-3 border-t border-neutral-100 dark:border-neutral-800 text-lg font-bold">
-                  <span className="text-neutral-900 dark:text-white font-extrabold">Total</span>
+                  <div>
+                    <span className="text-neutral-900 dark:text-white font-extrabold block">Total</span>
+                    {appliedGiftCard && (
+                      <span className="text-xs text-neutral-400 font-normal">
+                        Due Now: {formatPrice(finalPayableTotal)}
+                      </span>
+                    )}
+                  </div>
                   <span className="text-2xl font-black text-black dark:text-white">
-                    {formatPrice(totalOrderAmount)}
+                    {formatPrice(finalPayableTotal)}
                   </span>
                 </div>
               </div>
@@ -1370,6 +1494,90 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
             <button
               onClick={() => setShowPromotionsModal(false)}
               className="w-full py-3.5 rounded-2xl font-bold text-sm bg-black text-white hover:bg-neutral-800 transition cursor-pointer"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Gift Card Modal */}
+      {showGiftCardModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+          <div className="bg-white dark:bg-neutral-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-neutral-200 dark:border-neutral-800 animate-slide-up">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 flex items-center justify-center">
+                  <Gift className="w-4 h-4" />
+                </div>
+                <h3 className="text-xl font-bold">Gift Card</h3>
+              </div>
+              <button
+                onClick={() => setShowGiftCardModal(false)}
+                className="p-1 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Gift Card Code Input */}
+            <div className="flex gap-2 mb-4">
+              <div className="relative flex-1">
+                <Gift className="w-4 h-4 text-neutral-400 absolute left-3.5 top-3.5" />
+                <input
+                  type="text"
+                  placeholder="GC-XXXX-XXXX-XXXX"
+                  value={giftCardCodeInput}
+                  onChange={(e) => setGiftCardCodeInput(e.target.value.toUpperCase())}
+                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 font-mono font-bold uppercase text-xs outline-hidden"
+                />
+              </div>
+              <button
+                onClick={() => handleApplyGiftCardCode(giftCardCodeInput)}
+                disabled={isValidatingGiftCard || !giftCardCodeInput.trim()}
+                className="px-6 py-3 rounded-2xl font-bold text-xs bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-40 transition cursor-pointer"
+              >
+                {isValidatingGiftCard ? 'Checking...' : 'Apply'}
+              </button>
+            </div>
+
+            {giftCardError && <p className="text-xs text-rose-500 mb-4">{giftCardError}</p>}
+
+            {/* Active Gift Card Banner */}
+            {appliedGiftCard ? (
+              <div className="p-4 rounded-2xl bg-violet-50 dark:bg-violet-950/20 border border-violet-200 dark:border-violet-900/40 flex items-center justify-between mb-6">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-black text-violet-700 dark:text-violet-300 text-sm">
+                      {appliedGiftCard.code}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-violet-200 dark:bg-violet-900 text-violet-800 dark:text-violet-200">
+                      Balance: {formatPrice(appliedGiftCard.balance)}
+                    </span>
+                  </div>
+                  <div className="text-xs text-violet-600 dark:text-violet-400 mt-1">
+                    Applying {formatPrice(giftCardDeduction)} deduction towards this order
+                  </div>
+                </div>
+                <button
+                  onClick={handleRemoveGiftCard}
+                  className="text-xs font-bold text-rose-500 hover:text-rose-600 transition"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <div className="text-center py-6 text-neutral-400">
+                <div className="w-14 h-14 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mx-auto mb-2 text-2xl">
+                  🎁
+                </div>
+                <p className="text-xs font-medium">Enter your 16-character gift card code above to redeem its balance.</p>
+              </div>
+            )}
+
+            <button
+              onClick={() => setShowGiftCardModal(false)}
+              className="w-full py-3.5 rounded-2xl font-bold text-sm bg-black text-white dark:bg-white dark:text-black hover:opacity-90 transition cursor-pointer"
             >
               Done
             </button>

@@ -79,6 +79,7 @@ export { searchProducts } from './search';
 // Checkout & Multi-Gateway Payment APIs
 export {
   validateCoupon,
+  checkGiftCardBalance,
   getAvailablePaymentMethods,
   getCheckoutSummary,
   createRazorpayOrder,
