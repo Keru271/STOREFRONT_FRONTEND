@@ -26,11 +26,11 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps) {
     };
 
     // Colors
-    setVar('--sf-primary',      theme.themePrimaryColor,    '#f59e0b');
-    setVar('--sf-secondary',    theme.themeSecondaryColor,  '#23272a');
-    setVar('--sf-bg',           theme.themeBackgroundColor, '#fafaf9');
-    setVar('--sf-text',         theme.themeTextColor,       '#0f172a');
-    setVar('--sf-accent',       theme.themeAccentColor,     '#d97706');
+    setVar('--sf-primary', theme.themePrimaryColor, '#f59e0b');
+    setVar('--sf-secondary', theme.themeSecondaryColor, '#23272a');
+    setVar('--sf-bg', theme.themeBackgroundColor, '#fafaf9');
+    setVar('--sf-text', theme.themeTextColor, '#0f172a');
+    setVar('--sf-accent', theme.themeAccentColor, '#d97706');
 
     // Radius mapping
     let radius = theme.themeBorderRadius || '0.75rem';
@@ -50,7 +50,9 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps) {
     root.style.setProperty('--sf-font-size', fontSize);
 
     // Typography
-    const { cleanName: headingName, fallback: headingFallback } = parseFontName(theme.themeHeadingFont);
+    const { cleanName: headingName, fallback: headingFallback } = parseFontName(
+      theme.themeHeadingFont,
+    );
     const { cleanName: bodyName, fallback: bodyFallback } = parseFontName(theme.themeBodyFont);
 
     const headingKey = headingName.toLowerCase().replace(/_/g, ' ');
@@ -59,14 +61,14 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps) {
     const headingVar = theme.themeHeadingFontUrl
       ? `'StoreHeadingFont', ${headingFallback}`
       : NEXT_FONT_MAP[headingKey]
-      ? `${NEXT_FONT_MAP[headingKey]}, ${headingFallback}`
-      : `'${headingName}', ${headingFallback}`;
+        ? `${NEXT_FONT_MAP[headingKey]}, ${headingFallback}`
+        : `'${headingName}', ${headingFallback}`;
 
     const bodyVar = theme.themeBodyFontUrl
       ? `'StoreBodyFont', ${bodyFallback}`
       : NEXT_FONT_MAP[bodyKey]
-      ? `${NEXT_FONT_MAP[bodyKey]}, ${bodyFallback}`
-      : `'${bodyName}', ${bodyFallback}`;
+        ? `${NEXT_FONT_MAP[bodyKey]}, ${bodyFallback}`
+        : `'${bodyName}', ${bodyFallback}`;
 
     root.style.setProperty('--font-heading', headingVar, 'important');
     root.style.setProperty('--font-body', bodyVar, 'important');
@@ -94,19 +96,15 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps) {
       '--sf-primary-hover',
       theme.themePrimaryColor
         ? `color-mix(in srgb, ${theme.themePrimaryColor} 85%, black)`
-        : '#d97706'
+        : '#d97706',
     );
     root.style.setProperty(
       '--sf-accent-hover',
       theme.themeAccentColor
         ? `color-mix(in srgb, ${theme.themeAccentColor} 85%, black)`
-        : '#b45309'
+        : '#b45309',
     );
   }, [theme]);
 
-  return (
-    <ThemeContext.Provider value={{ theme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={{ theme }}>{children}</ThemeContext.Provider>;
 }

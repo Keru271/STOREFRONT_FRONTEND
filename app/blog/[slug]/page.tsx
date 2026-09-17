@@ -47,7 +47,8 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
       type: 'article',
       publishedTime: post.publishedAt || post.createdAt,
       authors: [post.author || 'Store Editorial'],
-      images: post.ogImage || post.featuredImage ? [post.ogImage || post.featuredImage!] : undefined,
+      images:
+        post.ogImage || post.featuredImage ? [post.ogImage || post.featuredImage!] : undefined,
     },
     alternates: {
       canonical: post.canonicalUrl || undefined,
@@ -114,13 +115,19 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
           </Link>
 
           <div className="flex items-center gap-1.5 text-xs text-slate-400">
-            <Link href="/" className="hover:underline">Home</Link>
+            <Link href="/" className="hover:underline">
+              Home
+            </Link>
             <ChevronRight className="w-3 h-3" />
-            <Link href="/blog" className="hover:underline">Journal</Link>
+            <Link href="/blog" className="hover:underline">
+              Journal
+            </Link>
             {post.category && (
               <>
                 <ChevronRight className="w-3 h-3" />
-                <span className="text-slate-600 dark:text-slate-300 font-medium">{post.category}</span>
+                <span className="text-slate-600 dark:text-slate-300 font-medium">
+                  {post.category}
+                </span>
               </>
             )}
           </div>
@@ -154,8 +161,7 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
             </div>
             <span>•</span>
             <div className="flex items-center gap-1.5">
-              <Clock className="w-4 h-4" />
-              4 min read
+              <Clock className="w-4 h-4" />4 min read
             </div>
           </div>
         </header>
@@ -163,11 +169,7 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
         {/* Hero Featured Image */}
         {post.featuredImage && (
           <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden shadow-lg bg-slate-100 dark:bg-slate-800">
-            <img
-              src={post.featuredImage}
-              alt={post.title}
-              className="w-full h-full object-cover"
-            />
+            <img src={post.featuredImage} alt={post.title} className="w-full h-full object-cover" />
           </div>
         )}
 
@@ -178,14 +180,20 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
             if (!trimmed) return null;
             if (trimmed.startsWith('## ')) {
               return (
-                <h2 key={idx} className="text-2xl sm:text-3xl font-bold mt-8 mb-4 text-slate-900 dark:text-white">
+                <h2
+                  key={idx}
+                  className="text-2xl sm:text-3xl font-bold mt-8 mb-4 text-slate-900 dark:text-white"
+                >
                   {trimmed.replace('## ', '')}
                 </h2>
               );
             }
             if (trimmed.startsWith('### ')) {
               return (
-                <h3 key={idx} className="text-xl sm:text-2xl font-bold mt-6 mb-3 text-slate-900 dark:text-white">
+                <h3
+                  key={idx}
+                  className="text-xl sm:text-2xl font-bold mt-6 mb-3 text-slate-900 dark:text-white"
+                >
                   {trimmed.replace('### ', '')}
                 </h3>
               );
@@ -208,7 +216,10 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
               );
             }
             return (
-              <p key={idx} className="text-slate-700 dark:text-slate-300 leading-relaxed my-4 text-base sm:text-lg">
+              <p
+                key={idx}
+                className="text-slate-700 dark:text-slate-300 leading-relaxed my-4 text-base sm:text-lg"
+              >
                 {trimmed}
               </p>
             );
@@ -220,16 +231,22 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
           {post.tags ? (
             <div className="flex flex-wrap items-center gap-2">
               <Tag className="w-4 h-4 text-slate-400" />
-              {post.tags.split(',').map((t) => t.trim()).filter(Boolean).map((tag) => (
-                <span
-                  key={tag}
-                  className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-lg"
-                >
-                  #{tag}
-                </span>
-              ))}
+              {post.tags
+                .split(',')
+                .map((t) => t.trim())
+                .filter(Boolean)
+                .map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-lg"
+                  >
+                    #{tag}
+                  </span>
+                ))}
             </div>
-          ) : <div />}
+          ) : (
+            <div />
+          )}
 
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
@@ -275,9 +292,14 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
                   className="group bg-slate-50 dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 hover:shadow-md transition flex flex-col justify-between"
                 >
                   <div className="aspect-square bg-white dark:bg-slate-800 rounded-xl overflow-hidden mb-2.5">
-                    {prod.images && (Array.isArray(prod.images) ? prod.images.length > 0 : Boolean(prod.images)) ? (
+                    {prod.images &&
+                    (Array.isArray(prod.images) ? prod.images.length > 0 : Boolean(prod.images)) ? (
                       <img
-                        src={Array.isArray(prod.images) ? prod.images[0] : (prod.images as string).split(',')[0].trim()}
+                        src={
+                          Array.isArray(prod.images)
+                            ? prod.images[0]
+                            : (prod.images as string).split(',')[0].trim()
+                        }
                         alt={prod.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition"
                       />
@@ -292,7 +314,8 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
                       {prod.name}
                     </h4>
                     <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 mt-1">
-                      {theme.currency || '$'}{prod.price.toFixed(2)}
+                      {theme.currency || '$'}
+                      {prod.price.toFixed(2)}
                     </p>
                   </div>
                 </Link>

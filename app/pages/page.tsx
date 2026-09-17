@@ -15,10 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PagesIndexPage() {
-  const [theme, pages] = await Promise.all([
-    getTheme(),
-    getPages(),
-  ]);
+  const [theme, pages] = await Promise.all([getTheme(), getPages()]);
 
   const customPages = pages.filter((p) => p.pageType === 'CUSTOM' || p.pageType === 'BRAND');
   const policyPages = pages.filter((p) => p.pageType === 'POLICY');
@@ -33,7 +30,10 @@ export default async function PagesIndexPage() {
           >
             INFORMATION DIRECTORY
           </span>
-          <h1 className="text-4xl sm:text-5xl font-black font-heading tracking-tight" style={{ color: 'var(--sf-text)' }}>
+          <h1
+            className="text-4xl sm:text-5xl font-black font-heading tracking-tight"
+            style={{ color: 'var(--sf-text)' }}
+          >
             Store Pages & Policies
           </h1>
           <p className="text-base opacity-70">
@@ -75,7 +75,10 @@ export default async function PagesIndexPage() {
                       </p>
                     )}
                   </div>
-                  <span className="text-xs font-bold mt-4 inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform" style={{ color: 'var(--sf-primary)' }}>
+                  <span
+                    className="text-xs font-bold mt-4 inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform"
+                    style={{ color: 'var(--sf-primary)' }}
+                  >
                     Read Page →
                   </span>
                 </Link>
@@ -107,7 +110,10 @@ export default async function PagesIndexPage() {
                       <span className="text-lg mb-1 block">📜</span>
                       <h4 className="font-bold text-sm font-heading">{page.title}</h4>
                     </div>
-                    <span className="text-[11px] font-bold mt-3" style={{ color: 'var(--sf-primary)' }}>
+                    <span
+                      className="text-[11px] font-bold mt-3"
+                      style={{ color: 'var(--sf-primary)' }}
+                    >
                       View Terms →
                     </span>
                   </Link>

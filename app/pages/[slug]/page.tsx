@@ -13,10 +13,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const [theme, page] = await Promise.all([
-    getTheme(),
-    getPage(slug),
-  ]);
+  const [theme, page] = await Promise.all([getTheme(), getPage(slug)]);
 
   if (!page) {
     return {
@@ -51,10 +48,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function DynamicCmsPage({ params }: PageProps) {
   const { slug } = await params;
-  const [theme, page] = await Promise.all([
-    getTheme(),
-    getPage(slug),
-  ]);
+  const [theme, page] = await Promise.all([getTheme(), getPage(slug)]);
 
   if (!page) {
     notFound();

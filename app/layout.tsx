@@ -99,7 +99,8 @@ const geistMono = Geist_Mono({
 export async function generateMetadata(): Promise<Metadata> {
   const theme = await getTheme();
   const title = theme.seoSiteTitle || theme.storeName;
-  const description = theme.seoMetaDescription || theme.description || `Shop premium products at ${theme.storeName}.`;
+  const description =
+    theme.seoMetaDescription || theme.description || `Shop premium products at ${theme.storeName}.`;
   const ogTitle = theme.seoOgTitle || title;
   const ogDescription = theme.seoOgDescription || description;
   const ogImage = theme.seoOgImage || theme.logo || undefined;
@@ -125,9 +126,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: ogDescription,
       images: ogImage ? [ogImage] : undefined,
     },
-    alternates: theme.seoCanonicalUrl
-      ? { canonical: theme.seoCanonicalUrl }
-      : undefined,
+    alternates: theme.seoCanonicalUrl ? { canonical: theme.seoCanonicalUrl } : undefined,
     robots: theme.seoRobotsTxt || 'index, follow',
   };
 }
@@ -135,11 +134,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Server-side fetching of Theme and Menus in parallel
   const [theme, headerMenu, footerMenu] = await Promise.all([
     getTheme(),
@@ -167,10 +162,7 @@ export default async function RootLayout({
     <html lang={theme.language || 'en'} className={`h-full antialiased ${fontVariables}`}>
       <head>
         {/* Dynamic @font-face and CSS variable injection for tenant fonts without app rebuild */}
-        <style
-          id="sf-dynamic-typography"
-          dangerouslySetInnerHTML={{ __html: dynamicFontCss }}
-        />
+        <style id="sf-dynamic-typography" dangerouslySetInnerHTML={{ __html: dynamicFontCss }} />
         {structuredDataMarkup && (
           <script
             type="application/ld+json"
@@ -180,7 +172,11 @@ export default async function RootLayout({
       </head>
       <body
         className="min-h-full flex flex-col pb-16 lg:pb-0"
-        style={{ backgroundColor: 'var(--sf-bg)', color: 'var(--sf-text)', fontFamily: 'var(--sf-body-font)' }}
+        style={{
+          backgroundColor: 'var(--sf-bg)',
+          color: 'var(--sf-text)',
+          fontFamily: 'var(--sf-body-font)',
+        }}
       >
         <ThemeProvider theme={theme}>
           <LoadingProvider>

@@ -25,19 +25,26 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
   const variantPrices = hasVariants
     ? product.variants!.map((v) => Number(v.price)).filter((p) => !isNaN(p))
     : [];
-  const minVariantPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : Number(product.price);
-  const maxVariantPrice = variantPrices.length > 0 ? Math.max(...variantPrices) : Number(product.price);
+  const minVariantPrice =
+    variantPrices.length > 0 ? Math.min(...variantPrices) : Number(product.price);
+  const maxVariantPrice =
+    variantPrices.length > 0 ? Math.max(...variantPrices) : Number(product.price);
   const hasPriceRange = hasVariants && minVariantPrice !== maxVariantPrice;
 
   const isWishlisted = isInWishlist(product.id);
   const mainImage = product.image || (product.images && product.images[0]);
-  const discount = product.compareAtPrice && product.compareAtPrice > product.price
-    ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
-    : 0;
+  const discount =
+    product.compareAtPrice && product.compareAtPrice > product.price
+      ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
+      : 0;
 
   const stock = hasVariants
     ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
-    : (product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1);
+    : product.stockQuantity !== undefined
+      ? Number(product.stockQuantity)
+      : product.inventory !== undefined
+        ? Number(product.inventory)
+        : 1;
   const isOutOfStock = stock <= 0;
 
   const handleQuickAdd = async (e: React.MouseEvent) => {
@@ -73,10 +80,8 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
 
   return (
     <div className="group relative flex flex-col justify-between bg-white rounded-2xl border border-[#ededed] hover:border-[#d0d0d0] hover:shadow-xl transition-all duration-300 overflow-hidden">
-      
       {/* Product Image Area */}
       <div className="relative aspect-square w-full bg-[#f7f7f7] overflow-hidden">
-        
         {/* Badges */}
         <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
           {hasVariants && (
@@ -105,8 +110,18 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
           {isWishlisted ? (
             <span className="text-rose-500 text-sm">❤️</span>
           ) : (
-            <svg className="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            <svg
+              className="w-4 h-4 text-slate-700"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
             </svg>
           )}
         </button>
@@ -135,7 +150,17 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
             disabled={isAdding || isOutOfStock}
             className="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs shadow-md transition flex items-center justify-center gap-1.5 active:scale-95 bg-black hover:bg-orange-500 text-white disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
           >
-            <span>{added ? 'Added! ✓' : isAdding ? 'Adding...' : isOutOfStock ? 'Sold Out' : hasVariants ? 'Select Options' : 'Quick Add'}</span>
+            <span>
+              {added
+                ? 'Added! ✓'
+                : isAdding
+                  ? 'Adding...'
+                  : isOutOfStock
+                    ? 'Sold Out'
+                    : hasVariants
+                      ? 'Select Options'
+                      : 'Quick Add'}
+            </span>
             <span>{hasVariants ? '⚡' : '🛍️'}</span>
           </button>
           <Link
@@ -174,7 +199,9 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
         <div className="pt-2 border-t border-slate-100 flex items-baseline justify-between">
           <div className="flex items-baseline gap-2">
             <span className="text-base font-black text-slate-900 font-heading">
-              {hasPriceRange ? `From ${formatPrice(minVariantPrice)}` : formatPrice(minVariantPrice)}
+              {hasPriceRange
+                ? `From ${formatPrice(minVariantPrice)}`
+                : formatPrice(minVariantPrice)}
             </span>
             {product.compareAtPrice && product.compareAtPrice > product.price && (
               <span className="text-xs text-slate-400 line-through">
@@ -188,8 +215,8 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
               isOutOfStock
                 ? 'bg-rose-50 text-rose-600'
                 : stock <= 5
-                ? 'bg-amber-50 text-amber-700'
-                : 'bg-emerald-50 text-emerald-700'
+                  ? 'bg-amber-50 text-amber-700'
+                  : 'bg-emerald-50 text-emerald-700'
             }`}
           >
             {isOutOfStock ? 'Sold Out' : stock <= 5 ? `${stock} left` : 'In Stock'}

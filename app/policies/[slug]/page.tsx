@@ -13,10 +13,7 @@ interface PolicyPageProps {
 
 export async function generateMetadata({ params }: PolicyPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const [theme, page] = await Promise.all([
-    getTheme(),
-    getPage(`policies/${slug}`),
-  ]);
+  const [theme, page] = await Promise.all([getTheme(), getPage(`policies/${slug}`)]);
 
   if (!page) {
     return {
@@ -50,10 +47,7 @@ export async function generateMetadata({ params }: PolicyPageProps): Promise<Met
 
 export default async function PolicyPage({ params }: PolicyPageProps) {
   const { slug } = await params;
-  const [theme, page] = await Promise.all([
-    getTheme(),
-    getPage(`policies/${slug}`),
-  ]);
+  const [theme, page] = await Promise.all([getTheme(), getPage(`policies/${slug}`)]);
 
   if (!page) {
     notFound();

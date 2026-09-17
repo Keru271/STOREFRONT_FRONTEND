@@ -24,22 +24,38 @@ export function FunoLogo({ className = 'h-8' }: { className?: string }) {
       >
         {/* Lamp shade above F */}
         <path d="M12 4 L22 4 L20 10 L14 10 Z" fill="currentColor" />
-        <line x1="17" y1="10" x2="17" y2="13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        
+        <line
+          x1="17"
+          y1="10"
+          x2="17"
+          y2="13"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+
         {/* Letter F */}
         <path d="M10 14 H28 V19 H16 V25 H25 V30 H16 V44 H10 Z" />
-        <line x1="16" y1="21" x2="25" y2="21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        
+        <line
+          x1="16"
+          y1="21"
+          x2="25"
+          y2="21"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+
         {/* Letter u */}
         <path d="M36 22 V35 C36 41 40 45 47 45 C54 45 58 41 58 35 V22 H52 V34 C52 38 50 40 47 40 C44 40 42 38 42 34 V22 Z" />
-        
+
         {/* Letter n */}
         <path d="M66 22 V44 H72 V32 C72 27 75 25 79 25 C83 25 85 27 85 32 V44 H91 V31 C91 24 87 21 81 21 C76 21 73 23 72 26 V22 Z" />
-        
+
         {/* Letter i */}
         <circle cx="99" cy="15" r="3.5" />
         <rect x="96" y="22" width="6" height="22" rx="1" />
-        
+
         {/* Letter e */}
         <path d="M121 31 C121 24 116 21 110 21 C103 21 98 26 98 33 C98 40 103 45 111 45 C116 45 120 42 121 38 H115 C114 39.5 113 40.5 110.5 40.5 C106.5 40.5 104 38 104 34 H121 V31 Z M104 30 C104.5 26.5 107 25 110 25 C113 25 115 26.5 115.5 30 Z" />
       </svg>
@@ -118,11 +134,10 @@ export default function FunoHeader() {
       {/* Main Sticky Header */}
       <header
         className={`w-full bg-white text-black transition-all duration-300 z-50 ${
-          theme.headerSticky ?? true ? 'sticky top-0' : ''
+          (theme.headerSticky ?? true) ? 'sticky top-0' : ''
         } ${scrolled ? 'shadow-md py-3' : 'py-5'} border-b border-[#f0f0f0]`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          
           {/* 1. Left: Mobile Hamburger & Brand Logo */}
           <div className="flex items-center gap-4">
             <button
@@ -132,9 +147,19 @@ export default function FunoHeader() {
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {mobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
                 )}
               </svg>
             </button>
@@ -157,7 +182,6 @@ export default function FunoHeader() {
 
           {/* 2. Center: Desktop Main Navigation Bar */}
           <nav className="hidden lg:flex items-center gap-8 text-[13px] font-bold tracking-widest text-black">
-            
             {/* HOME Dropdown */}
             <div
               className="relative py-2"
@@ -169,17 +193,33 @@ export default function FunoHeader() {
                 className="hover:text-orange-500 transition-colors uppercase flex items-center gap-1"
               >
                 <span>HOME</span>
-                <svg className="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-3 h-3 opacity-60"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </Link>
 
               {activeDropdown === 'home' && (
                 <div className="absolute top-full left-0 w-64 bg-white border border-[#eaeaea] shadow-xl rounded-2xl p-4 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
-                  <div className="text-[10px] font-black uppercase text-slate-400 tracking-wider mb-2">Homepage Layouts</div>
+                  <div className="text-[10px] font-black uppercase text-slate-400 tracking-wider mb-2">
+                    Homepage Layouts
+                  </div>
                   <div className="space-y-1">
                     {[
-                      { label: 'Modern Living & Lounge', href: '/?layout=modern', badge: 'Popular' },
+                      {
+                        label: 'Modern Living & Lounge',
+                        href: '/?layout=modern',
+                        badge: 'Popular',
+                      },
                       { label: 'Nordic Studio & Wood', href: '/?layout=nordic' },
                       { label: 'Minimalist Architecture', href: '/?layout=minimal', badge: 'New' },
                       { label: 'Artisan Decor & Lighting', href: '/?layout=artisan' },
@@ -213,8 +253,18 @@ export default function FunoHeader() {
                 className="hover:text-orange-500 transition-colors uppercase flex items-center gap-1"
               >
                 <span>SHOPS</span>
-                <svg className="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-3 h-3 opacity-60"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </Link>
 
@@ -258,7 +308,11 @@ export default function FunoHeader() {
                           { name: 'Best Selling Classics', href: '/products?sort=popular' },
                           { name: 'Limited Studio Pieces', href: '/collections/studio-drop' },
                           { name: 'Sustainable Oak & Teak', href: '/collections/sustainable' },
-                          { name: 'Special Sale Deals', href: '/products?sort=discount', isSale: true },
+                          {
+                            name: 'Special Sale Deals',
+                            href: '/products?sort=discount',
+                            isSale: true,
+                          },
                         ].map((item, idx) => (
                           <li key={idx} className="flex items-center gap-2">
                             <Link
@@ -267,8 +321,16 @@ export default function FunoHeader() {
                             >
                               {item.name}
                             </Link>
-                            {item.isHot && <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">HOT</span>}
-                            {item.isSale && <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-rose-100 text-rose-600">SALE</span>}
+                            {item.isHot && (
+                              <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">
+                                HOT
+                              </span>
+                            )}
+                            {item.isSale && (
+                              <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-rose-100 text-rose-600">
+                                SALE
+                              </span>
+                            )}
                           </li>
                         ))}
                       </ul>
@@ -314,8 +376,18 @@ export default function FunoHeader() {
                 className="hover:text-orange-500 transition-colors uppercase flex items-center gap-1"
               >
                 <span>PRODUCTS</span>
-                <svg className="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-3 h-3 opacity-60"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </Link>
 
@@ -354,25 +426,47 @@ export default function FunoHeader() {
                 className="hover:text-orange-500 transition-colors uppercase flex items-center gap-1"
               >
                 <span>BLOG</span>
-                <svg className="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-3 h-3 opacity-60"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </Link>
 
               {activeDropdown === 'blog' && (
                 <div className="absolute top-full -left-12 w-64 bg-white border border-[#eaeaea] shadow-xl rounded-2xl p-4 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
-                  <div className="text-[10px] font-black uppercase text-slate-400 tracking-wider mb-2">Stories & Insights</div>
+                  <div className="text-[10px] font-black uppercase text-slate-400 tracking-wider mb-2">
+                    Stories & Insights
+                  </div>
                   <div className="space-y-2">
                     {[
-                      { title: 'The Nordic Interior Guide 2026', desc: '5 design rules for serene spaces', href: '/pages/about' },
-                      { title: 'Sustainable Teak & Craft', desc: 'How our master carpenters work', href: '/pages/about' },
+                      {
+                        title: 'The Nordic Interior Guide 2026',
+                        desc: '5 design rules for serene spaces',
+                        href: '/pages/about',
+                      },
+                      {
+                        title: 'Sustainable Teak & Craft',
+                        desc: 'How our master carpenters work',
+                        href: '/pages/about',
+                      },
                     ].map((story, idx) => (
                       <Link
                         key={idx}
                         href={story.href}
                         className="block p-2 rounded-xl hover:bg-slate-50 transition"
                       >
-                        <div className="text-xs font-bold text-slate-900 hover:text-orange-500 leading-snug">{story.title}</div>
+                        <div className="text-xs font-bold text-slate-900 hover:text-orange-500 leading-snug">
+                          {story.title}
+                        </div>
                         <div className="text-[10px] text-slate-500 mt-0.5">{story.desc}</div>
                       </Link>
                     ))}
@@ -392,8 +486,18 @@ export default function FunoHeader() {
                 className="hover:text-orange-500 transition-colors uppercase flex items-center gap-1"
               >
                 <span>PAGES</span>
-                <svg className="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-3 h-3 opacity-60"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </Link>
 
@@ -418,12 +522,10 @@ export default function FunoHeader() {
                 </div>
               )}
             </div>
-
           </nav>
 
           {/* 3. Right: Action Icons (Search, User, Wishlist, Cart Badge) */}
           <div className="flex items-center gap-4 sm:gap-6">
-            
             {/* Search Icon Button */}
             <button
               onClick={() => setSearchOpen(true)}
@@ -431,7 +533,12 @@ export default function FunoHeader() {
               title="Search products"
               aria-label="Search"
             >
-              <svg className="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-5 h-5 stroke-[2]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <circle cx="11" cy="11" r="8" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35" />
               </svg>
@@ -445,8 +552,17 @@ export default function FunoHeader() {
                 title="Account"
                 aria-label="User Account"
               >
-                <svg className="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                <svg
+                  className="w-5 h-5 stroke-[2]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
                 </svg>
               </button>
 
@@ -455,7 +571,9 @@ export default function FunoHeader() {
                   {isAuthenticated ? (
                     <div className="space-y-1">
                       <div className="px-3 py-2 border-b border-slate-100">
-                        <div className="text-xs font-black text-slate-900 truncate">{customer?.name || 'Customer'}</div>
+                        <div className="text-xs font-black text-slate-900 truncate">
+                          {customer?.name || 'Customer'}
+                        </div>
                         <div className="text-[10px] text-slate-500 truncate">{customer?.email}</div>
                       </div>
                       <Link
@@ -511,8 +629,17 @@ export default function FunoHeader() {
               title="Wishlist"
               aria-label="Wishlist"
             >
-              <svg className="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              <svg
+                className="w-5 h-5 stroke-[2]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
               </svg>
               {wishlistCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-slate-900 text-white rounded-full text-[9px] font-black flex items-center justify-center">
@@ -529,17 +656,24 @@ export default function FunoHeader() {
               aria-label="Cart"
             >
               {/* Bag icon */}
-              <svg className="w-6 h-6 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              <svg
+                className="w-6 h-6 stroke-[2]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                />
               </svg>
               {/* Distinct orange badge with item count */}
               <span className="absolute -top-1 -right-1.5 min-w-[18px] h-[18px] px-1 bg-[#f97316] text-white rounded-full text-[10px] font-black flex items-center justify-center shadow-sm">
                 {itemCount}
               </span>
             </button>
-
           </div>
-
         </div>
       </header>
 
@@ -553,31 +687,42 @@ export default function FunoHeader() {
               aria-label="Close search"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
 
             <div className="space-y-1">
-              <h3 className="text-xl font-black text-slate-900 font-heading">Search Funie Collection</h3>
-              <p className="text-xs text-slate-500">Find furniture, lighting, chairs, tables, and home accents.</p>
+              <h3 className="text-xl font-black text-slate-900 font-heading">
+                Search Funie Collection
+              </h3>
+              <p className="text-xs text-slate-500">
+                Find furniture, lighting, chairs, tables, and home accents.
+              </p>
             </div>
 
-            <SearchAutocomplete
-              placeholder="Search by keyword, product name, or SKU..."
-            />
+            <SearchAutocomplete placeholder="Search by keyword, product name, or SKU..." />
 
             <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Popular Searches:</span>
-              {['Lounge Chair', 'Pendant Light', 'Oak Table', 'Ceramic Vase', 'Sofa'].map((term) => (
-                <Link
-                  key={term}
-                  href={`/products?search=${encodeURIComponent(term)}`}
-                  onClick={() => setSearchOpen(false)}
-                  className="px-3 py-1 rounded-full bg-slate-100 hover:bg-orange-50 hover:text-orange-600 text-xs font-semibold text-slate-700 transition"
-                >
-                  {term}
-                </Link>
-              ))}
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                Popular Searches:
+              </span>
+              {['Lounge Chair', 'Pendant Light', 'Oak Table', 'Ceramic Vase', 'Sofa'].map(
+                (term) => (
+                  <Link
+                    key={term}
+                    href={`/products?search=${encodeURIComponent(term)}`}
+                    onClick={() => setSearchOpen(false)}
+                    className="px-3 py-1 rounded-full bg-slate-100 hover:bg-orange-50 hover:text-orange-600 text-xs font-semibold text-slate-700 transition"
+                  >
+                    {term}
+                  </Link>
+                ),
+              )}
             </div>
           </div>
         </div>
@@ -595,7 +740,12 @@ export default function FunoHeader() {
                   className="p-1 text-slate-400 hover:text-slate-800"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -669,7 +819,9 @@ export default function FunoHeader() {
                 className="flex items-center justify-between py-2 text-xs font-bold text-slate-700"
               >
                 <span>❤️ Wishlist</span>
-                <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-900">{wishlistCount}</span>
+                <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-900">
+                  {wishlistCount}
+                </span>
               </Link>
               <Link
                 href="/account"

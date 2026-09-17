@@ -82,7 +82,11 @@ function HeroSection({
               <Link
                 href={config.secondaryCtaHref || '/collections'}
                 className="px-8 py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 hover:scale-105"
-                style={{ backgroundColor: 'rgba(255,255,255,0.15)', color: 'white', border: '1.5px solid rgba(255,255,255,0.3)' }}
+                style={{
+                  backgroundColor: 'rgba(255,255,255,0.15)',
+                  color: 'white',
+                  border: '1.5px solid rgba(255,255,255,0.3)',
+                }}
               >
                 {config.secondaryCtaLabel}
               </Link>
@@ -112,10 +116,10 @@ function TrustBadgesSection({
   config,
 }: SectionProps & { config: Extract<SectionConfig, { type: 'trust-badges' }>['config'] }) {
   const DEFAULT_BADGES = [
-    { icon: '🚚', title: 'Free Shipping',  desc: 'On orders over $50' },
-    { icon: '↩️', title: 'Easy Returns',   desc: '30-day return policy' },
+    { icon: '🚚', title: 'Free Shipping', desc: 'On orders over $50' },
+    { icon: '↩️', title: 'Easy Returns', desc: '30-day return policy' },
     { icon: '🔒', title: 'Secure Payment', desc: 'SSL encrypted checkout' },
-    { icon: '💬', title: '24/7 Support',   desc: 'Always here to help' },
+    { icon: '💬', title: '24/7 Support', desc: 'Always here to help' },
   ];
   const badges = config.badges || DEFAULT_BADGES;
 
@@ -130,8 +134,15 @@ function TrustBadgesSection({
             <div key={badge.title} className="flex items-center gap-3 py-2">
               <span className="text-2xl flex-shrink-0">{badge.icon}</span>
               <div>
-                <p className="text-sm font-semibold" style={{ color: 'var(--sf-text)' }}>{badge.title}</p>
-                <p className="text-xs" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>{badge.desc}</p>
+                <p className="text-sm font-semibold" style={{ color: 'var(--sf-text)' }}>
+                  {badge.title}
+                </p>
+                <p
+                  className="text-xs"
+                  style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                >
+                  {badge.desc}
+                </p>
               </div>
             </div>
           ))}
@@ -149,7 +160,7 @@ function CollectionsSection({
 }: SectionProps & { config: Extract<SectionConfig, { type: 'collections' }>['config'] }) {
   const limit = config.limit || 3;
   const featured = collections.filter((c) => c.featured).slice(0, limit);
-  const display  = featured.length > 0 ? featured : collections.slice(0, limit);
+  const display = featured.length > 0 ? featured : collections.slice(0, limit);
 
   if (display.length === 0) return null;
 
@@ -157,10 +168,21 @@ function CollectionsSection({
     <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-10">
         <div>
-          <span className="text-xs font-semibold tracking-widest uppercase mb-2 block" style={{ color: 'var(--sf-primary)' }}>Explore</span>
-          <h2 className="text-3xl font-bold" style={{ color: 'var(--sf-text)' }}>{config.title || 'Featured Collections'}</h2>
+          <span
+            className="text-xs font-semibold tracking-widest uppercase mb-2 block"
+            style={{ color: 'var(--sf-primary)' }}
+          >
+            Explore
+          </span>
+          <h2 className="text-3xl font-bold" style={{ color: 'var(--sf-text)' }}>
+            {config.title || 'Featured Collections'}
+          </h2>
         </div>
-        <Link href="/collections" className="text-sm font-medium hidden sm:flex items-center gap-1.5 transition-all hover:gap-2.5" style={{ color: 'var(--sf-primary)' }}>
+        <Link
+          href="/collections"
+          className="text-sm font-medium hidden sm:flex items-center gap-1.5 transition-all hover:gap-2.5"
+          style={{ color: 'var(--sf-primary)' }}
+        >
           View All <span>→</span>
         </Link>
       </div>
@@ -173,16 +195,30 @@ function CollectionsSection({
             style={{ minHeight: i === 0 ? '400px' : '190px' }}
           >
             {collection.image ? (
-              <img src={collection.image} alt={collection.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <img
+                src={collection.image}
+                alt={collection.name}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
             ) : (
-              <div className="absolute inset-0" style={{ background: `linear-gradient(${135 + i * 30}deg, color-mix(in srgb, var(--sf-primary) ${80 - i * 15}%, var(--sf-secondary)), color-mix(in srgb, var(--sf-accent) 60%, var(--sf-secondary)))` }} />
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `linear-gradient(${135 + i * 30}deg, color-mix(in srgb, var(--sf-primary) ${80 - i * 15}%, var(--sf-secondary)), color-mix(in srgb, var(--sf-accent) 60%, var(--sf-secondary)))`,
+                }}
+              />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             <div className="absolute bottom-0 left-0 p-6">
               <h3 className="text-xl font-bold text-white mb-1">{collection.name}</h3>
-              {collection.description && <p className="text-sm text-white/70 line-clamp-2">{collection.description}</p>}
+              {collection.description && (
+                <p className="text-sm text-white/70 line-clamp-2">{collection.description}</p>
+              )}
               <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-white/90 group-hover:text-white transition-colors">
-                Shop Collection <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
+                Shop Collection{' '}
+                <span className="group-hover:translate-x-1 transition-transform inline-block">
+                  →
+                </span>
               </span>
             </div>
           </Link>
@@ -219,7 +255,10 @@ function CategoriesSection({
               key={cat.id}
               href={`/products?category=${cat.slug}`}
               className="flex-shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 border hover:text-white"
-              style={{ color: 'var(--sf-text)', borderColor: 'color-mix(in srgb, var(--sf-text) 20%, transparent)' }}
+              style={{
+                color: 'var(--sf-text)',
+                borderColor: 'color-mix(in srgb, var(--sf-text) 20%, transparent)',
+              }}
             >
               {cat.icon && <span className="mr-1.5">{cat.icon}</span>}
               {cat.name}
@@ -233,13 +272,20 @@ function CategoriesSection({
 
 // ── Featured Products Section ─────────────────────────────────────────────────
 
-interface ProductCardMiniProps { product: Product; }
+interface ProductCardMiniProps {
+  product: Product;
+}
 
 function ProductCardMini({ product }: ProductCardMiniProps) {
   const href = product.urlSlug ? `/products/${product.urlSlug}` : `/products/${product.id}`;
   const image = product.images?.[0] || product.image;
   const hasDiscount = product.compareAtPrice && product.compareAtPrice > product.price;
-  const stock = product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1;
+  const stock =
+    product.stockQuantity !== undefined
+      ? Number(product.stockQuantity)
+      : product.inventory !== undefined
+        ? Number(product.inventory)
+        : 1;
   const isOutOfStock = stock <= 0;
 
   return (
@@ -252,13 +298,20 @@ function ProductCardMini({ product }: ProductCardMiniProps) {
         }}
       >
         {image ? (
-          <img src={image} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          <img
+            src={image}
+            alt={product.name}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-4xl">🛍️</div>
         )}
         <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
           {hasDiscount && (
-            <span className="px-2 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: 'var(--sf-accent)' }}>
+            <span
+              className="px-2 py-0.5 rounded-full text-xs font-bold text-white"
+              style={{ backgroundColor: 'var(--sf-accent)' }}
+            >
               Sale
             </span>
           )}
@@ -269,7 +322,10 @@ function ProductCardMini({ product }: ProductCardMiniProps) {
           )}
         </div>
       </div>
-      <h3 className="font-medium text-sm line-clamp-1 mb-1 group-hover:underline" style={{ color: 'var(--sf-text)' }}>
+      <h3
+        className="font-medium text-sm line-clamp-1 mb-1 group-hover:underline"
+        style={{ color: 'var(--sf-text)' }}
+      >
         {product.name}
       </h3>
       <div className="flex items-baseline gap-2">
@@ -277,14 +333,15 @@ function ProductCardMini({ product }: ProductCardMiniProps) {
           {product.price.toFixed(2)}
         </span>
         {hasDiscount && (
-          <span className="text-xs line-through" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+          <span
+            className="text-xs line-through"
+            style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+          >
             {product.compareAtPrice!.toFixed(2)}
           </span>
         )}
         {isOutOfStock && (
-          <span className="text-xs font-bold text-rose-600 ml-auto">
-            Out of Stock
-          </span>
+          <span className="text-xs font-bold text-rose-600 ml-auto">Out of Stock</span>
         )}
       </div>
     </Link>
@@ -298,10 +355,14 @@ function FeaturedProductsSection({
   // Filter to collection/category if specified
   let displayProducts = products;
   if (config.collection) {
-    displayProducts = products.filter((p) => p.collectionName?.toLowerCase() === config.collection?.toLowerCase());
+    displayProducts = products.filter(
+      (p) => p.collectionName?.toLowerCase() === config.collection?.toLowerCase(),
+    );
   }
   if (config.category) {
-    displayProducts = displayProducts.filter((p) => p.categoryName?.toLowerCase() === config.category?.toLowerCase());
+    displayProducts = displayProducts.filter(
+      (p) => p.categoryName?.toLowerCase() === config.category?.toLowerCase(),
+    );
   }
   const limit = config.limit || 12;
   displayProducts = displayProducts.slice(0, limit);
@@ -311,7 +372,10 @@ function FeaturedProductsSection({
       <div className="flex items-center justify-between mb-10">
         <div>
           {config.subtitle && (
-            <span className="text-xs font-semibold tracking-widest uppercase mb-2 block" style={{ color: 'var(--sf-primary)' }}>
+            <span
+              className="text-xs font-semibold tracking-widest uppercase mb-2 block"
+              style={{ color: 'var(--sf-primary)' }}
+            >
               {config.subtitle}
             </span>
           )}
@@ -320,7 +384,11 @@ function FeaturedProductsSection({
           </h2>
         </div>
         {config.viewAllHref && (
-          <Link href={config.viewAllHref} className="text-sm font-medium hidden sm:flex items-center gap-1.5 transition-all hover:gap-2.5" style={{ color: 'var(--sf-primary)' }}>
+          <Link
+            href={config.viewAllHref}
+            className="text-sm font-medium hidden sm:flex items-center gap-1.5 transition-all hover:gap-2.5"
+            style={{ color: 'var(--sf-primary)' }}
+          >
             View All <span>→</span>
           </Link>
         )}
@@ -328,7 +396,12 @@ function FeaturedProductsSection({
 
       {displayProducts.length === 0 ? (
         <div className="text-center py-20">
-          <p className="text-lg" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>Products coming soon…</p>
+          <p
+            className="text-lg"
+            style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+          >
+            Products coming soon…
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -346,22 +419,42 @@ function FeaturedProductsSection({
 function BannerSection({
   config,
 }: SectionProps & { config: Extract<SectionConfig, { type: 'banner' }>['config'] }) {
-  const bgStyle = config.variant === 'dark'
-    ? { background: '#111827' }
-    : config.variant === 'accent'
-      ? { background: `linear-gradient(120deg, var(--sf-accent), color-mix(in srgb, var(--sf-accent) 60%, var(--sf-primary)))` }
-      : { background: `linear-gradient(120deg, var(--sf-primary), color-mix(in srgb, var(--sf-primary) 60%, var(--sf-secondary)))` };
+  const bgStyle =
+    config.variant === 'dark'
+      ? { background: '#111827' }
+      : config.variant === 'accent'
+        ? {
+            background: `linear-gradient(120deg, var(--sf-accent), color-mix(in srgb, var(--sf-accent) 60%, var(--sf-primary)))`,
+          }
+        : {
+            background: `linear-gradient(120deg, var(--sf-primary), color-mix(in srgb, var(--sf-primary) 60%, var(--sf-secondary)))`,
+          };
 
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8">
       <div
         className="max-w-7xl mx-auto rounded-3xl overflow-hidden relative"
-        style={{ ...bgStyle, minHeight: '240px', ...(config.backgroundImage ? { backgroundImage: `url(${config.backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}) }}
+        style={{
+          ...bgStyle,
+          minHeight: '240px',
+          ...(config.backgroundImage
+            ? {
+                backgroundImage: `url(${config.backgroundImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }
+            : {}),
+        }}
       >
         {config.backgroundImage && <div className="absolute inset-0 bg-black/40" />}
-        <div className="relative flex items-center justify-center p-10 text-center" style={{ minHeight: '240px' }}>
+        <div
+          className="relative flex items-center justify-center p-10 text-center"
+          style={{ minHeight: '240px' }}
+        >
           <div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">{config.title || 'Members get more'}</h2>
+            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
+              {config.title || 'Members get more'}
+            </h2>
             {config.description && (
               <p className="text-white/80 mb-8 max-w-md mx-auto">{config.description}</p>
             )}
@@ -369,7 +462,10 @@ function BannerSection({
               <Link
                 href={config.ctaHref || '/auth/signup'}
                 className="inline-block px-8 py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 hover:scale-105"
-                style={{ backgroundColor: 'white', color: config.variant === 'accent' ? 'var(--sf-accent)' : 'var(--sf-primary)' }}
+                style={{
+                  backgroundColor: 'white',
+                  color: config.variant === 'accent' ? 'var(--sf-accent)' : 'var(--sf-primary)',
+                }}
               >
                 {config.ctaLabel}
               </Link>
@@ -410,19 +506,39 @@ function TestimonialsSection({
             >
               <div className="flex mb-3">
                 {[...Array(5)].map((_, star) => (
-                  <span key={star} style={{ color: star < t.rating ? 'var(--sf-accent)' : 'color-mix(in srgb, var(--sf-text) 20%, transparent)' }}>★</span>
+                  <span
+                    key={star}
+                    style={{
+                      color:
+                        star < t.rating
+                          ? 'var(--sf-accent)'
+                          : 'color-mix(in srgb, var(--sf-text) 20%, transparent)',
+                    }}
+                  >
+                    ★
+                  </span>
                 ))}
               </div>
-              <p className="text-sm leading-relaxed mb-4 line-clamp-3" style={{ color: 'var(--sf-text)' }}>"{t.text}"</p>
+              <p
+                className="text-sm leading-relaxed mb-4 line-clamp-3"
+                style={{ color: 'var(--sf-text)' }}
+              >
+                "{t.text}"
+              </p>
               <div className="flex items-center gap-3">
                 {t.avatar ? (
                   <img src={t.avatar} alt={t.name} className="w-8 h-8 rounded-full object-cover" />
                 ) : (
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: 'var(--sf-primary)' }}>
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                    style={{ backgroundColor: 'var(--sf-primary)' }}
+                  >
                     {t.name[0]}
                   </div>
                 )}
-                <span className="text-sm font-semibold" style={{ color: 'var(--sf-text)' }}>{t.name}</span>
+                <span className="text-sm font-semibold" style={{ color: 'var(--sf-text)' }}>
+                  {t.name}
+                </span>
               </div>
             </div>
           ))}
@@ -447,7 +563,10 @@ function NewsletterSection({
           {config.title || 'Stay in the loop'}
         </h2>
         {config.description && (
-          <p className="mb-8" style={{ color: 'color-mix(in srgb, var(--sf-text) 55%, transparent)' }}>
+          <p
+            className="mb-8"
+            style={{ color: 'color-mix(in srgb, var(--sf-text) 55%, transparent)' }}
+          >
             {config.description}
           </p>
         )}
@@ -457,10 +576,7 @@ function NewsletterSection({
             placeholder={config.placeholder || 'Enter your email'}
             className="sf-input flex-1 px-4 py-3 text-sm"
           />
-          <button
-            type="submit"
-            className="btn-primary px-5 py-3 text-sm font-semibold rounded-xl"
-          >
+          <button type="submit" className="btn-primary px-5 py-3 text-sm font-semibold rounded-xl">
             {config.ctaLabel || 'Subscribe'}
           </button>
         </form>
@@ -471,7 +587,11 @@ function NewsletterSection({
 
 // ── Spacer Section ────────────────────────────────────────────────────────────
 
-function SpacerSection({ config }: { config: Extract<SectionConfig, { type: 'spacer' }>['config'] }) {
+function SpacerSection({
+  config,
+}: {
+  config: Extract<SectionConfig, { type: 'spacer' }>['config'];
+}) {
   return <div style={{ height: config.height || 32 }} aria-hidden />;
 }
 
@@ -487,7 +607,13 @@ interface SectionResolverProps extends SectionProps {
  * Template-aware: future per-template section overrides can be added via
  * SECTION_OVERRIDES[templateSlug].
  */
-export function SectionResolver({ sections, theme, products, collections, categories }: SectionResolverProps) {
+export function SectionResolver({
+  sections,
+  theme,
+  products,
+  collections,
+  categories,
+}: SectionResolverProps) {
   const commonProps: SectionProps = { theme, products, collections, categories };
 
   return (
@@ -526,7 +652,9 @@ export function SectionResolver({ sections, theme, products, collections, catego
           default:
             // Unknown section type — skip silently in production, warn in dev
             if (process.env.NODE_ENV === 'development') {
-              console.warn(`[SectionResolver] Unknown section type: ${(section as { type: string }).type}`);
+              console.warn(
+                `[SectionResolver] Unknown section type: ${(section as { type: string }).type}`,
+              );
             }
             return null;
         }

@@ -17,9 +17,7 @@ import type {
  * Registers a new customer account.
  * Automatically sets the HttpOnly session cookie.
  */
-export async function registerCustomer(
-  data: CustomerRegisterInput
-): Promise<AuthResponse> {
+export async function registerCustomer(data: CustomerRegisterInput): Promise<AuthResponse> {
   const res = await apiClient.post<AuthResponse>('api/storefront/account/register', data);
   if (res?.accessToken && typeof window !== 'undefined') {
     localStorage.setItem('customer_token', res.accessToken);
@@ -31,9 +29,7 @@ export async function registerCustomer(
  * Authenticates a customer with email + password.
  * Automatically sets the HttpOnly session cookie and stores client fallback token.
  */
-export async function loginCustomer(
-  data: CustomerLoginInput
-): Promise<AuthResponse> {
+export async function loginCustomer(data: CustomerLoginInput): Promise<AuthResponse> {
   const res = await apiClient.post<AuthResponse>('api/storefront/account/login', data);
   if (res?.accessToken && typeof window !== 'undefined') {
     localStorage.setItem('customer_token', res.accessToken);
@@ -55,11 +51,11 @@ export async function logoutCustomer(): Promise<{ message: string }> {
  * Initiates forgot password flow by requesting a 6-digit OTP verification code.
  */
 export async function forgotPassword(
-  email: string
+  email: string,
 ): Promise<{ success: boolean; message: string; otp?: string; expiresIn?: number }> {
   return apiClient.post<{ success: boolean; message: string; otp?: string; expiresIn?: number }>(
     'api/storefront/account/forgot-password',
-    { email }
+    { email },
   );
 }
 
@@ -68,11 +64,11 @@ export async function forgotPassword(
  */
 export async function verifyOtp(
   email: string,
-  otp: string
+  otp: string,
 ): Promise<{ success: boolean; message: string }> {
   return apiClient.post<{ success: boolean; message: string }>(
     'api/storefront/account/verify-otp',
-    { email, otp }
+    { email, otp },
   );
 }
 
@@ -87,7 +83,7 @@ export async function resetPassword(data: {
 }): Promise<{ success: boolean; message: string }> {
   return apiClient.post<{ success: boolean; message: string }>(
     'api/storefront/account/reset-password',
-    data
+    data,
   );
 }
 
@@ -110,12 +106,12 @@ export const getCustomerProfile = getInfo;
  */
 export async function editInfo(
   data: EditCustomerInput,
-  token?: string
+  token?: string,
 ): Promise<{ message: string; customer: CustomerInfo }> {
   return apiClient.put<{ message: string; customer: CustomerInfo }>(
     'api/storefront/account/me',
     data,
-    { token }
+    { token },
   );
 }
 
@@ -127,9 +123,14 @@ export const editCustomerProfile = editInfo;
 /**
  * Fetches all saved delivery addresses for the authenticated customer.
  */
-export async function getCustomerAddresses(token?: string): Promise<{ addresses: CustomerAddress[]; defaultAddress: CustomerAddress | null }> {
+export async function getCustomerAddresses(
+  token?: string,
+): Promise<{ addresses: CustomerAddress[]; defaultAddress: CustomerAddress | null }> {
   try {
-    return await apiClient.get<{ addresses: CustomerAddress[]; defaultAddress: CustomerAddress | null }>('api/storefront/account/addresses', { token });
+    return await apiClient.get<{
+      addresses: CustomerAddress[];
+      defaultAddress: CustomerAddress | null;
+    }>('api/storefront/account/addresses', { token });
   } catch {
     return { addresses: [], defaultAddress: null };
   }
@@ -140,13 +141,13 @@ export async function getCustomerAddresses(token?: string): Promise<{ addresses:
  */
 export async function addCustomerAddress(
   data: CustomerAddress,
-  token?: string
+  token?: string,
 ): Promise<{ message: string; address: CustomerAddress; addresses: CustomerAddress[] }> {
-  return apiClient.post<{ message: string; address: CustomerAddress; addresses: CustomerAddress[] }>(
-    'api/storefront/account/addresses',
-    data,
-    { token }
-  );
+  return apiClient.post<{
+    message: string;
+    address: CustomerAddress;
+    addresses: CustomerAddress[];
+  }>('api/storefront/account/addresses', data, { token });
 }
 
 /**
@@ -155,12 +156,12 @@ export async function addCustomerAddress(
 export async function updateCustomerAddress(
   id: string,
   data: Partial<CustomerAddress>,
-  token?: string
+  token?: string,
 ): Promise<{ message: string; addresses: CustomerAddress[] }> {
   return apiClient.put<{ message: string; addresses: CustomerAddress[] }>(
     `api/storefront/account/addresses/${encodeURIComponent(id)}`,
     data,
-    { token }
+    { token },
   );
 }
 
@@ -169,11 +170,11 @@ export async function updateCustomerAddress(
  */
 export async function deleteCustomerAddress(
   id: string,
-  token?: string
+  token?: string,
 ): Promise<{ message: string; addresses: CustomerAddress[] }> {
   return apiClient.delete<{ message: string; addresses: CustomerAddress[] }>(
     `api/storefront/account/addresses/${encodeURIComponent(id)}`,
-    { token }
+    { token },
   );
 }
 
@@ -182,12 +183,12 @@ export async function deleteCustomerAddress(
  */
 export async function setDefaultCustomerAddress(
   id: string,
-  token?: string
+  token?: string,
 ): Promise<{ message: string; addresses: CustomerAddress[] }> {
   return apiClient.put<{ message: string; addresses: CustomerAddress[] }>(
     `api/storefront/account/addresses/${encodeURIComponent(id)}/default`,
     {},
-    { token }
+    { token },
   );
 }
 
@@ -209,17 +210,16 @@ export async function getCustomerOrders(token?: string): Promise<Order[]> {
  */
 export async function getCustomerOrder(
   orderIdOrToken: string,
-  orderId?: string
+  orderId?: string,
 ): Promise<Order | null> {
   const targetId = orderId || orderIdOrToken;
   const targetToken = orderId ? orderIdOrToken : undefined;
   try {
     return await apiClient.get<Order>(
       `api/storefront/account/orders/${encodeURIComponent(targetId)}`,
-      { token: targetToken }
+      { token: targetToken },
     );
   } catch {
     return null;
   }
 }
-

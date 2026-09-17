@@ -27,16 +27,26 @@ export default function MinimalFooter() {
   ].filter((s) => !!s.url);
 
   return (
-    <footer className="mt-auto pt-16 pb-10 px-6 font-mono text-xs" style={{ borderTop: '1px solid color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
+    <footer
+      className="mt-auto pt-16 pb-10 px-6 font-mono text-xs"
+      style={{ borderTop: '1px solid color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+    >
       <div className="max-w-6xl mx-auto">
-        
         {/* Newsletter Section */}
         {theme.footerShowNewsletter !== false && (
           <div className="mb-12 text-center">
-            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+            <p
+              className="text-[10px] tracking-widest uppercase mb-3"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+            >
               Newsletter
             </p>
-            <h3 className="text-xl font-normal tracking-tight mb-4" style={{ color: 'var(--sf-text)' }}>Stay in the know with {theme.storeName}</h3>
+            <h3
+              className="text-xl font-normal tracking-tight mb-4"
+              style={{ color: 'var(--sf-text)' }}
+            >
+              Stay in the know with {theme.storeName}
+            </h3>
             <form className="flex max-w-sm mx-auto gap-3" onSubmit={(e) => e.preventDefault()}>
               <input
                 type="email"
@@ -47,7 +57,11 @@ export default function MinimalFooter() {
                   borderColor: 'color-mix(in srgb, var(--sf-text) 30%, transparent)',
                 }}
               />
-              <button type="submit" className="text-[11px] tracking-widest uppercase px-4 py-2 transition-opacity hover:opacity-60 font-bold" style={{ color: 'var(--sf-text)' }}>
+              <button
+                type="submit"
+                className="text-[11px] tracking-widest uppercase px-4 py-2 transition-opacity hover:opacity-60 font-bold"
+                style={{ color: 'var(--sf-text)' }}
+              >
                 Subscribe →
               </button>
             </form>
@@ -55,17 +69,50 @@ export default function MinimalFooter() {
         )}
 
         {/* Contact, Address & Social Info */}
-        {(theme.contactEmail || theme.contactPhone || hasAddress || (theme.footerShowSocial !== false && socialChannels.length > 0)) && (
-          <div className="mb-12 pb-8 text-center space-y-3" style={{ borderBottom: '1px solid color-mix(in srgb, var(--sf-text) 8%, transparent)' }}>
-            <div className="flex flex-wrap justify-center items-center gap-6 text-[11px]" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+        {(theme.contactEmail ||
+          theme.contactPhone ||
+          hasAddress ||
+          (theme.footerShowSocial !== false && socialChannels.length > 0)) && (
+          <div
+            className="mb-12 pb-8 text-center space-y-3"
+            style={{ borderBottom: '1px solid color-mix(in srgb, var(--sf-text) 8%, transparent)' }}
+          >
+            <div
+              className="flex flex-wrap justify-center items-center gap-6 text-[11px]"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
+            >
               {theme.contactPhone && (
-                <span>TEL: <a href={`tel:${theme.contactPhone}`} className="hover:underline" style={{ color: 'var(--sf-text)' }}>{theme.contactPhone}</a></span>
+                <span>
+                  TEL:{' '}
+                  <a
+                    href={`tel:${theme.contactPhone}`}
+                    className="hover:underline"
+                    style={{ color: 'var(--sf-text)' }}
+                  >
+                    {theme.contactPhone}
+                  </a>
+                </span>
               )}
               {theme.contactEmail && (
-                <span>EMAIL: <a href={`mailto:${theme.contactEmail}`} className="hover:underline" style={{ color: 'var(--sf-text)' }}>{theme.contactEmail}</a></span>
+                <span>
+                  EMAIL:{' '}
+                  <a
+                    href={`mailto:${theme.contactEmail}`}
+                    className="hover:underline"
+                    style={{ color: 'var(--sf-text)' }}
+                  >
+                    {theme.contactEmail}
+                  </a>
+                </span>
               )}
               {hasAddress && (
-                <span>LOC: {[theme.addressStreet, theme.addressCity, theme.addressState, theme.addressZip].filter(Boolean).join(', ')} {theme.addressCountry ? `(${theme.addressCountry})` : ''}</span>
+                <span>
+                  LOC:{' '}
+                  {[theme.addressStreet, theme.addressCity, theme.addressState, theme.addressZip]
+                    .filter(Boolean)
+                    .join(', ')}{' '}
+                  {theme.addressCountry ? `(${theme.addressCountry})` : ''}
+                </span>
               )}
             </div>
 
@@ -91,7 +138,10 @@ export default function MinimalFooter() {
         {/* Navigation Directory */}
         {cmsFooterItems && cmsFooterItems.length > 0 ? (
           <div className="mb-12 text-center">
-            <p className="text-[10px] tracking-widest uppercase mb-4" style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}>
+            <p
+              className="text-[10px] tracking-widest uppercase mb-4"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}
+            >
               Quick Links
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-xs">
@@ -116,17 +166,43 @@ export default function MinimalFooter() {
         ) : (
           <div className="grid grid-cols-3 gap-8 mb-12 text-center text-xs">
             {[
-              { section: 'Shop', links: [{ label: 'Products', href: '/products' }, { label: 'Collections', href: '/collections' }] },
-              { section: 'Company', links: [{ label: 'About', href: '/about' }, { label: 'Contact', href: '/contact' }] },
-              { section: 'Legal', links: [{ label: 'Privacy', href: '/privacy' }, { label: 'Terms', href: '/terms' }] },
+              {
+                section: 'Shop',
+                links: [
+                  { label: 'Products', href: '/products' },
+                  { label: 'Collections', href: '/collections' },
+                ],
+              },
+              {
+                section: 'Company',
+                links: [
+                  { label: 'About', href: '/about' },
+                  { label: 'Contact', href: '/contact' },
+                ],
+              },
+              {
+                section: 'Legal',
+                links: [
+                  { label: 'Privacy', href: '/privacy' },
+                  { label: 'Terms', href: '/terms' },
+                ],
+              },
             ].map(({ section, links }) => (
               <div key={section}>
-                <p className="text-[10px] tracking-widest uppercase mb-4" style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}>
+                <p
+                  className="text-[10px] tracking-widest uppercase mb-4"
+                  style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}
+                >
                   {section}
                 </p>
                 <div className="space-y-2">
                   {links.map((l) => (
-                    <Link key={l.href} href={l.href} className="block transition-opacity hover:opacity-50" style={{ color: 'var(--sf-text)' }}>
+                    <Link
+                      key={l.href}
+                      href={l.href}
+                      className="block transition-opacity hover:opacity-50"
+                      style={{ color: 'var(--sf-text)' }}
+                    >
                       {l.label}
                     </Link>
                   ))}
@@ -136,9 +212,16 @@ export default function MinimalFooter() {
           </div>
         )}
 
-        <div className="text-center pt-6" style={{ borderTop: '1px solid color-mix(in srgb, var(--sf-text) 8%, transparent)' }}>
-          <p className="text-[10px]" style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}>
-            {theme.footerCopyright || `© ${new Date().getFullYear()} ${theme.storeName}. All rights reserved.`}
+        <div
+          className="text-center pt-6"
+          style={{ borderTop: '1px solid color-mix(in srgb, var(--sf-text) 8%, transparent)' }}
+        >
+          <p
+            className="text-[10px]"
+            style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}
+          >
+            {theme.footerCopyright ||
+              `© ${new Date().getFullYear()} ${theme.storeName}. All rights reserved.`}
           </p>
         </div>
       </div>

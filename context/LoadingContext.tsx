@@ -64,7 +64,7 @@ export function LoadingProvider({ children }: { children: React.ReactNode }) {
         stopLoading();
       }
     },
-    [startLoading, stopLoading]
+    [startLoading, stopLoading],
   );
 
   return (

@@ -8,9 +8,7 @@ import { getCollections, getCategories } from '@/lib/api/catalog';
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
-  (process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : 'http://localhost:3000');
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
 export const revalidate = 3600; // Rebuild sitemap every hour
 
@@ -77,10 +75,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [
-    ...staticRoutes,
-    ...productRoutes,
-    ...collectionRoutes,
-    ...categoryRoutes,
-  ];
+  return [...staticRoutes, ...productRoutes, ...collectionRoutes, ...categoryRoutes];
 }

@@ -55,10 +55,13 @@ export async function getTheme(): Promise<ThemeConfig> {
   try {
     const cmsBase = process.env.NEXT_PUBLIC_CMS_API_URL || 'http://localhost:5000/api';
     const storeId = process.env.NEXT_PUBLIC_STORE_ID || '';
-    const res = await fetch(`${cmsBase}/stores/theme${storeId ? `?storeId=${encodeURIComponent(storeId)}` : ''}`, {
-      headers: storeId ? { 'x-store-id': storeId } : {},
-      cache: 'no-store',
-    });
+    const res = await fetch(
+      `${cmsBase}/stores/theme${storeId ? `?storeId=${encodeURIComponent(storeId)}` : ''}`,
+      {
+        headers: storeId ? { 'x-store-id': storeId } : {},
+        cache: 'no-store',
+      },
+    );
     if (res.ok) {
       const data = await res.json();
       return {
@@ -82,7 +85,7 @@ export async function getStoreInfo(): Promise<StoreInfo> {
     const info = await apiClient.get<StoreInfo>('api/storefront/theme/info', {
       next: { revalidate: 0, tags: ['store-info', 'theme'] },
     });
-    console.log({ info })
+    console.log({ info });
     return info;
   } catch {
     return {

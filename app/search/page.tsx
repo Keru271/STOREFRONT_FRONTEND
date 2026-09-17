@@ -33,23 +33,19 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const resolvedParams = await searchParams;
   const q = ((resolvedParams.q as string) || '').trim();
 
-  const [theme, categories, brands] = await Promise.all([
-    getTheme(),
-    getCategories(),
-    getBrands(),
-  ]);
+  const [theme, categories, brands] = await Promise.all([getTheme(), getCategories(), getBrands()]);
 
   // Only fetch if a query exists
   const products = q
     ? await searchProducts({
         q,
-        sort:     resolvedParams.sort     as string | undefined,
+        sort: resolvedParams.sort as string | undefined,
         category: resolvedParams.category as string | undefined,
-        brand:    resolvedParams.brand    as string | undefined,
+        brand: resolvedParams.brand as string | undefined,
         minPrice: resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
         maxPrice: resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
-        page:     resolvedParams.page     ? Number(resolvedParams.page)     : 1,
-        limit:    24,
+        page: resolvedParams.page ? Number(resolvedParams.page) : 1,
+        limit: 24,
       })
     : [];
 
@@ -59,7 +55,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const enrichedParams: Record<string, string | string[] | undefined> = {
     ...resolvedParams,
     q,
-    _isSearch:   'true',
+    _isSearch: 'true',
     _searchTerm: q,
   };
 

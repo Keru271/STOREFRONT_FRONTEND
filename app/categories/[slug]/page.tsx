@@ -23,8 +23,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   return {
     title: `${categoryName} | ${theme.storeName}`,
     description:
-      category?.description ||
-      `Shop top-rated ${categoryName} products at ${theme.storeName}.`,
+      category?.description || `Shop top-rated ${categoryName} products at ${theme.storeName}.`,
     openGraph: {
       title: `${categoryName} — ${theme.storeName}`,
       description: category?.description || `Shop ${categoryName} online.`,
@@ -33,10 +32,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   };
 }
 
-export default async function CategoryDetailPage({
-  params,
-  searchParams,
-}: CategoryPageProps) {
+export default async function CategoryDetailPage({ params, searchParams }: CategoryPageProps) {
   const { slug } = await params;
   const resolvedParams = await searchParams;
 
@@ -54,19 +50,19 @@ export default async function CategoryDetailPage({
 
   // Fetch products for this category with optional additional filters
   const products = await getProducts({
-    category:    category ? category.name : categoryName,
-    collection:  resolvedParams.collection as string | undefined,
-    brand:       resolvedParams.brand as string | undefined,
-    brands:      resolvedParams.brands as string | undefined,
-    search:      (resolvedParams.search || resolvedParams.q) as string | undefined,
-    sort:        resolvedParams.sort as string | undefined,
-    minPrice:    resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
-    maxPrice:    resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
-    discount:    resolvedParams.discount ? Number(resolvedParams.discount) : undefined,
+    category: category ? category.name : categoryName,
+    collection: resolvedParams.collection as string | undefined,
+    brand: resolvedParams.brand as string | undefined,
+    brands: resolvedParams.brands as string | undefined,
+    search: (resolvedParams.search || resolvedParams.q) as string | undefined,
+    sort: resolvedParams.sort as string | undefined,
+    minPrice: resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
+    maxPrice: resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
+    discount: resolvedParams.discount ? Number(resolvedParams.discount) : undefined,
     minDiscount: resolvedParams.minDiscount ? Number(resolvedParams.minDiscount) : undefined,
-    gender:      resolvedParams.gender as string | undefined,
-    page:        resolvedParams.page ? Number(resolvedParams.page) : 1,
-    limit:       24,
+    gender: resolvedParams.gender as string | undefined,
+    page: resolvedParams.page ? Number(resolvedParams.page) : 1,
+    limit: 24,
   });
 
   const previewTemplate = resolvedParams?.previewTemplate as string | undefined;
@@ -79,10 +75,10 @@ export default async function CategoryDetailPage({
   // Pass category context via searchParams so PLPPage can render heading & breadcrumbs
   const enrichedParams: Record<string, string | string[] | undefined> = {
     ...resolvedParams,
-    category:             categoryName,
-    _categoryName:        categoryName,
+    category: categoryName,
+    _categoryName: categoryName,
     _categoryDescription: category?.description || '',
-    _categorySlug:        category?.slug || slug,
+    _categorySlug: category?.slug || slug,
   };
 
   return (

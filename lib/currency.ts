@@ -32,7 +32,7 @@ export function getCurrencySymbol(currency: string = 'USD'): string {
 export function formatPrice(
   amount?: number | null,
   currency: string = 'USD',
-  language: string = 'en-US'
+  language: string = 'en-US',
 ): string {
   if (amount === undefined || amount === null || isNaN(amount)) {
     return `${getCurrencySymbol(currency)}0.00`;

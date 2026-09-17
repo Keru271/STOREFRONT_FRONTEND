@@ -36,7 +36,6 @@ export function ThemeLoader() {
       {/* ── Fullscreen Overlay Loader ──────────────────────────────────────── */}
       {isLoading && (
         <div className="fixed inset-0 z-[99998] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity duration-200">
-          
           {/* 1. Mincom Theme Loader */}
           {template.includes('mincom') && (
             <div className="bg-[#23272a] text-white p-8 rounded-3xl border border-slate-700 shadow-2xl flex flex-col items-center gap-5 max-w-xs text-center animate-in zoom-in-95 duration-200">
@@ -96,9 +95,7 @@ export function ThemeLoader() {
                 <span className="w-2.5 h-2.5 bg-black animate-pulse" />
                 <span className="w-2.5 h-2.5 bg-black" />
               </div>
-              <div className="font-bold uppercase tracking-widest">
-                [ {message || 'LOADING'} ]
-              </div>
+              <div className="font-bold uppercase tracking-widest">[ {message || 'LOADING'} ]</div>
             </div>
           )}
 
@@ -126,7 +123,6 @@ export function ThemeLoader() {
                 <p className="text-xs font-semibold">{message || 'Loading...'}</p>
               </div>
             )}
-
         </div>
       )}
     </>

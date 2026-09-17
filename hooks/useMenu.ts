@@ -14,18 +14,20 @@ export function useMenu(handle: string = 'header', options: UseMenuOptions = {})
 
   // Check if this menu is already pre-fetched on the server side
   const lowerHandle = handle.toLowerCase();
-  const isHeader = lowerHandle.includes('header') || lowerHandle.includes('main') || lowerHandle.includes('nav');
+  const isHeader =
+    lowerHandle.includes('header') || lowerHandle.includes('main') || lowerHandle.includes('nav');
   const isFooter = lowerHandle.includes('footer');
 
   const serverMenu = isHeader
     ? menuCtx?.headerMenu
     : isFooter
-    ? menuCtx?.footerMenu
-    : menuCtx?.menus.find((m) => m.handle.toLowerCase() === lowerHandle);
+      ? menuCtx?.footerMenu
+      : menuCtx?.menus.find((m) => m.handle.toLowerCase() === lowerHandle);
 
-  const initialItems = serverMenu?.items && serverMenu.items.length > 0
-    ? serverMenu.items
-    : options.fallbackItems || [];
+  const initialItems =
+    serverMenu?.items && serverMenu.items.length > 0
+      ? serverMenu.items
+      : options.fallbackItems || [];
 
   const [menu, setMenu] = useState<Menu | null>(serverMenu || null);
   const [items, setItems] = useState<MenuItem[]>(initialItems);

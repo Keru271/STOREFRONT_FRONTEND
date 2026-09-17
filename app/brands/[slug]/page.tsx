@@ -34,10 +34,7 @@ export async function generateMetadata({ params }: BrandPageProps): Promise<Meta
   };
 }
 
-export default async function BrandDetailPage({
-  params,
-  searchParams,
-}: BrandPageProps) {
+export default async function BrandDetailPage({ params, searchParams }: BrandPageProps) {
   const { slug } = await params;
   const resolvedParams = await searchParams;
 
@@ -54,19 +51,19 @@ export default async function BrandDetailPage({
 
   // Fetch products for this brand with optional additional filters (category, sort, price, etc.)
   const products = await getProducts({
-    brand:       brand ? brand.name : brandName,
-    category:    resolvedParams.category as string | undefined,
-    categories:  resolvedParams.categories as string | undefined,
-    collection:  resolvedParams.collection as string | undefined,
-    search:      (resolvedParams.search || resolvedParams.q) as string | undefined,
-    sort:        resolvedParams.sort as string | undefined,
-    minPrice:    resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
-    maxPrice:    resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
-    discount:    resolvedParams.discount ? Number(resolvedParams.discount) : undefined,
+    brand: brand ? brand.name : brandName,
+    category: resolvedParams.category as string | undefined,
+    categories: resolvedParams.categories as string | undefined,
+    collection: resolvedParams.collection as string | undefined,
+    search: (resolvedParams.search || resolvedParams.q) as string | undefined,
+    sort: resolvedParams.sort as string | undefined,
+    minPrice: resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
+    maxPrice: resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
+    discount: resolvedParams.discount ? Number(resolvedParams.discount) : undefined,
     minDiscount: resolvedParams.minDiscount ? Number(resolvedParams.minDiscount) : undefined,
-    gender:      resolvedParams.gender as string | undefined,
-    page:        resolvedParams.page ? Number(resolvedParams.page) : 1,
-    limit:       24,
+    gender: resolvedParams.gender as string | undefined,
+    page: resolvedParams.page ? Number(resolvedParams.page) : 1,
+    limit: 24,
   });
 
   // Resolve template from theme configuration or query preview override
@@ -80,11 +77,11 @@ export default async function BrandDetailPage({
   // Pass brand context via searchParams so PLPPage can render title, breadcrumbs & description
   const enrichedParams: Record<string, string | string[] | undefined> = {
     ...resolvedParams,
-    brand:             brandName,
-    _brandName:        brandName,
+    brand: brandName,
+    _brandName: brandName,
     _brandDescription: brand?.description || '',
-    _brandSlug:        brand?.slug || slug,
-    _brandLogo:        brand?.logo || '',
+    _brandSlug: brand?.slug || slug,
+    _brandLogo: brand?.logo || '',
   };
 
   return (

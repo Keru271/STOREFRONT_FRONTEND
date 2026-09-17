@@ -58,14 +58,15 @@ export default function DefaultFooter() {
     >
       {/* Newsletter Section (Configured via CMS footerShowNewsletter) */}
       {theme.footerShowNewsletter !== false && (
-        <div
-          className="py-12 px-4"
-          style={{ backgroundColor: 'var(--sf-primary)' }}
-        >
+        <div className="py-12 px-4" style={{ backgroundColor: 'var(--sf-primary)' }}>
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-              <h3 className="text-2xl font-bold text-white">Stay in the loop with {theme.storeName}</h3>
-              <p className="text-white/80 mt-1 text-sm">Subscribe for exclusive deals and new arrivals.</p>
+              <h3 className="text-2xl font-bold text-white">
+                Stay in the loop with {theme.storeName}
+              </h3>
+              <p className="text-white/80 mt-1 text-sm">
+                Subscribe for exclusive deals and new arrivals.
+              </p>
             </div>
             <form className="flex gap-3 w-full md:w-auto" onSubmit={(e) => e.preventDefault()}>
               <input
@@ -96,7 +97,6 @@ export default function DefaultFooter() {
       {/* Footer Links & Contact Info */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-10">
-          
           {/* Brand & Contact Support Info */}
           <div className="col-span-1 md:col-span-2 space-y-4">
             <Link href="/" className="inline-block">
@@ -114,9 +114,12 @@ export default function DefaultFooter() {
                 </span>
               )}
             </Link>
-            
+
             {theme.description && (
-              <p className="text-sm leading-relaxed max-w-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+              <p
+                className="text-sm leading-relaxed max-w-sm"
+                style={{ color: 'rgba(255,255,255,0.6)' }}
+              >
                 {theme.description}
               </p>
             )}
@@ -126,7 +129,10 @@ export default function DefaultFooter() {
               {theme.contactPhone && (
                 <div className="flex items-center gap-2">
                   <span className="opacity-60">📞 Support:</span>
-                  <a href={`tel:${theme.contactPhone}`} className="font-semibold text-white hover:underline">
+                  <a
+                    href={`tel:${theme.contactPhone}`}
+                    className="font-semibold text-white hover:underline"
+                  >
                     {theme.contactPhone}
                   </a>
                 </div>
@@ -135,7 +141,10 @@ export default function DefaultFooter() {
               {theme.contactEmail && (
                 <div className="flex items-center gap-2">
                   <span className="opacity-60">✉️ Email:</span>
-                  <a href={`mailto:${theme.contactEmail}`} className="font-semibold text-white hover:underline">
+                  <a
+                    href={`mailto:${theme.contactEmail}`}
+                    className="font-semibold text-white hover:underline"
+                  >
                     {theme.contactEmail}
                   </a>
                 </div>
@@ -171,11 +180,13 @@ export default function DefaultFooter() {
                       color: 'rgba(255,255,255,0.85)',
                     }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'var(--sf-primary)';
+                      (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
+                        'var(--sf-primary)';
                       (e.currentTarget as HTMLAnchorElement).style.color = 'white';
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'rgba(255,255,255,0.08)';
+                      (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
+                        'rgba(255,255,255,0.08)';
                       (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.85)';
                     }}
                   >
@@ -190,7 +201,10 @@ export default function DefaultFooter() {
           {/* Navigation & Link Columns */}
           {cmsFooterItems && cmsFooterItems.length > 0 ? (
             <div className="col-span-1 md:col-span-2 lg:col-span-3">
-              <h4 className="font-semibold text-xs tracking-widest uppercase mb-4" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              <h4
+                className="font-semibold text-xs tracking-widest uppercase mb-4"
+                style={{ color: 'rgba(255,255,255,0.4)' }}
+              >
                 Navigation
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -215,7 +229,10 @@ export default function DefaultFooter() {
           ) : (
             Object.entries(defaultFooterLinks).map(([section, links]) => (
               <div key={section}>
-                <h4 className="font-semibold text-xs tracking-widest uppercase mb-4" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <h4
+                  className="font-semibold text-xs tracking-widest uppercase mb-4"
+                  style={{ color: 'rgba(255,255,255,0.4)' }}
+                >
                   {section}
                 </h4>
                 <ul className="space-y-3">
@@ -244,18 +261,35 @@ export default function DefaultFooter() {
             color: 'rgba(255,255,255,0.4)',
           }}
         >
-          <p>{theme.footerCopyright || `© ${new Date().getFullYear()} ${theme.storeName}. All rights reserved.`}</p>
+          <p>
+            {theme.footerCopyright ||
+              `© ${new Date().getFullYear()} ${theme.storeName}. All rights reserved.`}
+          </p>
           <div className="flex items-center gap-6">
-            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
-            <Link href="/shipping" className="hover:text-white transition-colors">Shipping & Returns</Link>
+            <Link href="/privacy" className="hover:text-white transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-white transition-colors">
+              Terms of Service
+            </Link>
+            <Link href="/shipping" className="hover:text-white transition-colors">
+              Shipping & Returns
+            </Link>
           </div>
           {theme.footerShowPaymentBadges !== false && (
             <div className="flex items-center gap-2 text-xs opacity-75">
-              <span className="px-2 py-0.5 bg-white/10 rounded font-semibold text-white text-[10px]">VISA</span>
-              <span className="px-2 py-0.5 bg-white/10 rounded font-semibold text-white text-[10px]">MASTERCARD</span>
-              <span className="px-2 py-0.5 bg-white/10 rounded font-semibold text-white text-[10px]">STRIPE</span>
-              <span className="px-2 py-0.5 bg-white/10 rounded font-semibold text-white text-[10px]">RAZORPAY</span>
+              <span className="px-2 py-0.5 bg-white/10 rounded font-semibold text-white text-[10px]">
+                VISA
+              </span>
+              <span className="px-2 py-0.5 bg-white/10 rounded font-semibold text-white text-[10px]">
+                MASTERCARD
+              </span>
+              <span className="px-2 py-0.5 bg-white/10 rounded font-semibold text-white text-[10px]">
+                STRIPE
+              </span>
+              <span className="px-2 py-0.5 bg-white/10 rounded font-semibold text-white text-[10px]">
+                RAZORPAY
+              </span>
             </div>
           )}
         </div>

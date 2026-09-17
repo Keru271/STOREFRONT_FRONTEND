@@ -20,7 +20,7 @@ export async function getPageLayout(slug: string = 'home'): Promise<PageLayout> 
   try {
     const layout = await apiClient.get<PageLayout>(
       `api/storefront/pages/${encodeURIComponent(slug)}`,
-      { next: { revalidate: 300, tags: ['sections', `page-${slug}`] } }
+      { next: { revalidate: 300, tags: ['sections', `page-${slug}`] } },
     );
 
     // Validate response shape

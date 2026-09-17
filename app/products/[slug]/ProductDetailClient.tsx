@@ -3,7 +3,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import type { ThemeConfig, ProductDetail, Product, ProductReview, EligibleCoupon } from '@/lib/api/types';
+import type {
+  ThemeConfig,
+  ProductDetail,
+  Product,
+  ProductReview,
+  EligibleCoupon,
+} from '@/lib/api/types';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import DefaultHeader from '@/templates/default/Header';
@@ -12,7 +18,14 @@ import DefaultProductCard from '@/templates/default/ProductCard';
 import ReviewModal from '@/components/shared/ReviewModal';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
-import { getProductReviews, postProductReview, editProductReview, deleteProductReview, upvoteProductReview, getProductEligibleCoupons } from '@/lib/api';
+import {
+  getProductReviews,
+  postProductReview,
+  editProductReview,
+  deleteProductReview,
+  upvoteProductReview,
+  getProductEligibleCoupons,
+} from '@/lib/api';
 
 interface ProductDetailClientProps {
   theme: ThemeConfig;
@@ -30,17 +43,18 @@ export default function ProductDetailClient({
   const { customer, isAuthenticated } = useAuth();
   const toast = useToast();
 
-  const allImages = product.images.length > 0 ? product.images : (product.image ? [product.image] : []);
+  const allImages =
+    product.images.length > 0 ? product.images : product.image ? [product.image] : [];
   const [selectedImage, setSelectedImage] = useState<string>(allImages[0] || '');
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedSize, setSelectedSize] = useState<string>(
-    product.sizeOptions && product.sizeOptions.length > 0 ? product.sizeOptions[0] : ''
+    product.sizeOptions && product.sizeOptions.length > 0 ? product.sizeOptions[0] : '',
   );
   const [selectedColor, setSelectedColor] = useState<string>(
-    product.colorOptions && product.colorOptions.length > 0 ? product.colorOptions[0] : ''
+    product.colorOptions && product.colorOptions.length > 0 ? product.colorOptions[0] : '',
   );
   const [selectedVariantId, setSelectedVariantId] = useState<string>(
-    product.variants && product.variants.length > 0 ? product.variants[0].id : ''
+    product.variants && product.variants.length > 0 ? product.variants[0].id : '',
   );
   const [isAdding, setIsAdding] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -105,25 +119,36 @@ export default function ProductDetailClient({
   const isWishlisted = isInWishlist(product.id);
 
   const selectedVariant = product.variants?.find((v) => v.id === selectedVariantId);
-  const activePrice = selectedVariant?.price != null ? Number(selectedVariant.price) : Number(product.price);
-  const activeCompareAtPrice = selectedVariant?.compareAtPrice != null
-    ? Number(selectedVariant.compareAtPrice)
-    : product.compareAtPrice ? Number(product.compareAtPrice) : null;
-  const stock = selectedVariant?.inventory != null
-    ? Number(selectedVariant.inventory)
-    : (product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1);
+  const activePrice =
+    selectedVariant?.price != null ? Number(selectedVariant.price) : Number(product.price);
+  const activeCompareAtPrice =
+    selectedVariant?.compareAtPrice != null
+      ? Number(selectedVariant.compareAtPrice)
+      : product.compareAtPrice
+        ? Number(product.compareAtPrice)
+        : null;
+  const stock =
+    selectedVariant?.inventory != null
+      ? Number(selectedVariant.inventory)
+      : product.stockQuantity !== undefined
+        ? Number(product.stockQuantity)
+        : product.inventory !== undefined
+          ? Number(product.inventory)
+          : 1;
   const isOutOfStock = stock <= 0;
   const activeSku = selectedVariant?.sku || product.sku;
 
-  const discount = activeCompareAtPrice && activeCompareAtPrice > activePrice
-    ? Math.round(((activeCompareAtPrice - activePrice) / activeCompareAtPrice) * 100)
-    : 0;
+  const discount =
+    activeCompareAtPrice && activeCompareAtPrice > activePrice
+      ? Math.round(((activeCompareAtPrice - activePrice) / activeCompareAtPrice) * 100)
+      : 0;
 
   // Calculate Average Rating & Distribution
   const totalReviewsCount = reviewsList.length;
-  const avgRating = totalReviewsCount > 0
-    ? Number((reviewsList.reduce((acc, r) => acc + r.rating, 0) / totalReviewsCount).toFixed(1))
-    : 5.0;
+  const avgRating =
+    totalReviewsCount > 0
+      ? Number((reviewsList.reduce((acc, r) => acc + r.rating, 0) / totalReviewsCount).toFixed(1))
+      : 5.0;
 
   const starCounts = {
     5: reviewsList.filter((r) => r.rating === 5).length,
@@ -189,7 +214,12 @@ export default function ProductDetailClient({
   const isReviewOwner = (rev: ProductReview): boolean => {
     if (!isAuthenticated || !customer) return false;
     if (rev.customerId && customer.id && rev.customerId === customer.id) return true;
-    if (rev.userEmail && customer.email && rev.userEmail.toLowerCase() === customer.email.toLowerCase()) return true;
+    if (
+      rev.userEmail &&
+      customer.email &&
+      rev.userEmail.toLowerCase() === customer.email.toLowerCase()
+    )
+      return true;
     return false;
   };
 
@@ -208,7 +238,10 @@ export default function ProductDetailClient({
   };
 
   const handleDeleteReview = async (revId: string) => {
-    if (!window.confirm('Are you sure you want to delete your review? This action cannot be undone.')) return;
+    if (
+      !window.confirm('Are you sure you want to delete your review? This action cannot be undone.')
+    )
+      return;
     setDeletingReviewId(revId);
     try {
       await deleteProductReview(product.id, revId);
@@ -283,7 +316,7 @@ export default function ProductDetailClient({
         });
 
         setReviewsList((prev) =>
-          prev.map((r) => (r.id === editingReviewId ? { ...r, ...res.review } : r))
+          prev.map((r) => (r.id === editingReviewId ? { ...r, ...res.review } : r)),
         );
         setToastMessage('✓ Your review has been updated!');
       } else {
@@ -326,8 +359,8 @@ export default function ProductDetailClient({
                 hasLiked: res.hasLiked,
                 likedByJson: res.likedBy ? JSON.stringify(res.likedBy) : r.likedByJson,
               }
-            : r
-        )
+            : r,
+        ),
       );
     } catch (err) {
       console.error('Error toggling review helpfulness:', err);
@@ -353,13 +386,20 @@ export default function ProductDetailClient({
 
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full text-xs text-gray-500 flex items-center gap-2">
-        <Link href="/" className="hover:underline">Home</Link>
+        <Link href="/" className="hover:underline">
+          Home
+        </Link>
         <span>/</span>
-        <Link href="/products" className="hover:underline">Products</Link>
+        <Link href="/products" className="hover:underline">
+          Products
+        </Link>
         {product.categoryName && (
           <>
             <span>/</span>
-            <Link href={`/products?category=${encodeURIComponent(product.categoryName)}`} className="hover:underline">
+            <Link
+              href={`/products?category=${encodeURIComponent(product.categoryName)}`}
+              className="hover:underline"
+            >
               {product.categoryName}
             </Link>
           </>
@@ -438,7 +478,7 @@ export default function ProductDetailClient({
                 </span>
               )}
               <h1 className="text-3xl sm:text-4xl font-black tracking-tight">{product.name}</h1>
-              
+
               {/* Rating stars banner */}
               <div className="flex items-center gap-3 mt-2">
                 <div className="flex text-amber-400 text-sm">
@@ -453,8 +493,14 @@ export default function ProductDetailClient({
                   {avgRating} ({totalReviewsCount} {totalReviewsCount === 1 ? 'review' : 'reviews'})
                 </button>
                 <span className="text-xs text-gray-300 dark:text-gray-700">•</span>
-                <span className={`text-xs font-bold ${isOutOfStock ? 'text-rose-600' : stock <= 5 ? 'text-amber-600' : 'text-emerald-600'}`}>
-                  {isOutOfStock ? '✕ Out of Stock' : stock <= 5 ? `⚠️ Only ${stock} units left` : `✓ In Stock (${stock} available)`}
+                <span
+                  className={`text-xs font-bold ${isOutOfStock ? 'text-rose-600' : stock <= 5 ? 'text-amber-600' : 'text-emerald-600'}`}
+                >
+                  {isOutOfStock
+                    ? '✕ Out of Stock'
+                    : stock <= 5
+                      ? `⚠️ Only ${stock} units left`
+                      : `✓ In Stock (${stock} available)`}
                 </span>
               </div>
             </div>
@@ -511,7 +557,9 @@ export default function ProductDetailClient({
                         }`}
                       >
                         <span>{v.name}</span>
-                        <span className={`text-[11px] font-mono ${isSelected ? 'text-white/90' : 'text-gray-500'}`}>
+                        <span
+                          className={`text-[11px] font-mono ${isSelected ? 'text-white/90' : 'text-gray-500'}`}
+                        >
                           ₹{Number(v.price).toFixed(2)}
                         </span>
                         {isVOut && (
@@ -594,8 +642,8 @@ export default function ProductDetailClient({
                       coupon.discountType === 'PERCENTAGE'
                         ? (activePrice * (coupon.value || 0)) / 100
                         : coupon.discountType === 'FIXED_AMOUNT'
-                        ? Math.min(activePrice, coupon.value || 0)
-                        : 0;
+                          ? Math.min(activePrice, coupon.value || 0)
+                          : 0;
 
                     return (
                       <div
@@ -607,7 +655,10 @@ export default function ProductDetailClient({
                         <div className="space-y-1">
                           <div className="flex items-center justify-between gap-1">
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/15 text-amber-600 border border-amber-500/30">
-                              {coupon.badge || (coupon.discountType === 'PERCENTAGE' ? `${coupon.value}% OFF` : 'OFFER')}
+                              {coupon.badge ||
+                                (coupon.discountType === 'PERCENTAGE'
+                                  ? `${coupon.value}% OFF`
+                                  : 'OFFER')}
                             </span>
                             {liveSavings > 0 && (
                               <span className="text-[11px] font-black text-emerald-600 font-mono">
@@ -615,7 +666,10 @@ export default function ProductDetailClient({
                               </span>
                             )}
                           </div>
-                          <h4 className="text-xs font-bold truncate text-gray-900 dark:text-gray-100" title={coupon.title}>
+                          <h4
+                            className="text-xs font-bold truncate text-gray-900 dark:text-gray-100"
+                            title={coupon.title}
+                          >
                             {coupon.title}
                           </h4>
                           <p className="text-[11px] text-gray-500 line-clamp-1">
@@ -658,7 +712,9 @@ export default function ProductDetailClient({
                     onClick={() => setIsCouponsExpanded(!isCouponsExpanded)}
                     className="w-full text-center text-xs font-bold pt-1 text-[var(--sf-primary)] hover:underline cursor-pointer"
                   >
-                    {isCouponsExpanded ? 'Show Less Offers ▲' : `View All ${coupons.length} Offers ▼`}
+                    {isCouponsExpanded
+                      ? 'Show Less Offers ▲'
+                      : `View All ${coupons.length} Offers ▼`}
                   </button>
                 )}
               </div>
@@ -675,7 +731,9 @@ export default function ProductDetailClient({
                   >
                     -
                   </button>
-                  <span className="w-10 text-center font-bold text-sm font-mono">{isOutOfStock ? 0 : quantity}</span>
+                  <span className="w-10 text-center font-bold text-sm font-mono">
+                    {isOutOfStock ? 0 : quantity}
+                  </span>
                   <button
                     onClick={() => setQuantity((q) => Math.min(stock, q + 1))}
                     disabled={isOutOfStock || quantity >= stock}
@@ -691,7 +749,9 @@ export default function ProductDetailClient({
                   className="flex-1 py-4 rounded-2xl font-bold text-sm text-white shadow-xl transition hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   style={{ backgroundColor: isOutOfStock ? '#64748b' : 'var(--sf-primary)' }}
                 >
-                  <span>{isAdding ? 'Adding...' : isOutOfStock ? 'Out of Stock' : 'Add to Bag'}</span>
+                  <span>
+                    {isAdding ? 'Adding...' : isOutOfStock ? 'Out of Stock' : 'Add to Bag'}
+                  </span>
                   <span>🛍️</span>
                 </button>
               </div>
@@ -832,14 +892,17 @@ export default function ProductDetailClient({
                         <span key={star}>{star <= Math.round(avgRating) ? '★' : '☆'}</span>
                       ))}
                     </div>
-                    <p className="text-xs text-gray-500">Based on {totalReviewsCount} verified reviews</p>
+                    <p className="text-xs text-gray-500">
+                      Based on {totalReviewsCount} verified reviews
+                    </p>
                   </div>
 
                   {/* Distribution Bars */}
                   <div className="md:col-span-5 space-y-1.5 text-xs">
                     {[5, 4, 3, 2, 1].map((stars) => {
                       const count = (starCounts as any)[stars] || 0;
-                      const percentage = totalReviewsCount > 0 ? Math.round((count / totalReviewsCount) * 100) : 0;
+                      const percentage =
+                        totalReviewsCount > 0 ? Math.round((count / totalReviewsCount) * 100) : 0;
                       return (
                         <div key={stars} className="flex items-center gap-2">
                           <span className="w-8 text-right font-bold text-gray-500">{stars}★</span>
@@ -883,7 +946,9 @@ export default function ProductDetailClient({
                   {isReviewsLoading ? (
                     <div className="p-12 text-center bg-gray-50 dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 space-y-3">
                       <div className="w-7 h-7 border-2 border-[var(--sf-primary)] border-t-transparent rounded-full animate-spin mx-auto" />
-                      <p className="text-xs text-gray-500 font-semibold">Loading verified customer reviews...</p>
+                      <p className="text-xs text-gray-500 font-semibold">
+                        Loading verified customer reviews...
+                      </p>
                     </div>
                   ) : reviewsList.length > 0 ? (
                     reviewsList.map((rev) => (
@@ -905,10 +970,17 @@ export default function ProductDetailClient({
                             </div>
                             <div className="flex items-center gap-2 mt-1">
                               <span className="text-amber-400 text-xs">
-                                {'★'.repeat(rev.rating)}{'☆'.repeat(Math.max(0, 5 - rev.rating))}
+                                {'★'.repeat(rev.rating)}
+                                {'☆'.repeat(Math.max(0, 5 - rev.rating))}
                               </span>
                               <span className="text-[11px] text-gray-400">
-                                {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recently'}
+                                {rev.createdAt
+                                  ? new Date(rev.createdAt).toLocaleDateString('en-US', {
+                                      month: 'short',
+                                      day: 'numeric',
+                                      year: 'numeric',
+                                    })
+                                  : 'Recently'}
                               </span>
                             </div>
                           </div>
@@ -970,7 +1042,9 @@ export default function ProductDetailClient({
                                 className="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm transition hover:opacity-90 cursor-pointer"
                                 onClick={() => window.open(rev.imageUrl!, '_blank')}
                               />
-                              <span className="text-[10px] text-gray-400 block mt-1">🔍 Click to expand</span>
+                              <span className="text-[10px] text-gray-400 block mt-1">
+                                🔍 Click to expand
+                              </span>
                             </div>
                           </div>
                         )}
@@ -1042,7 +1116,10 @@ export default function ProductDetailClient({
           <div className="mt-20">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold tracking-tight">You May Also Like</h2>
-              <Link href="/products" className="text-sm font-semibold text-[var(--sf-primary)] hover:underline">
+              <Link
+                href="/products"
+                className="text-sm font-semibold text-[var(--sf-primary)] hover:underline"
+              >
                 View All Products →
               </Link>
             </div>

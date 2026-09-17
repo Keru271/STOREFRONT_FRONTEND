@@ -14,13 +14,26 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import type { ThemeConfig, ProductDetail, Product, ProductReview, EligibleCoupon } from '@/lib/api/types';
+import type {
+  ThemeConfig,
+  ProductDetail,
+  Product,
+  ProductReview,
+  EligibleCoupon,
+} from '@/lib/api/types';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useToast } from '@/hooks/useToast';
 import { useAuth } from '@/hooks/useAuth';
-import { getProductReviews, postProductReview, editProductReview, deleteProductReview, upvoteProductReview, getProductEligibleCoupons } from '@/lib/api';
+import {
+  getProductReviews,
+  postProductReview,
+  editProductReview,
+  deleteProductReview,
+  upvoteProductReview,
+  getProductEligibleCoupons,
+} from '@/lib/api';
 
 const ReviewModal = dynamic(() => import('./ReviewModal'), { ssr: false });
 
@@ -47,17 +60,18 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
   const isFuno = activeTemplate === 'funo';
   const isMincom = activeTemplate === 'mincom';
 
-  const allImages = product.images.length > 0 ? product.images : (product.image ? [product.image] : []);
+  const allImages =
+    product.images.length > 0 ? product.images : product.image ? [product.image] : [];
   const [selectedImage, setSelectedImage] = useState<string>(allImages[0] || '');
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedSize, setSelectedSize] = useState<string>(
-    product.sizeOptions && product.sizeOptions.length > 0 ? product.sizeOptions[0] : ''
+    product.sizeOptions && product.sizeOptions.length > 0 ? product.sizeOptions[0] : '',
   );
   const [selectedColor, setSelectedColor] = useState<string>(
-    product.colorOptions && product.colorOptions.length > 0 ? product.colorOptions[0] : ''
+    product.colorOptions && product.colorOptions.length > 0 ? product.colorOptions[0] : '',
   );
   const [selectedVariantId, setSelectedVariantId] = useState<string>(
-    product.variants && product.variants.length > 0 ? product.variants[0].id : ''
+    product.variants && product.variants.length > 0 ? product.variants[0].id : '',
   );
   const [isAdding, setIsAdding] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -104,27 +118,40 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
   const isWishlisted = isInWishlist(product.id);
 
   const selectedVariant = product.variants?.find((v) => v.id === selectedVariantId);
-  const activePrice = selectedVariant?.price != null ? Number(selectedVariant.price) : Number(product.price);
-  const activeCompareAtPrice = selectedVariant?.compareAtPrice != null
-    ? Number(selectedVariant.compareAtPrice)
-    : product.compareAtPrice ? Number(product.compareAtPrice) : null;
-  const stock = selectedVariant?.inventory != null
-    ? Number(selectedVariant.inventory)
-    : (product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1);
+  const activePrice =
+    selectedVariant?.price != null ? Number(selectedVariant.price) : Number(product.price);
+  const activeCompareAtPrice =
+    selectedVariant?.compareAtPrice != null
+      ? Number(selectedVariant.compareAtPrice)
+      : product.compareAtPrice
+        ? Number(product.compareAtPrice)
+        : null;
+  const stock =
+    selectedVariant?.inventory != null
+      ? Number(selectedVariant.inventory)
+      : product.stockQuantity !== undefined
+        ? Number(product.stockQuantity)
+        : product.inventory !== undefined
+          ? Number(product.inventory)
+          : 1;
   const isOutOfStock = stock <= 0;
   const activeSku = selectedVariant?.sku || product.sku;
 
-  const discount = activeCompareAtPrice && activeCompareAtPrice > activePrice
-    ? Math.round(((activeCompareAtPrice - activePrice) / activeCompareAtPrice) * 100)
-    : 0;
+  const discount =
+    activeCompareAtPrice && activeCompareAtPrice > activePrice
+      ? Math.round(((activeCompareAtPrice - activePrice) / activeCompareAtPrice) * 100)
+      : 0;
 
   const totalReviewsCount = reviewsList.length;
-  const avgRating = totalReviewsCount > 0
-    ? Number((reviewsList.reduce((acc, r) => acc + r.rating, 0) / totalReviewsCount).toFixed(1))
-    : 5.0;
+  const avgRating =
+    totalReviewsCount > 0
+      ? Number((reviewsList.reduce((acc, r) => acc + r.rating, 0) / totalReviewsCount).toFixed(1))
+      : 5.0;
 
   const starCounts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-  reviewsList.forEach((r) => { if (r.rating >= 1 && r.rating <= 5) (starCounts as Record<number, number>)[r.rating]++; });
+  reviewsList.forEach((r) => {
+    if (r.rating >= 1 && r.rating <= 5) (starCounts as Record<number, number>)[r.rating]++;
+  });
 
   // Fetch eligible coupons dynamically if not preloaded
   useEffect(() => {
@@ -143,7 +170,10 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
       navigator.clipboard.writeText(code);
     }
     setCopiedCouponCode(code);
-    toast.success(`Coupon "${code}" copied! Paste at checkout to redeem savings.`, 'Offer Unlocked');
+    toast.success(
+      `Coupon "${code}" copied! Paste at checkout to redeem savings.`,
+      'Offer Unlocked',
+    );
     setTimeout(() => {
       setCopiedCouponCode((curr) => (curr === code ? null : curr));
     }, 3000);
@@ -189,7 +219,9 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
           comment: form.comment,
           imageUrl: form.imageUrl,
         });
-        setReviewsList((prev) => prev.map((r) => (r.id === editingReviewId ? { ...r, ...res.review } : r)));
+        setReviewsList((prev) =>
+          prev.map((r) => (r.id === editingReviewId ? { ...r, ...res.review } : r)),
+        );
         toast.success('Your product review has been updated.', 'Review Updated');
       } else {
         const res = await postProductReview(product.id, {
@@ -240,21 +272,31 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                 hasLiked: res.hasLiked,
                 likedByJson: res.likedBy ? JSON.stringify(res.likedBy) : r.likedByJson,
               }
-            : r
-        )
+            : r,
+        ),
       );
-    } catch { /* silent */ }
+    } catch {
+      /* silent */
+    }
   };
 
   const isReviewOwner = (rev: ProductReview): boolean => {
     if (!isAuthenticated || !customer) return false;
     if (rev.customerId && customer.id && rev.customerId === customer.id) return true;
-    if (rev.userEmail && customer.email && rev.userEmail.toLowerCase() === customer.email.toLowerCase()) return true;
+    if (
+      rev.userEmail &&
+      customer.email &&
+      rev.userEmail.toLowerCase() === customer.email.toLowerCase()
+    )
+      return true;
     return false;
   };
 
   const handleDeleteReview = async (revId: string) => {
-    if (!window.confirm('Are you sure you want to delete your review? This action cannot be undone.')) return;
+    if (
+      !window.confirm('Are you sure you want to delete your review? This action cannot be undone.')
+    )
+      return;
     setDeletingReviewId(revId);
     try {
       await deleteProductReview(product.id, revId);
@@ -305,32 +347,30 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
   const radiusBox = isMinimal
     ? 'rounded-none'
     : isLuxe
-    ? 'rounded-sm'
-    : isMincom
-    ? 'rounded-xl'
-    : isNova
-    ? 'rounded-[26px]'
-    : isFuno
-    ? 'rounded-[32px]'
-    : 'rounded-3xl';
+      ? 'rounded-sm'
+      : isMincom
+        ? 'rounded-xl'
+        : isNova
+          ? 'rounded-[26px]'
+          : isFuno
+            ? 'rounded-[32px]'
+            : 'rounded-3xl';
 
   const radiusPill = isMinimal || isLuxe ? 'rounded-none' : 'rounded-full';
 
   const titleClass = isLuxe
     ? 'font-serif text-3xl sm:text-5xl font-normal tracking-wide text-stone-900 dark:text-stone-100'
     : isNova
-    ? 'font-sans text-3xl sm:text-5xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white'
-    : isMinimal
-    ? 'font-sans text-3xl sm:text-5xl font-extralight tracking-tight uppercase text-black dark:text-white'
-    : isFuno
-    ? 'font-sans text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white'
-    : isMincom
-    ? 'font-sans text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100'
-    : 'font-sans text-3xl sm:text-4xl font-black tracking-tight text-[var(--sf-text)]';
+      ? 'font-sans text-3xl sm:text-5xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white'
+      : isMinimal
+        ? 'font-sans text-3xl sm:text-5xl font-extralight tracking-tight uppercase text-black dark:text-white'
+        : isFuno
+          ? 'font-sans text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white'
+          : isMincom
+            ? 'font-sans text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100'
+            : 'font-sans text-3xl sm:text-4xl font-black tracking-tight text-[var(--sf-text)]';
 
-  const galleryAspect = isLuxe
-    ? 'aspect-[3/4]'
-    : 'aspect-square';
+  const galleryAspect = isLuxe ? 'aspect-[3/4]' : 'aspect-square';
 
   return (
     <>
@@ -338,7 +378,13 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
       {toastMessage && (
         <div className="fixed top-20 right-6 z-50 bg-gray-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-fadeIn border border-gray-700">
           <span>{toastMessage}</span>
-          <Link href="/cart" className="text-xs font-bold underline" style={{ color: 'var(--sf-accent)' }}>View Cart</Link>
+          <Link
+            href="/cart"
+            className="text-xs font-bold underline"
+            style={{ color: 'var(--sf-accent)' }}
+          >
+            View Cart
+          </Link>
         </div>
       )}
 
@@ -347,13 +393,20 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full text-xs flex items-center gap-2"
         style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}
       >
-        <Link href="/" className="hover:underline transition">Home</Link>
+        <Link href="/" className="hover:underline transition">
+          Home
+        </Link>
         <span>{isMinimal ? '//' : isLuxe ? '✦' : '/'}</span>
-        <Link href="/products" className="hover:underline transition">Products</Link>
+        <Link href="/products" className="hover:underline transition">
+          Products
+        </Link>
         {product.categoryName && (
           <>
             <span>{isMinimal ? '//' : isLuxe ? '✦' : '/'}</span>
-            <Link href={`/products?category=${encodeURIComponent(product.categoryName)}`} className="hover:underline transition">
+            <Link
+              href={`/products?category=${encodeURIComponent(product.categoryName)}`}
+              className="hover:underline transition"
+            >
               {product.categoryName}
             </Link>
           </>
@@ -365,10 +418,8 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
-
         {/* ── Product Hero Grid ─────────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-
           {/* ── 1. Media Gallery (Left Column) ─────────────────────────── */}
           <div className="lg:col-span-6 space-y-4">
             <div
@@ -392,7 +443,9 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                   className="object-cover object-center transition duration-500 hover:scale-105"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-5xl opacity-20">📦</div>
+                <div className="w-full h-full flex items-center justify-center text-5xl opacity-20">
+                  📦
+                </div>
               )}
 
               {/* Discount Tag */}
@@ -402,8 +455,8 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                     isMinimal
                       ? 'rounded-none bg-black text-white font-mono'
                       : isLuxe
-                      ? 'rounded-none bg-stone-900 uppercase tracking-[0.2em] text-[10px]'
-                      : 'rounded-full'
+                        ? 'rounded-none bg-stone-900 uppercase tracking-[0.2em] text-[10px]'
+                        : 'rounded-full'
                   }`}
                   style={isMinimal || isLuxe ? undefined : { backgroundColor: 'var(--sf-accent)' }}
                 >
@@ -415,7 +468,11 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
               <button
                 onClick={() => toggleWishlist(product.id)}
                 className={`absolute top-4 right-4 w-10 h-10 backdrop-blur shadow-md flex items-center justify-center text-lg transition hover:scale-110 z-10 ${
-                  isMinimal ? 'rounded-none bg-white border border-black' : isLuxe ? 'rounded-none bg-white/90 border border-stone-300' : 'rounded-full bg-white/85'
+                  isMinimal
+                    ? 'rounded-none bg-white border border-black'
+                    : isLuxe
+                      ? 'rounded-none bg-white/90 border border-stone-300'
+                      : 'rounded-full bg-white/85'
                 }`}
                 title={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
               >
@@ -434,13 +491,16 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                       isMinimal
                         ? 'rounded-none'
                         : isLuxe
-                        ? 'rounded-none'
-                        : isMincom
-                        ? 'rounded-lg'
-                        : 'rounded-2xl'
+                          ? 'rounded-none'
+                          : isMincom
+                            ? 'rounded-lg'
+                            : 'rounded-2xl'
                     } ${selectedImage === img ? 'shadow-md opacity-100 scale-95' : 'opacity-60 hover:opacity-100'}`}
                     style={{
-                      borderColor: selectedImage === img ? 'var(--sf-primary)' : 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
+                      borderColor:
+                        selectedImage === img
+                          ? 'var(--sf-primary)'
+                          : 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
                     }}
                   >
                     <Image
@@ -458,7 +518,6 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
 
           {/* ── 2. Product Details & Actions (Right Column) ──────────────── */}
           <div className="lg:col-span-6 space-y-6">
-            
             {/* Header Badge / Meta */}
             <div>
               {isNova ? (
@@ -486,14 +545,15 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                   <span>★ Commercial Grade Spec</span>
                 </div>
               ) : product.brandName ? (
-                <span className="text-xs font-bold uppercase tracking-widest block mb-1" style={{ color: 'var(--sf-primary)' }}>
+                <span
+                  className="text-xs font-bold uppercase tracking-widest block mb-1"
+                  style={{ color: 'var(--sf-primary)' }}
+                >
                   {product.brandName}
                 </span>
               ) : null}
 
-              <h1 className={titleClass}>
-                {product.name}
-              </h1>
+              <h1 className={titleClass}>{product.name}</h1>
 
               {/* Rating & Stock Summary */}
               <div className="flex flex-wrap items-center gap-3 mt-3">
@@ -507,11 +567,20 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                   className="text-xs font-bold hover:underline transition"
                   style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
                 >
-                  {avgRating} ({totalReviewsCount} {totalReviewsCount === 1 ? 'verified review' : 'reviews'})
+                  {avgRating} ({totalReviewsCount}{' '}
+                  {totalReviewsCount === 1 ? 'verified review' : 'reviews'})
                 </button>
-                <span style={{ color: 'color-mix(in srgb, var(--sf-text) 25%, transparent)' }}>•</span>
-                <span className={`text-xs font-bold ${isOutOfStock ? 'text-rose-600' : stock <= 5 ? 'text-amber-600' : 'text-emerald-600'}`}>
-                  {isOutOfStock ? '✕ Out of Stock' : stock <= 5 ? `⚠️ Only ${stock} units remaining` : `✓ In Stock (${stock} available)`}
+                <span style={{ color: 'color-mix(in srgb, var(--sf-text) 25%, transparent)' }}>
+                  •
+                </span>
+                <span
+                  className={`text-xs font-bold ${isOutOfStock ? 'text-rose-600' : stock <= 5 ? 'text-amber-600' : 'text-emerald-600'}`}
+                >
+                  {isOutOfStock
+                    ? '✕ Out of Stock'
+                    : stock <= 5
+                      ? `⚠️ Only ${stock} units remaining`
+                      : `✓ In Stock (${stock} available)`}
                 </span>
               </div>
             </div>
@@ -521,18 +590,28 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
               className="flex items-baseline gap-3 pb-6 border-b"
               style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
             >
-              <span className={`text-3xl sm:text-4xl ${isLuxe ? 'font-serif' : 'font-black'}`} style={{ color: 'var(--sf-primary)' }}>
+              <span
+                className={`text-3xl sm:text-4xl ${isLuxe ? 'font-serif' : 'font-black'}`}
+                style={{ color: 'var(--sf-primary)' }}
+              >
                 {formatPrice(activePrice)}
               </span>
               {activeCompareAtPrice && activeCompareAtPrice > activePrice && (
-                <span className="text-lg line-through" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+                <span
+                  className="text-lg line-through"
+                  style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+                >
                   {formatPrice(activeCompareAtPrice)}
                 </span>
               )}
               {discount > 0 && (
                 <span
                   className={`px-2.5 py-0.5 text-xs font-black ${
-                    isMinimal ? 'rounded-none bg-black text-white' : isLuxe ? 'rounded-none border border-amber-500 text-amber-700' : 'rounded-full bg-rose-500/10 text-rose-600 border border-rose-500/20'
+                    isMinimal
+                      ? 'rounded-none bg-black text-white'
+                      : isLuxe
+                        ? 'rounded-none border border-amber-500 text-amber-700'
+                        : 'rounded-full bg-rose-500/10 text-rose-600 border border-rose-500/20'
                   }`}
                 >
                   Save {discount}%
@@ -544,11 +623,23 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
             {product.variants && product.variants.length > 0 && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
-                    {isNova ? 'Hardware Configuration' : isLuxe ? 'Select Atelier Finish' : isMinimal ? 'EDITION_OPTIONS' : 'Choose Variant'}
+                  <span
+                    className="text-xs font-bold uppercase tracking-wider"
+                    style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
+                  >
+                    {isNova
+                      ? 'Hardware Configuration'
+                      : isLuxe
+                        ? 'Select Atelier Finish'
+                        : isMinimal
+                          ? 'EDITION_OPTIONS'
+                          : 'Choose Variant'}
                   </span>
                   {selectedVariant && (
-                    <span className="text-xs font-mono font-bold" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+                    <span
+                      className="text-xs font-mono font-bold"
+                      style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
+                    >
                       SKU: {selectedVariant.sku}
                     </span>
                   )}
@@ -568,16 +659,26 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                           if (v.image) setSelectedImage(v.image);
                         }}
                         className={`px-4 py-2 text-xs font-bold border transition flex items-center gap-2 cursor-pointer ${
-                          isMinimal ? 'rounded-none' : isLuxe ? 'rounded-none' : isMincom ? 'rounded-lg' : 'rounded-xl'
+                          isMinimal
+                            ? 'rounded-none'
+                            : isLuxe
+                              ? 'rounded-none'
+                              : isMincom
+                                ? 'rounded-lg'
+                                : 'rounded-xl'
                         } ${isVOut ? 'opacity-40 cursor-not-allowed' : 'hover:scale-[1.02]'}`}
                         style={{
                           backgroundColor: isSelected ? 'var(--sf-primary)' : 'transparent',
                           color: isSelected ? '#ffffff' : 'var(--sf-text)',
-                          borderColor: isSelected ? 'var(--sf-primary)' : 'color-mix(in srgb, var(--sf-text) 20%, transparent)',
+                          borderColor: isSelected
+                            ? 'var(--sf-primary)'
+                            : 'color-mix(in srgb, var(--sf-text) 20%, transparent)',
                         }}
                       >
                         <span>{v.name}</span>
-                        <span className={`text-[11px] font-mono ${isSelected ? 'text-white/90' : 'opacity-70'}`}>
+                        <span
+                          className={`text-[11px] font-mono ${isSelected ? 'text-white/90' : 'opacity-70'}`}
+                        >
                           {formatPrice(v.price)}
                         </span>
                         {isVOut && (
@@ -604,11 +705,17 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-base">🏷️</span>
-                    <span className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--sf-primary)' }}>
+                    <span
+                      className="text-xs font-black uppercase tracking-wider"
+                      style={{ color: 'var(--sf-primary)' }}
+                    >
                       Available Coupons ({coupons.length})
                     </span>
                   </div>
-                  <span className="text-[11px] font-medium" style={{ color: 'color-mix(in srgb, var(--sf-text) 55%, transparent)' }}>
+                  <span
+                    className="text-[11px] font-medium"
+                    style={{ color: 'color-mix(in srgb, var(--sf-text) 55%, transparent)' }}
+                  >
                     Click code to copy
                   </span>
                 </div>
@@ -620,8 +727,8 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                       coupon.discountType === 'PERCENTAGE'
                         ? (activePrice * (coupon.value || 0)) / 100
                         : coupon.discountType === 'FIXED_AMOUNT'
-                        ? Math.min(activePrice, coupon.value || 0)
-                        : 0;
+                          ? Math.min(activePrice, coupon.value || 0)
+                          : 0;
 
                     return (
                       <div
@@ -631,7 +738,9 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                         }`}
                         style={{
                           backgroundColor: 'color-mix(in srgb, var(--sf-text) 2%, var(--sf-bg))',
-                          borderColor: isCopied ? '#10b981' : 'color-mix(in srgb, var(--sf-primary) 30%, transparent)',
+                          borderColor: isCopied
+                            ? '#10b981'
+                            : 'color-mix(in srgb, var(--sf-primary) 30%, transparent)',
                         }}
                       >
                         <div className="space-y-1">
@@ -639,11 +748,15 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                             <span
                               className={`px-2 py-0.5 text-[10px] font-black uppercase tracking-wider ${radiusPill}`}
                               style={{
-                                backgroundColor: 'color-mix(in srgb, var(--sf-accent) 15%, transparent)',
+                                backgroundColor:
+                                  'color-mix(in srgb, var(--sf-accent) 15%, transparent)',
                                 color: 'var(--sf-accent)',
                               }}
                             >
-                              {coupon.badge || (coupon.discountType === 'PERCENTAGE' ? `${coupon.value}% OFF` : 'OFFER')}
+                              {coupon.badge ||
+                                (coupon.discountType === 'PERCENTAGE'
+                                  ? `${coupon.value}% OFF`
+                                  : 'OFFER')}
                             </span>
                             {liveSavings > 0 && (
                               <span className="text-[11px] font-black text-emerald-600 font-mono">
@@ -651,24 +764,34 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                               </span>
                             )}
                           </div>
-                          <h4 className="text-xs font-bold truncate" style={{ color: 'var(--sf-text)' }} title={coupon.title}>
+                          <h4
+                            className="text-xs font-bold truncate"
+                            style={{ color: 'var(--sf-text)' }}
+                            title={coupon.title}
+                          >
                             {coupon.title}
                           </h4>
-                          <p className="text-[11px] line-clamp-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 65%, transparent)' }}>
+                          <p
+                            className="text-[11px] line-clamp-1"
+                            style={{ color: 'color-mix(in srgb, var(--sf-text) 65%, transparent)' }}
+                          >
                             {coupon.description || coupon.terms || 'Applicable on this order'}
                           </p>
                         </div>
 
                         <div
                           className="flex items-center justify-between pt-2 border-t border-dashed"
-                          style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+                          style={{
+                            borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
+                          }}
                         >
                           <span
                             className="font-mono text-xs font-black tracking-wider px-2 py-0.5 rounded border border-dashed"
                             style={{
                               borderColor: 'var(--sf-primary)',
                               color: 'var(--sf-primary)',
-                              backgroundColor: 'color-mix(in srgb, var(--sf-primary) 5%, transparent)',
+                              backgroundColor:
+                                'color-mix(in srgb, var(--sf-primary) 5%, transparent)',
                             }}
                           >
                             {coupon.code}
@@ -678,7 +801,9 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                             onClick={() => handleCopyCoupon(coupon.code)}
                             className="text-[11px] font-bold px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer"
                             style={{
-                              backgroundColor: isCopied ? '#10b981' : 'color-mix(in srgb, var(--sf-primary) 12%, transparent)',
+                              backgroundColor: isCopied
+                                ? '#10b981'
+                                : 'color-mix(in srgb, var(--sf-primary) 12%, transparent)',
                               color: isCopied ? '#ffffff' : 'var(--sf-primary)',
                             }}
                           >
@@ -697,7 +822,9 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                     className="w-full text-center text-xs font-bold pt-1 hover:underline cursor-pointer"
                     style={{ color: 'var(--sf-primary)' }}
                   >
-                    {isCouponsExpanded ? 'Show Less Offers ▲' : `View All ${coupons.length} Offers ▼`}
+                    {isCouponsExpanded
+                      ? 'Show Less Offers ▲'
+                      : `View All ${coupons.length} Offers ▼`}
                   </button>
                 )}
               </div>
@@ -709,11 +836,18 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                 {/* Stepper */}
                 <div
                   className={`flex items-center p-1 ${
-                    isMinimal ? 'rounded-none border border-black dark:border-white' : isLuxe ? 'rounded-none border border-stone-300 dark:border-stone-700' : 'rounded-2xl border'
+                    isMinimal
+                      ? 'rounded-none border border-black dark:border-white'
+                      : isLuxe
+                        ? 'rounded-none border border-stone-300 dark:border-stone-700'
+                        : 'rounded-2xl border'
                   }`}
                   style={{
                     backgroundColor: 'color-mix(in srgb, var(--sf-text) 4%, var(--sf-bg))',
-                    borderColor: isMinimal || isLuxe ? undefined : 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
+                    borderColor:
+                      isMinimal || isLuxe
+                        ? undefined
+                        : 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
                   }}
                 >
                   <button
@@ -725,7 +859,10 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                   >
                     -
                   </button>
-                  <span className="w-10 text-center font-bold text-sm" style={{ color: 'var(--sf-text)' }}>
+                  <span
+                    className="w-10 text-center font-bold text-sm"
+                    style={{ color: 'var(--sf-text)' }}
+                  >
                     {isOutOfStock ? 0 : quantity}
                   </span>
                   <button
@@ -748,14 +885,14 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                     isLuxe
                       ? 'rounded-none uppercase tracking-[0.25em] text-xs py-4.5 bg-stone-950 hover:bg-stone-800'
                       : isMinimal
-                      ? 'rounded-none uppercase tracking-widest text-xs py-4 bg-black dark:bg-white dark:text-black'
-                      : isNova
-                      ? 'rounded-full py-4 text-sm bg-[#0071e3] hover:bg-[#0077ed]'
-                      : isFuno
-                      ? 'rounded-full py-4 text-sm bg-slate-950 hover:bg-orange-600'
-                      : isMincom
-                      ? 'rounded-xl py-3.5 text-sm'
-                      : 'rounded-2xl py-4 text-sm'
+                        ? 'rounded-none uppercase tracking-widest text-xs py-4 bg-black dark:bg-white dark:text-black'
+                        : isNova
+                          ? 'rounded-full py-4 text-sm bg-[#0071e3] hover:bg-[#0077ed]'
+                          : isFuno
+                            ? 'rounded-full py-4 text-sm bg-slate-950 hover:bg-orange-600'
+                            : isMincom
+                              ? 'rounded-xl py-3.5 text-sm'
+                              : 'rounded-2xl py-4 text-sm'
                   }`}
                   style={
                     isLuxe || isMinimal || isNova || isFuno
@@ -763,7 +900,16 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                       : { backgroundColor: isOutOfStock ? '#64748b' : 'var(--sf-primary)' }
                   }
                 >
-                  {isAdding ? 'Adding to Bag…' : isOutOfStock ? 'Out of Stock' : isLuxe ? 'Add to Atelier Bag' : isNova ? 'Add to Bag' : 'Add to Bag'} 🛍️
+                  {isAdding
+                    ? 'Adding to Bag…'
+                    : isOutOfStock
+                      ? 'Out of Stock'
+                      : isLuxe
+                        ? 'Add to Atelier Bag'
+                        : isNova
+                          ? 'Add to Bag'
+                          : 'Add to Bag'}{' '}
+                  🛍️
                 </button>
               </div>
 
@@ -775,12 +921,12 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                     isLuxe
                       ? 'rounded-none py-3.5 uppercase tracking-[0.2em] text-xs font-semibold'
                       : isMinimal
-                      ? 'rounded-none py-3 uppercase tracking-widest text-xs font-bold'
-                      : isNova
-                      ? 'rounded-full py-3.5 text-sm font-semibold'
-                      : isFuno
-                      ? 'rounded-full py-3.5 text-xs font-extrabold'
-                      : 'rounded-2xl py-3 text-sm font-bold'
+                        ? 'rounded-none py-3 uppercase tracking-widest text-xs font-bold'
+                        : isNova
+                          ? 'rounded-full py-3.5 text-sm font-semibold'
+                          : isFuno
+                            ? 'rounded-full py-3.5 text-xs font-extrabold'
+                            : 'rounded-2xl py-3 text-sm font-bold'
                   }`}
                   style={{ borderColor: 'var(--sf-primary)', color: 'var(--sf-primary)' }}
                 >
@@ -801,17 +947,23 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                 <>
                   <div>
                     <span className="block text-base mb-0.5">⚡</span>
-                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>Next-Day Courier</span>
+                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>
+                      Next-Day Courier
+                    </span>
                     <span className="opacity-60">Express dispatch</span>
                   </div>
                   <div>
                     <span className="block text-base mb-0.5">🔒</span>
-                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>Encrypted Pay</span>
+                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>
+                      Encrypted Pay
+                    </span>
                     <span className="opacity-60">Hardware security</span>
                   </div>
                   <div>
                     <span className="block text-base mb-0.5">🛡️</span>
-                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>2-Yr Warranty</span>
+                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>
+                      2-Yr Warranty
+                    </span>
                     <span className="opacity-60">Complete coverage</span>
                   </div>
                 </>
@@ -819,17 +971,32 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                 <>
                   <div>
                     <span className="block text-base mb-0.5">✦</span>
-                    <span className="font-bold block uppercase tracking-wider text-[10px]" style={{ color: 'var(--sf-text)' }}>Atelier Craft</span>
+                    <span
+                      className="font-bold block uppercase tracking-wider text-[10px]"
+                      style={{ color: 'var(--sf-text)' }}
+                    >
+                      Atelier Craft
+                    </span>
                     <span className="opacity-60 text-[10px]">Master materials</span>
                   </div>
                   <div>
                     <span className="block text-base mb-0.5">✦</span>
-                    <span className="font-bold block uppercase tracking-wider text-[10px]" style={{ color: 'var(--sf-text)' }}>Gift Presentation</span>
+                    <span
+                      className="font-bold block uppercase tracking-wider text-[10px]"
+                      style={{ color: 'var(--sf-text)' }}
+                    >
+                      Gift Presentation
+                    </span>
                     <span className="opacity-60 text-[10px]">Signature box</span>
                   </div>
                   <div>
                     <span className="block text-base mb-0.5">✦</span>
-                    <span className="font-bold block uppercase tracking-wider text-[10px]" style={{ color: 'var(--sf-text)' }}>White Glove</span>
+                    <span
+                      className="font-bold block uppercase tracking-wider text-[10px]"
+                      style={{ color: 'var(--sf-text)' }}
+                    >
+                      White Glove
+                    </span>
                     <span className="opacity-60 text-[10px]">Insured delivery</span>
                   </div>
                 </>
@@ -837,17 +1004,32 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                 <>
                   <div>
                     <span className="font-mono text-sm block mb-0.5">// 01</span>
-                    <span className="font-bold block text-[10px] uppercase" style={{ color: 'var(--sf-text)' }}>Zero Plastic</span>
+                    <span
+                      className="font-bold block text-[10px] uppercase"
+                      style={{ color: 'var(--sf-text)' }}
+                    >
+                      Zero Plastic
+                    </span>
                     <span className="opacity-60 text-[10px]">100% Recyclable</span>
                   </div>
                   <div>
                     <span className="font-mono text-sm block mb-0.5">// 02</span>
-                    <span className="font-bold block text-[10px] uppercase" style={{ color: 'var(--sf-text)' }}>Carbon Neutral</span>
+                    <span
+                      className="font-bold block text-[10px] uppercase"
+                      style={{ color: 'var(--sf-text)' }}
+                    >
+                      Carbon Neutral
+                    </span>
                     <span className="opacity-60 text-[10px]">Global logistics</span>
                   </div>
                   <div>
                     <span className="font-mono text-sm block mb-0.5">// 03</span>
-                    <span className="font-bold block text-[10px] uppercase" style={{ color: 'var(--sf-text)' }}>5-Yr Pledge</span>
+                    <span
+                      className="font-bold block text-[10px] uppercase"
+                      style={{ color: 'var(--sf-text)' }}
+                    >
+                      5-Yr Pledge
+                    </span>
                     <span className="opacity-60 text-[10px]">Built to endure</span>
                   </div>
                 </>
@@ -855,17 +1037,23 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                 <>
                   <div>
                     <span className="block text-base mb-0.5">🚚</span>
-                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>Free Shipping</span>
+                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>
+                      Free Shipping
+                    </span>
                     <span className="opacity-60">To your doorstep</span>
                   </div>
                   <div>
                     <span className="block text-base mb-0.5">☕</span>
-                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>30-Day Trial</span>
+                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>
+                      30-Day Trial
+                    </span>
                     <span className="opacity-60">Love it or return</span>
                   </div>
                   <div>
                     <span className="block text-base mb-0.5">💛</span>
-                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>Human Support</span>
+                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>
+                      Human Support
+                    </span>
                     <span className="opacity-60">7 days a week</span>
                   </div>
                 </>
@@ -873,49 +1061,72 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                 <>
                   <div>
                     <span className="block text-base mb-0.5">🚚</span>
-                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>Free Shipping</span>
+                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>
+                      Free Shipping
+                    </span>
                     <span className="opacity-60">Orders over ₹999</span>
                   </div>
                   <div>
                     <span className="block text-base mb-0.5">🔄</span>
-                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>Easy Returns</span>
+                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>
+                      Easy Returns
+                    </span>
                     <span className="opacity-60">7-Day Guarantee</span>
                   </div>
                   <div>
                     <span className="block text-base mb-0.5">🔒</span>
-                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>Safe Payment</span>
+                    <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>
+                      Safe Payment
+                    </span>
                     <span className="opacity-60">Stripe & Razorpay</span>
                   </div>
                 </>
               )}
             </div>
-
           </div>
         </div>
 
         {/* ── 3. Content Tabs Section (Description, Specs, Reviews) ─────── */}
-        <div className="mt-16 pt-10 border-t" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
-          
+        <div
+          className="mt-16 pt-10 border-t"
+          style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+        >
           {/* Tab Headers */}
-          <div className="flex gap-8 border-b mb-8" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
+          <div
+            className="flex gap-8 border-b mb-8"
+            style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+          >
             {(['description', 'specs', 'reviews'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`pb-4 text-sm font-bold tracking-wide transition-all border-b-2 cursor-pointer ${
-                  isLuxe ? 'font-serif tracking-widest uppercase text-xs' : isMinimal ? 'uppercase font-mono text-xs' : ''
+                  isLuxe
+                    ? 'font-serif tracking-widest uppercase text-xs'
+                    : isMinimal
+                      ? 'uppercase font-mono text-xs'
+                      : ''
                 }`}
                 style={{
                   borderColor: activeTab === tab ? 'var(--sf-primary)' : 'transparent',
-                  color: activeTab === tab ? 'var(--sf-primary)' : 'color-mix(in srgb, var(--sf-text) 40%, transparent)',
+                  color:
+                    activeTab === tab
+                      ? 'var(--sf-primary)'
+                      : 'color-mix(in srgb, var(--sf-text) 40%, transparent)',
                 }}
               >
-                {tab === 'description' ? 'Overview' : tab === 'specs' ? 'Specifications' : (
+                {tab === 'description' ? (
+                  'Overview'
+                ) : tab === 'specs' ? (
+                  'Specifications'
+                ) : (
                   <span className="flex items-center gap-2">
                     Customer Reviews
                     <span
                       className={`px-2 py-0.5 text-xs font-extrabold ${radiusPill}`}
-                      style={{ backgroundColor: 'color-mix(in srgb, var(--sf-text) 8%, var(--sf-bg))' }}
+                      style={{
+                        backgroundColor: 'color-mix(in srgb, var(--sf-text) 8%, var(--sf-bg))',
+                      }}
                     >
                       {totalReviewsCount}
                     </span>
@@ -926,8 +1137,10 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
           </div>
 
           {/* Tab Content */}
-          <div className="max-w-4xl text-sm leading-relaxed" style={{ color: 'color-mix(in srgb, var(--sf-text) 70%, transparent)' }}>
-            
+          <div
+            className="max-w-4xl text-sm leading-relaxed"
+            style={{ color: 'color-mix(in srgb, var(--sf-text) 70%, transparent)' }}
+          >
             {/* Overview / Description */}
             {activeTab === 'description' && (
               <div className="space-y-4">
@@ -955,14 +1168,23 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
 
             {/* Specifications Matrix */}
             {activeTab === 'specs' && (
-              <div className={`border divide-y ${radiusBox}`} style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
+              <div
+                className={`border divide-y ${radiusBox}`}
+                style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+              >
                 {[
                   { label: 'Category', value: product.categoryName || 'General Merchandise' },
                   { label: 'Brand / Maker', value: product.brandName || theme.storeName },
                   { label: 'Model Identifier / SKU', value: activeSku || product.id },
-                  ...(product.material ? [{ label: 'Primary Material', value: product.material }] : []),
-                  ...(product.weight ? [{ label: 'Item Weight', value: `${product.weight} kg` }] : []),
-                  ...(product.dimensions ? [{ label: 'Physical Dimensions', value: product.dimensions }] : []),
+                  ...(product.material
+                    ? [{ label: 'Primary Material', value: product.material }]
+                    : []),
+                  ...(product.weight
+                    ? [{ label: 'Item Weight', value: `${product.weight} kg` }]
+                    : []),
+                  ...(product.dimensions
+                    ? [{ label: 'Physical Dimensions', value: product.dimensions }]
+                    : []),
                   { label: 'Quality Verification', value: 'Inspected & Guaranteed Authentic' },
                 ].map((row, idx) => (
                   <div
@@ -972,8 +1194,15 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                     }`}
                     style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)' }}
                   >
-                    <span className="font-bold" style={{ color: 'var(--sf-text)' }}>{row.label}</span>
-                    <span className="font-medium" style={{ color: 'color-mix(in srgb, var(--sf-text) 65%, transparent)' }}>{row.value}</span>
+                    <span className="font-bold" style={{ color: 'var(--sf-text)' }}>
+                      {row.label}
+                    </span>
+                    <span
+                      className="font-medium"
+                      style={{ color: 'color-mix(in srgb, var(--sf-text) 65%, transparent)' }}
+                    >
+                      {row.value}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -982,7 +1211,6 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
             {/* Customer Reviews Module */}
             {activeTab === 'reviews' && (
               <div className="space-y-8">
-                
                 {/* Breakdown Card */}
                 <div
                   className={`p-6 border grid grid-cols-1 md:grid-cols-12 gap-6 items-center ${radiusBox}`}
@@ -992,13 +1220,21 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                   }}
                 >
                   <div className="md:col-span-4 text-center md:text-left space-y-1">
-                    <span className="text-5xl font-black" style={{ color: 'var(--sf-text)' }}>{avgRating}</span>
-                    <div className="flex justify-center md:justify-start text-base" style={{ color: 'var(--sf-accent, #f59e0b)' }}>
+                    <span className="text-5xl font-black" style={{ color: 'var(--sf-text)' }}>
+                      {avgRating}
+                    </span>
+                    <div
+                      className="flex justify-center md:justify-start text-base"
+                      style={{ color: 'var(--sf-accent, #f59e0b)' }}
+                    >
                       {[1, 2, 3, 4, 5].map((s) => (
                         <span key={s}>{s <= Math.round(avgRating) ? '★' : '☆'}</span>
                       ))}
                     </div>
-                    <p className="text-xs" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                    <p
+                      className="text-xs"
+                      style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                    >
                       Based on {totalReviewsCount} verified customer submissions
                     </p>
                   </div>
@@ -1006,19 +1242,35 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                   <div className="md:col-span-5 space-y-1.5 text-xs">
                     {[5, 4, 3, 2, 1].map((stars) => {
                       const count = (starCounts as Record<number, number>)[stars] || 0;
-                      const pct = totalReviewsCount > 0 ? Math.round((count / totalReviewsCount) * 100) : 0;
+                      const pct =
+                        totalReviewsCount > 0 ? Math.round((count / totalReviewsCount) * 100) : 0;
                       return (
                         <div key={stars} className="flex items-center gap-2">
-                          <span className="w-8 text-right font-bold" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                          <span
+                            className="w-8 text-right font-bold"
+                            style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                          >
                             {stars}★
                           </span>
                           <div
                             className="flex-1 h-2 rounded-full overflow-hidden"
-                            style={{ backgroundColor: 'color-mix(in srgb, var(--sf-text) 12%, transparent)' }}
+                            style={{
+                              backgroundColor:
+                                'color-mix(in srgb, var(--sf-text) 12%, transparent)',
+                            }}
                           >
-                            <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: 'var(--sf-accent, #f59e0b)' }} />
+                            <div
+                              className="h-full rounded-full transition-all"
+                              style={{
+                                width: `${pct}%`,
+                                backgroundColor: 'var(--sf-accent, #f59e0b)',
+                              }}
+                            />
                           </div>
-                          <span className="w-6 font-mono text-[10px]" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+                          <span
+                            className="w-6 font-mono text-[10px]"
+                            style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+                          >
                             {count}
                           </span>
                         </div>
@@ -1032,9 +1284,21 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                         type="button"
                         onClick={openWriteReview}
                         className={`w-full sm:w-auto px-5 py-3 font-bold text-xs text-white shadow-lg transition hover:opacity-90 cursor-pointer ${
-                          isMinimal ? 'rounded-none bg-black text-white dark:bg-white dark:text-black uppercase tracking-wider' : isLuxe ? 'rounded-none bg-stone-900 uppercase tracking-widest' : isNova ? 'rounded-full bg-[#0071e3]' : isFuno ? 'rounded-full bg-slate-900' : 'rounded-2xl'
+                          isMinimal
+                            ? 'rounded-none bg-black text-white dark:bg-white dark:text-black uppercase tracking-wider'
+                            : isLuxe
+                              ? 'rounded-none bg-stone-900 uppercase tracking-widest'
+                              : isNova
+                                ? 'rounded-full bg-[#0071e3]'
+                                : isFuno
+                                  ? 'rounded-full bg-slate-900'
+                                  : 'rounded-2xl'
                         }`}
-                        style={isMinimal || isLuxe || isNova || isFuno ? undefined : { backgroundColor: 'var(--sf-primary)' }}
+                        style={
+                          isMinimal || isLuxe || isNova || isFuno
+                            ? undefined
+                            : { backgroundColor: 'var(--sf-primary)' }
+                        }
                       >
                         ✏️ Write a Review
                       </button>
@@ -1063,7 +1327,10 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                         borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
                       }}
                     >
-                      <div className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin mx-auto mb-2" style={{ borderColor: 'var(--sf-primary)', borderTopColor: 'transparent' }} />
+                      <div
+                        className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin mx-auto mb-2"
+                        style={{ borderColor: 'var(--sf-primary)', borderTopColor: 'transparent' }}
+                      />
                       <p className="text-xs font-semibold">Loading reviews…</p>
                     </div>
                   ) : reviewsList.length > 0 ? (
@@ -1079,7 +1346,10 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                         <div className="flex items-start justify-between">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className={`font-bold text-sm ${isLuxe ? 'font-serif' : ''}`} style={{ color: 'var(--sf-text)' }}>
+                              <span
+                                className={`font-bold text-sm ${isLuxe ? 'font-serif' : ''}`}
+                                style={{ color: 'var(--sf-text)' }}
+                              >
                                 {rev.userName || rev.customerName || 'Verified Customer'}
                               </span>
                               {rev.verified !== false && (
@@ -1092,11 +1362,26 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                               )}
                             </div>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-xs" style={{ color: 'var(--sf-accent, #f59e0b)' }}>
-                                {'★'.repeat(rev.rating)}{'☆'.repeat(Math.max(0, 5 - rev.rating))}
+                              <span
+                                className="text-xs"
+                                style={{ color: 'var(--sf-accent, #f59e0b)' }}
+                              >
+                                {'★'.repeat(rev.rating)}
+                                {'☆'.repeat(Math.max(0, 5 - rev.rating))}
                               </span>
-                              <span className="text-[11px]" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
-                                {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recently'}
+                              <span
+                                className="text-[11px]"
+                                style={{
+                                  color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)',
+                                }}
+                              >
+                                {rev.createdAt
+                                  ? new Date(rev.createdAt).toLocaleDateString('en-US', {
+                                      month: 'short',
+                                      day: 'numeric',
+                                      year: 'numeric',
+                                    })
+                                  : 'Recently'}
                               </span>
                             </div>
                           </div>
@@ -1109,7 +1394,8 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                                   onClick={() => openEditReview(rev)}
                                   className={`text-xs font-semibold px-2.5 py-1 transition hover:opacity-70 flex items-center gap-1 cursor-pointer ${radiusPill}`}
                                   style={{
-                                    backgroundColor: 'color-mix(in srgb, var(--sf-text) 6%, var(--sf-bg))',
+                                    backgroundColor:
+                                      'color-mix(in srgb, var(--sf-text) 6%, var(--sf-bg))',
                                     color: 'color-mix(in srgb, var(--sf-text) 70%, transparent)',
                                   }}
                                 >
@@ -1121,7 +1407,8 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                                   onClick={() => handleDeleteReview(rev.id)}
                                   className={`text-xs font-semibold px-2.5 py-1 transition hover:opacity-70 flex items-center gap-1 text-rose-500 hover:text-rose-600 disabled:opacity-50 cursor-pointer ${radiusPill}`}
                                   style={{
-                                    backgroundColor: 'color-mix(in srgb, #f43f5e 10%, var(--sf-bg))',
+                                    backgroundColor:
+                                      'color-mix(in srgb, #f43f5e 10%, var(--sf-bg))',
                                   }}
                                 >
                                   🗑️ {deletingReviewId === rev.id ? 'Deleting…' : 'Delete'}
@@ -1140,7 +1427,8 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                                 hasUserLiked(rev)
                                   ? undefined
                                   : {
-                                      backgroundColor: 'color-mix(in srgb, var(--sf-text) 6%, var(--sf-bg))',
+                                      backgroundColor:
+                                        'color-mix(in srgb, var(--sf-text) 6%, var(--sf-bg))',
                                       color: 'color-mix(in srgb, var(--sf-text) 55%, transparent)',
                                     }
                               }
@@ -1170,7 +1458,9 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                                 className={`w-24 h-24 sm:w-28 sm:h-28 object-cover border border-gray-200 dark:border-gray-700 shadow-sm transition hover:opacity-90 cursor-pointer ${radiusBox}`}
                                 onClick={() => window.open(rev.imageUrl!, '_blank')}
                               />
-                              <span className="text-[10px] text-gray-400 block mt-1">🔍 Click to expand</span>
+                              <span className="text-[10px] text-gray-400 block mt-1">
+                                🔍 Click to expand
+                              </span>
                             </div>
                           </div>
                         )}
@@ -1179,11 +1469,15 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                           <div
                             className={`mt-3 p-3.5 border space-y-1 ${radiusBox}`}
                             style={{
-                              backgroundColor: 'color-mix(in srgb, var(--sf-primary) 5%, var(--sf-bg))',
+                              backgroundColor:
+                                'color-mix(in srgb, var(--sf-primary) 5%, var(--sf-bg))',
                               borderColor: 'color-mix(in srgb, var(--sf-primary) 20%, transparent)',
                             }}
                           >
-                            <div className="flex items-center gap-1.5 text-xs font-bold" style={{ color: 'var(--sf-primary)' }}>
+                            <div
+                              className="flex items-center gap-1.5 text-xs font-bold"
+                              style={{ color: 'var(--sf-primary)' }}
+                            >
                               💬 Store Response
                             </div>
                             <p className="text-xs leading-relaxed">{rev.adminReply}</p>
@@ -1200,17 +1494,30 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                       }}
                     >
                       <span className="text-3xl block mb-2">⭐</span>
-                      <p className="font-bold text-sm mb-1" style={{ color: 'var(--sf-text)' }}>No reviews yet</p>
-                      <p className="text-xs mb-4" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+                      <p className="font-bold text-sm mb-1" style={{ color: 'var(--sf-text)' }}>
+                        No reviews yet
+                      </p>
+                      <p
+                        className="text-xs mb-4"
+                        style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+                      >
                         Be the first to share your experience with this item!
                       </p>
                       {isAuthenticated ? (
                         <button
                           onClick={openWriteReview}
                           className={`px-5 py-2.5 text-xs font-bold text-white shadow cursor-pointer ${
-                            isMinimal ? 'rounded-none bg-black text-white uppercase' : isLuxe ? 'rounded-none bg-stone-900 uppercase' : 'rounded-2xl'
+                            isMinimal
+                              ? 'rounded-none bg-black text-white uppercase'
+                              : isLuxe
+                                ? 'rounded-none bg-stone-900 uppercase'
+                                : 'rounded-2xl'
                           }`}
-                          style={isMinimal || isLuxe ? undefined : { backgroundColor: 'var(--sf-primary)' }}
+                          style={
+                            isMinimal || isLuxe
+                              ? undefined
+                              : { backgroundColor: 'var(--sf-primary)' }
+                          }
                         >
                           Write First Review
                         </button>
@@ -1239,7 +1546,13 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                 className={`text-2xl font-bold tracking-tight ${isLuxe ? 'font-serif italic text-3xl font-normal' : ''}`}
                 style={{ color: 'var(--sf-text)' }}
               >
-                {isNova ? 'You Might Also Want' : isLuxe ? 'Curated Companions' : isMinimal ? 'RELATED_PIECES' : 'You May Also Like'}
+                {isNova
+                  ? 'You Might Also Want'
+                  : isLuxe
+                    ? 'Curated Companions'
+                    : isMinimal
+                      ? 'RELATED_PIECES'
+                      : 'You May Also Like'}
               </h2>
               <Link
                 href="/products"

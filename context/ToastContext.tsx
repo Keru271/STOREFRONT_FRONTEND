@@ -87,31 +87,31 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
       return id;
     },
-    [hideToast]
+    [hideToast],
   );
 
   const success = useCallback(
     (message: string, title?: string, options?: Partial<ToastOptions>) =>
       showToast({ ...options, type: 'success', message, title }),
-    [showToast]
+    [showToast],
   );
 
   const error = useCallback(
     (message: string, title?: string, options?: Partial<ToastOptions>) =>
       showToast({ ...options, type: 'error', message, title: title || 'Error' }),
-    [showToast]
+    [showToast],
   );
 
   const info = useCallback(
     (message: string, title?: string, options?: Partial<ToastOptions>) =>
       showToast({ ...options, type: 'info', message, title }),
-    [showToast]
+    [showToast],
   );
 
   const warning = useCallback(
     (message: string, title?: string, options?: Partial<ToastOptions>) =>
       showToast({ ...options, type: 'warning', message, title: title || 'Notice' }),
-    [showToast]
+    [showToast],
   );
 
   return (

@@ -24,9 +24,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   return {
     title: product.metaTitle || product.name,
     description:
-      product.metaDescription ||
-      product.description ||
-      `Buy ${product.name} at ${theme.storeName}`,
+      product.metaDescription || product.description || `Buy ${product.name} at ${theme.storeName}`,
     openGraph: {
       title: product.name,
       description: product.description || '',
@@ -34,8 +32,8 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
         product.images.length > 0
           ? [{ url: product.images[0] }]
           : product.image
-          ? [{ url: product.image }]
-          : undefined,
+            ? [{ url: product.image }]
+            : undefined,
     },
   };
 }
@@ -57,10 +55,16 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
 
   // Pick related products: same category first, exclude current
   const related = allProducts
-    .filter((p) => p.id !== product.id && (product.categoryName ? p.categoryName === product.categoryName : true))
+    .filter(
+      (p) =>
+        p.id !== product.id &&
+        (product.categoryName ? p.categoryName === product.categoryName : true),
+    )
     .slice(0, 4)
     .concat(
-      allProducts.filter((p) => p.id !== product.id && p.categoryName !== product.categoryName).slice(0, 4)
+      allProducts
+        .filter((p) => p.id !== product.id && p.categoryName !== product.categoryName)
+        .slice(0, 4),
     )
     .slice(0, 4);
 
@@ -72,4 +76,3 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
 
   return <PDPPage theme={effectiveTheme} product={product} relatedProducts={related} />;
 }
-

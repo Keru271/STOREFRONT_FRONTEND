@@ -21,7 +21,7 @@ export async function validateCoupon(payload: {
 }): Promise<ValidateCouponResponse> {
   const response = await apiClient.post<ValidateCouponResponse>(
     'api/storefront/discounts/validate',
-    payload
+    payload,
   );
   return response;
 }
@@ -31,10 +31,10 @@ export async function validateCoupon(payload: {
  */
 export async function getAvailablePaymentMethods(
   country: string = 'India',
-  currency: string = 'INR'
+  currency: string = 'INR',
 ): Promise<AvailablePaymentMethodsResponse> {
   const response = await apiClient.get<AvailablePaymentMethodsResponse>(
-    `api/storefront/checkout/payment-methods?country=${encodeURIComponent(country)}&currency=${encodeURIComponent(currency)}`
+    `api/storefront/checkout/payment-methods?country=${encodeURIComponent(country)}&currency=${encodeURIComponent(currency)}`,
   );
   return response;
 }
@@ -50,7 +50,7 @@ export async function getCheckoutSummary(payload: {
 }): Promise<CheckoutSummaryResponse> {
   const response = await apiClient.post<CheckoutSummaryResponse>(
     'api/storefront/checkout/summary',
-    payload
+    payload,
   );
   return response;
 }
@@ -71,7 +71,7 @@ export async function createRazorpayOrder(payload: {
 }): Promise<RazorpayOrderResponse> {
   const response = await apiClient.post<RazorpayOrderResponse>(
     'api/storefront/checkout/razorpay/create-order',
-    payload
+    payload,
   );
   return response;
 }
@@ -96,7 +96,7 @@ export async function verifyRazorpayPayment(payload: {
 }): Promise<OrderPlacedResponse> {
   const response = await apiClient.post<OrderPlacedResponse>(
     'api/storefront/checkout/razorpay/verify',
-    payload
+    payload,
   );
   return response;
 }
@@ -116,7 +116,7 @@ export async function createStripePaymentIntent(payload: {
 }): Promise<StripeIntentResponse> {
   const response = await apiClient.post<StripeIntentResponse>(
     'api/storefront/checkout/stripe/create-intent',
-    payload
+    payload,
   );
   return response;
 }
@@ -137,7 +137,7 @@ export async function verifyStripePayment(payload: {
 }): Promise<OrderPlacedResponse> {
   const response = await apiClient.post<OrderPlacedResponse>(
     'api/storefront/checkout/stripe/verify',
-    payload
+    payload,
   );
   return response;
 }
@@ -159,7 +159,7 @@ export async function processDirectCheckout(payload: {
 }): Promise<OrderPlacedResponse> {
   const response = await apiClient.post<OrderPlacedResponse>(
     'api/storefront/checkout/payment',
-    payload
+    payload,
   );
   return response;
 }

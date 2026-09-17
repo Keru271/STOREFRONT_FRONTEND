@@ -30,29 +30,62 @@ export default function MinimalLoginPage({ theme }: AuthPageProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12" style={{ backgroundColor: 'var(--sf-bg)' }}>
+    <div
+      className="min-h-screen flex flex-col items-center justify-center px-6 py-12"
+      style={{ backgroundColor: 'var(--sf-bg)' }}
+    >
       <div className="w-full max-w-md">
         {/* Logo */}
         <Link href="/" className="block text-center mb-12">
-          <span className="text-xs tracking-widest uppercase" style={{ color: 'var(--sf-text)' }}>{theme.storeName}</span>
+          <span className="text-xs tracking-widest uppercase" style={{ color: 'var(--sf-text)' }}>
+            {theme.storeName}
+          </span>
         </Link>
 
-        <h1 className="text-3xl font-extralight text-center mb-2" style={{ color: 'var(--sf-text)' }}>Sign in</h1>
-        <p className="text-center text-sm mb-10 font-light" style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}>
+        <h1
+          className="text-3xl font-extralight text-center mb-2"
+          style={{ color: 'var(--sf-text)' }}
+        >
+          Sign in
+        </h1>
+        <p
+          className="text-center text-sm mb-10 font-light"
+          style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}
+        >
           New here?{' '}
-          <Link href="/auth/signup" className="transition-opacity hover:opacity-60" style={{ color: 'var(--sf-text)' }}>
+          <Link
+            href="/auth/signup"
+            className="transition-opacity hover:opacity-60"
+            style={{ color: 'var(--sf-text)' }}
+          >
             Create an account
           </Link>
         </p>
 
         {error && (
-          <p className="text-center text-sm mb-6" style={{ color: 'var(--sf-primary)' }}>{error}</p>
+          <p className="text-center text-sm mb-6" style={{ color: 'var(--sf-primary)' }}>
+            {error}
+          </p>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {[
-            { id: 'min-login-email', label: 'Email', type: 'email', value: email, onChange: setEmail, autoComplete: 'email' },
-            { id: 'min-login-password', label: 'Password', type: 'password', value: password, onChange: setPassword, autoComplete: 'current-password' },
+            {
+              id: 'min-login-email',
+              label: 'Email',
+              type: 'email',
+              value: email,
+              onChange: setEmail,
+              autoComplete: 'email',
+            },
+            {
+              id: 'min-login-password',
+              label: 'Password',
+              type: 'password',
+              value: password,
+              onChange: setPassword,
+              autoComplete: 'current-password',
+            },
           ].map((field) => (
             <div key={field.id} className="relative">
               <input
@@ -72,7 +105,8 @@ export default function MinimalLoginPage({ theme }: AuthPageProps) {
                   (e.target as HTMLInputElement).style.borderBottomColor = 'var(--sf-primary)';
                 }}
                 onBlur={(e) => {
-                  (e.target as HTMLInputElement).style.borderBottomColor = 'color-mix(in srgb, var(--sf-text) 25%, transparent)';
+                  (e.target as HTMLInputElement).style.borderBottomColor =
+                    'color-mix(in srgb, var(--sf-text) 25%, transparent)';
                 }}
               />
               <label
@@ -86,7 +120,11 @@ export default function MinimalLoginPage({ theme }: AuthPageProps) {
           ))}
 
           <div className="flex justify-end">
-            <Link href="/auth/forgot-password" className="text-xs tracking-widest uppercase transition-opacity hover:opacity-60" style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}>
+            <Link
+              href="/auth/forgot-password"
+              className="text-xs tracking-widest uppercase transition-opacity hover:opacity-60"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}
+            >
               Forgot password?
             </Link>
           </div>

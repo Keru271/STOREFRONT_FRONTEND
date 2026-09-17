@@ -399,7 +399,10 @@ export default function ReviewModal({
             )}
           </div>
 
-          <div className="flex gap-3 pt-3 border-t" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
+          <div
+            className="flex gap-3 pt-3 border-t"
+            style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+          >
             <button
               type="button"
               onClick={onClose}

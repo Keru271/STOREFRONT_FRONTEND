@@ -23,13 +23,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function CollectionsPage() {
   const [theme, collections] = await Promise.all([getTheme(), getCollections()]);
 
-  const featured   = collections.filter((c) => c.featured);
-  const rest       = collections.filter((c) => !c.featured);
-  const allSorted  = [...featured, ...rest];
+  const featured = collections.filter((c) => c.featured);
+  const rest = collections.filter((c) => !c.featured);
+  const allSorted = [...featured, ...rest];
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--sf-bg)' }}>
-
       {/* ── Page Hero ──────────────────────────────────────────────────────── */}
       <section
         className="py-20 px-4 text-center"
@@ -48,10 +47,7 @@ export default async function CollectionsPage() {
         >
           Curated Picks
         </span>
-        <h1
-          className="text-4xl lg:text-5xl font-bold mb-4"
-          style={{ color: 'var(--sf-text)' }}
-        >
+        <h1 className="text-4xl lg:text-5xl font-bold mb-4" style={{ color: 'var(--sf-text)' }}>
           All Collections
         </h1>
         <p
@@ -134,7 +130,8 @@ export default async function CollectionsPage() {
                     </p>
                   )}
                   <span className="inline-flex items-center gap-1.5 text-sm font-medium text-white/90 group-hover:text-white transition-all group-hover:gap-2.5">
-                    Shop Collection <span className="transition-transform group-hover:translate-x-1">→</span>
+                    Shop Collection{' '}
+                    <span className="transition-transform group-hover:translate-x-1">→</span>
                   </span>
                 </div>
               </Link>

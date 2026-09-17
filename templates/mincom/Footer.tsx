@@ -52,7 +52,6 @@ export default function MincomFooter() {
   return (
     <footer className="w-full bg-[#181a1c] text-[#9ca3af] text-xs pt-16 pb-8 border-t border-[#26292d]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* Top Newsletter Highlight Banner (toggled via CMS footerShowNewsletter) */}
         {theme.footerShowNewsletter !== false && (
           <div className="bg-[#23272a] rounded-3xl p-8 sm:p-10 mb-16 border border-[#2e3338] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -94,7 +93,6 @@ export default function MincomFooter() {
 
         {/* Multi-Column Main Footer Links */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#26292d]">
-          
           {/* Col 1: About Store (from CMS config) */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-2">
@@ -111,21 +109,29 @@ export default function MincomFooter() {
                 </div>
               )}
             </div>
-            
+
             <p className="text-slate-400 leading-relaxed text-xs max-w-sm">
-              {theme.description || `${theme.storeName} is your premier destination for handcrafted, premium lifestyle collections and modern living essentials.`}
+              {theme.description ||
+                `${theme.storeName} is your premier destination for handcrafted, premium lifestyle collections and modern living essentials.`}
             </p>
 
             <div className="space-y-1.5 text-xs text-slate-300">
               {theme.contactPhone && (
-                <p>📞 Phone: <strong className="text-white">{theme.contactPhone}</strong></p>
+                <p>
+                  📞 Phone: <strong className="text-white">{theme.contactPhone}</strong>
+                </p>
               )}
               {theme.contactEmail && (
-                <p>✉️ Email: <strong className="text-white">{theme.contactEmail}</strong></p>
+                <p>
+                  ✉️ Email: <strong className="text-white">{theme.contactEmail}</strong>
+                </p>
               )}
               {hasAddress && (
                 <p className="text-slate-400">
-                  📍 {theme.addressStreet ? `${theme.addressStreet}, ` : ''}{theme.addressCity ? `${theme.addressCity}, ` : ''}{theme.addressState ? `${theme.addressState} ` : ''}{theme.addressZip || ''} {theme.addressCountry ? `(${theme.addressCountry})` : ''}
+                  📍 {theme.addressStreet ? `${theme.addressStreet}, ` : ''}
+                  {theme.addressCity ? `${theme.addressCity}, ` : ''}
+                  {theme.addressState ? `${theme.addressState} ` : ''}
+                  {theme.addressZip || ''} {theme.addressCountry ? `(${theme.addressCountry})` : ''}
                 </p>
               )}
             </div>
@@ -134,32 +140,62 @@ export default function MincomFooter() {
             {theme.footerShowSocial !== false && (
               <div className="flex flex-wrap items-center gap-2 pt-2">
                 {theme.socialInstagram && (
-                  <a href={theme.socialInstagram} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-[#23272a] hover:bg-amber-400 hover:text-slate-950 text-slate-300 flex items-center justify-center text-xs font-bold transition">
+                  <a
+                    href={theme.socialInstagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full bg-[#23272a] hover:bg-amber-400 hover:text-slate-950 text-slate-300 flex items-center justify-center text-xs font-bold transition"
+                  >
                     IG
                   </a>
                 )}
                 {theme.socialFacebook && (
-                  <a href={theme.socialFacebook} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-[#23272a] hover:bg-amber-400 hover:text-slate-950 text-slate-300 flex items-center justify-center text-xs font-bold transition">
+                  <a
+                    href={theme.socialFacebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full bg-[#23272a] hover:bg-amber-400 hover:text-slate-950 text-slate-300 flex items-center justify-center text-xs font-bold transition"
+                  >
                     FB
                   </a>
                 )}
                 {theme.socialTwitter && (
-                  <a href={theme.socialTwitter} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-[#23272a] hover:bg-amber-400 hover:text-slate-950 text-slate-300 flex items-center justify-center text-xs font-bold transition">
+                  <a
+                    href={theme.socialTwitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full bg-[#23272a] hover:bg-amber-400 hover:text-slate-950 text-slate-300 flex items-center justify-center text-xs font-bold transition"
+                  >
                     X
                   </a>
                 )}
                 {theme.socialYoutube && (
-                  <a href={theme.socialYoutube} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-[#23272a] hover:bg-amber-400 hover:text-slate-950 text-slate-300 flex items-center justify-center text-xs font-bold transition">
+                  <a
+                    href={theme.socialYoutube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full bg-[#23272a] hover:bg-amber-400 hover:text-slate-950 text-slate-300 flex items-center justify-center text-xs font-bold transition"
+                  >
                     YT
                   </a>
                 )}
                 {theme.socialPinterest && (
-                  <a href={theme.socialPinterest} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-[#23272a] hover:bg-amber-400 hover:text-slate-950 text-slate-300 flex items-center justify-center text-xs font-bold transition">
+                  <a
+                    href={theme.socialPinterest}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full bg-[#23272a] hover:bg-amber-400 hover:text-slate-950 text-slate-300 flex items-center justify-center text-xs font-bold transition"
+                  >
                     PIN
                   </a>
                 )}
                 {theme.socialLinkedin && (
-                  <a href={theme.socialLinkedin} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-[#23272a] hover:bg-amber-400 hover:text-slate-950 text-slate-300 flex items-center justify-center text-xs font-bold transition">
+                  <a
+                    href={theme.socialLinkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full bg-[#23272a] hover:bg-amber-400 hover:text-slate-950 text-slate-300 flex items-center justify-center text-xs font-bold transition"
+                  >
                     IN
                   </a>
                 )}
@@ -171,7 +207,9 @@ export default function MincomFooter() {
           {cmsFooterItems && cmsFooterItems.length > 0 ? (
             <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-8">
               <div className="space-y-3 col-span-2 sm:col-span-3">
-                <h4 className="text-white font-bold uppercase tracking-wider text-xs">Quick Links</h4>
+                <h4 className="text-white font-bold uppercase tracking-wider text-xs">
+                  Quick Links
+                </h4>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
                   {cmsFooterItems.map((item, idx) => {
                     const target = item.target || '_self';
@@ -195,7 +233,9 @@ export default function MincomFooter() {
             <>
               {/* Col 2: Shop Departments */}
               <div className="space-y-3">
-                <h4 className="text-white font-bold uppercase tracking-wider text-xs">Departments</h4>
+                <h4 className="text-white font-bold uppercase tracking-wider text-xs">
+                  Departments
+                </h4>
                 <ul className="space-y-2 text-xs">
                   {defaultFooterLinks.departments.map((link) => (
                     <li key={link.href}>
@@ -209,7 +249,9 @@ export default function MincomFooter() {
 
               {/* Col 3: Customer Care */}
               <div className="space-y-3">
-                <h4 className="text-white font-bold uppercase tracking-wider text-xs">Customer Service</h4>
+                <h4 className="text-white font-bold uppercase tracking-wider text-xs">
+                  Customer Service
+                </h4>
                 <ul className="space-y-2 text-xs">
                   {defaultFooterLinks.customerService.map((link) => (
                     <li key={link.href}>
@@ -236,22 +278,47 @@ export default function MincomFooter() {
               </div>
             </>
           )}
-
         </div>
 
         {/* Bottom Bar with Copyright (from CMS) & Payment Icons */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>
-            {theme.footerCopyright || `© ${new Date().getFullYear()} ${theme.storeName || 'Mincom'}. All rights reserved.`}
+            {theme.footerCopyright ||
+              `© ${new Date().getFullYear()} ${theme.storeName || 'Mincom'}. All rights reserved.`}
           </p>
-          
+
           {theme.footerShowPaymentBadges !== false && (
             <div className="flex items-center gap-3 text-lg opacity-80">
-              <span title="Visa" className="px-2 py-1 bg-[#23272a] rounded text-[11px] font-bold text-white border border-[#373e45]">VISA</span>
-              <span title="Mastercard" className="px-2 py-1 bg-[#23272a] rounded text-[11px] font-bold text-white border border-[#373e45]">MASTERCARD</span>
-              <span title="Amex" className="px-2 py-1 bg-[#23272a] rounded text-[11px] font-bold text-white border border-[#373e45]">AMEX</span>
-              <span title="Stripe" className="px-2 py-1 bg-[#23272a] rounded text-[11px] font-bold text-white border border-[#373e45]">STRIPE</span>
-              <span title="Razorpay" className="px-2 py-1 bg-[#23272a] rounded text-[11px] font-bold text-white border border-[#373e45]">RAZORPAY</span>
+              <span
+                title="Visa"
+                className="px-2 py-1 bg-[#23272a] rounded text-[11px] font-bold text-white border border-[#373e45]"
+              >
+                VISA
+              </span>
+              <span
+                title="Mastercard"
+                className="px-2 py-1 bg-[#23272a] rounded text-[11px] font-bold text-white border border-[#373e45]"
+              >
+                MASTERCARD
+              </span>
+              <span
+                title="Amex"
+                className="px-2 py-1 bg-[#23272a] rounded text-[11px] font-bold text-white border border-[#373e45]"
+              >
+                AMEX
+              </span>
+              <span
+                title="Stripe"
+                className="px-2 py-1 bg-[#23272a] rounded text-[11px] font-bold text-white border border-[#373e45]"
+              >
+                STRIPE
+              </span>
+              <span
+                title="Razorpay"
+                className="px-2 py-1 bg-[#23272a] rounded text-[11px] font-bold text-white border border-[#373e45]"
+              >
+                RAZORPAY
+              </span>
             </div>
           )}
         </div>

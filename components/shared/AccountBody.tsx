@@ -12,180 +12,392 @@ import { useAuth } from '@/hooks/useAuth';
 import { getCustomerOrders } from '@/lib/api/customer';
 
 // ── Inline Accessible SVGs ───────────────────────────────────────────────────
-function UserIcon({ className = "w-4 h-4" }: { className?: string }) {
+function UserIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+      />
     </svg>
   );
 }
 
-function ShoppingBagIcon({ className = "w-4 h-4" }: { className?: string }) {
+function ShoppingBagIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+      />
     </svg>
   );
 }
 
-function MapPinIcon({ className = "w-4 h-4" }: { className?: string }) {
+function MapPinIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+      />
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
   );
 }
 
-function HomeIcon({ className = "w-4 h-4" }: { className?: string }) {
+function HomeIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+      />
     </svg>
   );
 }
 
-function BuildingIcon({ className = "w-4 h-4" }: { className?: string }) {
+function BuildingIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+      />
     </svg>
   );
 }
 
-function ShieldCheckIcon({ className = "w-4 h-4" }: { className?: string }) {
+function ShieldCheckIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+      />
     </svg>
   );
 }
 
-function PackageIcon({ className = "w-4 h-4" }: { className?: string }) {
+function PackageIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+      />
     </svg>
   );
 }
 
-function TruckIcon({ className = "w-4 h-4" }: { className?: string }) {
+function TruckIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"
+      />
     </svg>
   );
 }
 
-function PrinterIcon({ className = "w-4 h-4" }: { className?: string }) {
+function PrinterIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+      />
     </svg>
   );
 }
 
-function ChevronRightIcon({ className = "w-4 h-4" }: { className?: string }) {
+function ChevronRightIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
     </svg>
   );
 }
 
-function XIcon({ className = "w-4 h-4" }: { className?: string }) {
+function XIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
     </svg>
   );
 }
 
-function PlusIcon({ className = "w-4 h-4" }: { className?: string }) {
+function PlusIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
     </svg>
   );
 }
 
-function Edit2Icon({ className = "w-4 h-4" }: { className?: string }) {
+function Edit2Icon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+      />
     </svg>
   );
 }
 
-function Trash2Icon({ className = "w-4 h-4" }: { className?: string }) {
+function Trash2Icon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+      />
     </svg>
   );
 }
 
-function CreditCardIcon({ className = "w-4 h-4" }: { className?: string }) {
+function CreditCardIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+      />
     </svg>
   );
 }
 
-function MailIcon({ className = "w-4 h-4" }: { className?: string }) {
+function MailIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+      />
     </svg>
   );
 }
 
-function PhoneIcon({ className = "w-4 h-4" }: { className?: string }) {
+function PhoneIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+      />
     </svg>
   );
 }
 
-function HelpCircleIcon({ className = "w-4 h-4" }: { className?: string }) {
+function HelpCircleIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
     </svg>
   );
 }
 
-function RefreshCwIcon({ className = "w-4 h-4" }: { className?: string }) {
+function RefreshCwIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+      />
     </svg>
   );
 }
 
-function LogOutIcon({ className = "w-4 h-4" }: { className?: string }) {
+function LogOutIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+      />
     </svg>
   );
 }
 
-function CheckCircle2Icon({ className = "w-4 h-4" }: { className?: string }) {
+function CheckCircle2Icon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
     </svg>
   );
 }
 
-function AlertCircleIcon({ className = "w-4 h-4" }: { className?: string }) {
+function AlertCircleIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
     </svg>
   );
 }
@@ -211,7 +423,9 @@ export function AccountBody({ theme }: AccountBodyProps) {
     refreshProfile,
   } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'addresses' | 'support'>('orders');
+  const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'addresses' | 'support'>(
+    'orders',
+  );
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -332,7 +546,9 @@ export function AccountBody({ theme }: AccountBodyProps) {
         newPassword: newPassword || undefined,
       });
 
-      setSaveSuccess('Profile info updated successfully! Changes are synchronized with your store account.');
+      setSaveSuccess(
+        'Profile info updated successfully! Changes are synchronized with your store account.',
+      );
       setCurrentPassword('');
       setNewPassword('');
       setTimeout(() => setSaveSuccess(null), 4000);
@@ -397,7 +613,8 @@ export function AccountBody({ theme }: AccountBodyProps) {
   };
 
   const handleDeleteAddress = async (id: string, label?: string) => {
-    if (!window.confirm(`Are you sure you want to delete this ${label || 'saved'} address?`)) return;
+    if (!window.confirm(`Are you sure you want to delete this ${label || 'saved'} address?`))
+      return;
     try {
       await deleteAddress(id);
       setSaveSuccess('Address deleted.');
@@ -432,20 +649,24 @@ export function AccountBody({ theme }: AccountBodyProps) {
             quantity: Number(it.quantity || 1),
             price: Number(it.price ?? it.unitPrice ?? 0),
             unitPrice: Number(it.unitPrice ?? it.price ?? 0),
-            subtotal: Number(it.subtotal ?? (Number(it.price ?? it.unitPrice ?? 0) * Number(it.quantity || 1))),
+            subtotal: Number(
+              it.subtotal ?? Number(it.price ?? it.unitPrice ?? 0) * Number(it.quantity || 1),
+            ),
             sku: it.sku || undefined,
             image: it.image || it.imageUrl || undefined,
           }));
         }
       } catch {}
     }
-    return [{
-      id: 'item-1',
-      productId: 'prod-1',
-      productName: 'Ordered Item',
-      quantity: 1,
-      price: Number(order.totalAmount || order.total || 0),
-    }];
+    return [
+      {
+        id: 'item-1',
+        productId: 'prod-1',
+        productName: 'Ordered Item',
+        quantity: 1,
+        price: Number(order.totalAmount || order.total || 0),
+      },
+    ];
   };
 
   // Helper to parse shipping address safely
@@ -463,9 +684,12 @@ export function AccountBody({ theme }: AccountBodyProps) {
     const totalSpent = Number(customer?.totalSpent || 0);
     const totalOrders = Number(customer?.totalOrders || orders.length);
 
-    if (totalSpent > 1000 || totalOrders >= 10) return { name: 'Platinum VIP', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.12)' };
-    if (totalSpent > 500 || totalOrders >= 5) return { name: 'Gold Member', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' };
-    if (totalSpent > 150 || totalOrders >= 2) return { name: 'Silver Member', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' };
+    if (totalSpent > 1000 || totalOrders >= 10)
+      return { name: 'Platinum VIP', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.12)' };
+    if (totalSpent > 500 || totalOrders >= 5)
+      return { name: 'Gold Member', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' };
+    if (totalSpent > 150 || totalOrders >= 2)
+      return { name: 'Silver Member', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' };
     return { name: 'Member', color: '#10b981', bg: 'rgba(16, 185, 129, 0.12)' };
   }, [customer, orders]);
 
@@ -492,8 +716,12 @@ export function AccountBody({ theme }: AccountBodyProps) {
         <h1 className="text-2xl font-black mb-2" style={{ color: 'var(--sf-text)' }}>
           Sign in to your account
         </h1>
-        <p className="text-sm mb-8" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
-          Log in to track your {theme.storeName || 'Store'} orders, manage multiple saved addresses (Home, Office, Other), and view member savings.
+        <p
+          className="text-sm mb-8"
+          style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
+        >
+          Log in to track your {theme.storeName || 'Store'} orders, manage multiple saved addresses
+          (Home, Office, Other), and view member savings.
         </p>
         <div className="flex gap-4 justify-center">
           <Link
@@ -537,7 +765,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight" style={{ color: 'var(--sf-text)' }}>
+              <h1
+                className="text-2xl sm:text-3xl font-black tracking-tight"
+                style={{ color: 'var(--sf-text)' }}
+              >
                 {customer?.name || 'Valued Customer'}
               </h1>
               <span
@@ -548,7 +779,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
                 <span>{customerTier.name}</span>
               </span>
             </div>
-            <p className="text-xs sm:text-sm mt-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+            <p
+              className="text-xs sm:text-sm mt-1"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+            >
               {customer?.email} {customer?.phone ? `• ${customer.phone}` : ''}
             </p>
           </div>
@@ -606,7 +840,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
             borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
           }}
         >
-          <span className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+          <span
+            className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5"
+            style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+          >
             <ShoppingBagIcon className="w-4 h-4 text-indigo-500" />
             <span>Total Orders</span>
           </span>
@@ -622,12 +859,18 @@ export function AccountBody({ theme }: AccountBodyProps) {
             borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
           }}
         >
-          <span className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+          <span
+            className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5"
+            style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+          >
             <CreditCardIcon className="w-4 h-4 text-emerald-500" />
             <span>Total Lifetime Spent</span>
           </span>
           <p className="text-3xl font-black mt-2 text-emerald-600 font-mono">
-            {formatPrice(customer?.totalSpent || orders.reduce((acc, o) => acc + (Number(o.totalAmount || o.total || 0)), 0))}
+            {formatPrice(
+              customer?.totalSpent ||
+                orders.reduce((acc, o) => acc + Number(o.totalAmount || o.total || 0), 0),
+            )}
           </p>
         </div>
 
@@ -638,15 +881,21 @@ export function AccountBody({ theme }: AccountBodyProps) {
             borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
           }}
         >
-          <span className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+          <span
+            className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5"
+            style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+          >
             <MapPinIcon className="w-4 h-4 text-amber-500" />
             <span>Saved Addresses</span>
           </span>
-          <p className="text-3xl font-black mt-2 text-amber-600">
-            {addresses.length}
-          </p>
-          <span className="text-[11px] block mt-0.5" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
-            {defaultAddress ? `Default: ${defaultAddress.label || 'HOME'} (${defaultAddress.city || 'Saved'})` : 'No default set'}
+          <p className="text-3xl font-black mt-2 text-amber-600">{addresses.length}</p>
+          <span
+            className="text-[11px] block mt-0.5"
+            style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+          >
+            {defaultAddress
+              ? `Default: ${defaultAddress.label || 'HOME'} (${defaultAddress.city || 'Saved'})`
+              : 'No default set'}
           </span>
         </div>
       </div>
@@ -662,7 +911,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
           className="pb-3 px-2 text-xs sm:text-sm font-extrabold tracking-wide transition border-b-2 flex items-center gap-2 shrink-0"
           style={{
             borderColor: activeTab === 'orders' ? 'var(--sf-primary, #6366f1)' : 'transparent',
-            color: activeTab === 'orders' ? 'var(--sf-primary, #6366f1)' : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
+            color:
+              activeTab === 'orders'
+                ? 'var(--sf-primary, #6366f1)'
+                : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
           }}
         >
           <ShoppingBagIcon className="w-4 h-4" />
@@ -675,7 +927,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
           className="pb-3 px-2 text-xs sm:text-sm font-extrabold tracking-wide transition border-b-2 flex items-center gap-2 shrink-0"
           style={{
             borderColor: activeTab === 'addresses' ? 'var(--sf-primary, #6366f1)' : 'transparent',
-            color: activeTab === 'addresses' ? 'var(--sf-primary, #6366f1)' : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
+            color:
+              activeTab === 'addresses'
+                ? 'var(--sf-primary, #6366f1)'
+                : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
           }}
         >
           <MapPinIcon className="w-4 h-4" />
@@ -688,7 +943,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
           className="pb-3 px-2 text-xs sm:text-sm font-extrabold tracking-wide transition border-b-2 flex items-center gap-2 shrink-0"
           style={{
             borderColor: activeTab === 'profile' ? 'var(--sf-primary, #6366f1)' : 'transparent',
-            color: activeTab === 'profile' ? 'var(--sf-primary, #6366f1)' : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
+            color:
+              activeTab === 'profile'
+                ? 'var(--sf-primary, #6366f1)'
+                : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
           }}
         >
           <UserIcon className="w-4 h-4" />
@@ -701,7 +959,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
           className="pb-3 px-2 text-xs sm:text-sm font-extrabold tracking-wide transition border-b-2 flex items-center gap-2 shrink-0"
           style={{
             borderColor: activeTab === 'support' ? 'var(--sf-primary, #6366f1)' : 'transparent',
-            color: activeTab === 'support' ? 'var(--sf-primary, #6366f1)' : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
+            color:
+              activeTab === 'support'
+                ? 'var(--sf-primary, #6366f1)'
+                : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
           }}
         >
           <HelpCircleIcon className="w-4 h-4" />
@@ -713,7 +974,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
       {activeTab === 'orders' && (
         <div className="space-y-4">
           {loadingOrders ? (
-            <div className="py-16 text-center text-sm" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+            <div
+              className="py-16 text-center text-sm"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+            >
               Loading order history...
             </div>
           ) : orders.length === 0 ? (
@@ -725,9 +989,15 @@ export function AccountBody({ theme }: AccountBodyProps) {
               }}
             >
               <ShoppingBagIcon className="w-12 h-12 mx-auto mb-3 opacity-30" />
-              <h3 className="text-base font-black mb-1" style={{ color: 'var(--sf-text)' }}>No orders yet</h3>
-              <p className="text-xs mb-6 max-w-sm mx-auto" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
-                You haven't placed any orders yet. Discover our catalog and place your first order with fast checkout.
+              <h3 className="text-base font-black mb-1" style={{ color: 'var(--sf-text)' }}>
+                No orders yet
+              </h3>
+              <p
+                className="text-xs mb-6 max-w-sm mx-auto"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+              >
+                You haven't placed any orders yet. Discover our catalog and place your first order
+                with fast checkout.
               </p>
               <Link
                 href="/products"
@@ -740,7 +1010,11 @@ export function AccountBody({ theme }: AccountBodyProps) {
           ) : (
             orders.map((order) => {
               const items = parseOrderItems(order);
-              const statusUpper = (order.fulfillmentStatus || order.status || 'CONFIRMED').toUpperCase();
+              const statusUpper = (
+                order.fulfillmentStatus ||
+                order.status ||
+                'CONFIRMED'
+              ).toUpperCase();
               const paymentUpper = (order.paymentStatus || 'PAID').toUpperCase();
 
               return (
@@ -752,10 +1026,16 @@ export function AccountBody({ theme }: AccountBodyProps) {
                     borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
                   }}
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b gap-4" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)' }}>
+                  <div
+                    className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b gap-4"
+                    style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)' }}
+                  >
                     <div>
                       <div className="flex items-center gap-3 flex-wrap">
-                        <span className="font-mono font-black text-sm" style={{ color: 'var(--sf-text)' }}>
+                        <span
+                          className="font-mono font-black text-sm"
+                          style={{ color: 'var(--sf-text)' }}
+                        >
                           #{order.orderNumber || order.id.slice(0, 8)}
                         </span>
                         <span
@@ -763,12 +1043,12 @@ export function AccountBody({ theme }: AccountBodyProps) {
                             statusUpper === 'DELIVERED'
                               ? 'bg-emerald-100 text-emerald-800'
                               : statusUpper === 'SHIPPED'
-                              ? 'bg-purple-100 text-purple-800'
-                              : statusUpper === 'PROCESSING'
-                              ? 'bg-indigo-100 text-indigo-800'
-                              : statusUpper === 'CANCELLED'
-                              ? 'bg-rose-100 text-rose-800'
-                              : 'bg-blue-100 text-blue-800'
+                                ? 'bg-purple-100 text-purple-800'
+                                : statusUpper === 'PROCESSING'
+                                  ? 'bg-indigo-100 text-indigo-800'
+                                  : statusUpper === 'CANCELLED'
+                                    ? 'bg-rose-100 text-rose-800'
+                                    : 'bg-blue-100 text-blue-800'
                           }`}
                         >
                           {statusUpper}
@@ -783,17 +1063,31 @@ export function AccountBody({ theme }: AccountBodyProps) {
                           {paymentUpper}
                         </span>
                       </div>
-                      <p className="text-xs mt-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
-                        Placed on {order.createdAt ? new Date(order.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : 'Recent'}
+                      <p
+                        className="text-xs mt-1"
+                        style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+                      >
+                        Placed on{' '}
+                        {order.createdAt
+                          ? new Date(order.createdAt).toLocaleDateString(undefined, {
+                              dateStyle: 'medium',
+                            })
+                          : 'Recent'}
                       </p>
                     </div>
 
                     <div className="flex items-center gap-4 self-start sm:self-auto">
                       <div className="text-left sm:text-right">
-                        <span className="text-base font-black font-mono block" style={{ color: 'var(--sf-text)' }}>
+                        <span
+                          className="text-base font-black font-mono block"
+                          style={{ color: 'var(--sf-text)' }}
+                        >
                           {formatPrice(order.totalAmount || order.total || 0, order.currency)}
                         </span>
-                        <span className="text-[10px]" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+                        <span
+                          className="text-[10px]"
+                          style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+                        >
                           {items.length} {items.length === 1 ? 'Item' : 'Items'}
                         </span>
                       </div>
@@ -803,8 +1097,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
                         onClick={() => setSelectedOrder(order)}
                         className="px-4 py-2 rounded-xl text-xs font-extrabold transition border flex items-center gap-1.5 hover:opacity-90"
                         style={{
-                          backgroundColor: 'color-mix(in srgb, var(--sf-primary, #6366f1) 8%, var(--sf-bg))',
-                          borderColor: 'color-mix(in srgb, var(--sf-primary, #6366f1) 30%, transparent)',
+                          backgroundColor:
+                            'color-mix(in srgb, var(--sf-primary, #6366f1) 8%, var(--sf-bg))',
+                          borderColor:
+                            'color-mix(in srgb, var(--sf-primary, #6366f1) 30%, transparent)',
                           color: 'var(--sf-primary, #6366f1)',
                         }}
                       >
@@ -820,16 +1116,26 @@ export function AccountBody({ theme }: AccountBodyProps) {
                       <div key={idx} className="flex items-center gap-2 shrink-0">
                         <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border overflow-hidden shrink-0 flex items-center justify-center text-xs font-bold text-slate-400">
                           {it.image ? (
-                            <img src={it.image} alt={it.productName || it.name} className="w-full h-full object-cover" />
+                            <img
+                              src={it.image}
+                              alt={it.productName || it.name}
+                              className="w-full h-full object-cover"
+                            />
                           ) : (
                             <PackageIcon className="w-4 h-4 text-slate-400" />
                           )}
                         </div>
                         <div className="text-xs max-w-[140px] truncate">
-                          <span className="font-bold block truncate" style={{ color: 'var(--sf-text)' }}>
+                          <span
+                            className="font-bold block truncate"
+                            style={{ color: 'var(--sf-text)' }}
+                          >
                             {it.productName || it.name}
                           </span>
-                          <span className="text-[10px]" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+                          <span
+                            className="text-[10px]"
+                            style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+                          >
                             Qty: {it.quantity}
                           </span>
                         </div>
@@ -863,8 +1169,12 @@ export function AccountBody({ theme }: AccountBodyProps) {
               <h2 className="text-xl font-black" style={{ color: 'var(--sf-text)' }}>
                 Saved Delivery Addresses
               </h2>
-              <p className="text-xs mt-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
-                Add and manage multiple delivery locations (Home, Office, Others) for seamless 1-click checkout.
+              <p
+                className="text-xs mt-1"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+              >
+                Add and manage multiple delivery locations (Home, Office, Others) for seamless
+                1-click checkout.
               </p>
             </div>
 
@@ -892,7 +1202,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
                 <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--sf-text)' }}>
                   No saved addresses found
                 </h3>
-                <p className="text-xs mb-4" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                <p
+                  className="text-xs mb-4"
+                  style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                >
                   Save your home, office, or secondary delivery addresses for faster order checkout.
                 </p>
                 <button
@@ -929,11 +1242,17 @@ export function AccountBody({ theme }: AccountBodyProps) {
                             isHome
                               ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300'
                               : isOffice
-                              ? 'bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300'
-                              : 'bg-purple-100 text-purple-800 dark:bg-purple-950/50 dark:text-purple-300'
+                                ? 'bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300'
+                                : 'bg-purple-100 text-purple-800 dark:bg-purple-950/50 dark:text-purple-300'
                           }`}
                         >
-                          {isHome ? <HomeIcon className="w-3 h-3" /> : isOffice ? <BuildingIcon className="w-3 h-3" /> : <MapPinIcon className="w-3 h-3" />}
+                          {isHome ? (
+                            <HomeIcon className="w-3 h-3" />
+                          ) : isOffice ? (
+                            <BuildingIcon className="w-3 h-3" />
+                          ) : (
+                            <MapPinIcon className="w-3 h-3" />
+                          )}
                           <span>{label}</span>
                         </span>
 
@@ -949,13 +1268,22 @@ export function AccountBody({ theme }: AccountBodyProps) {
                         <h4 className="font-extrabold text-sm" style={{ color: 'var(--sf-text)' }}>
                           {addr.name || customer?.name || 'Recipient'}
                         </h4>
-                        <p className="text-xs leading-relaxed mt-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 70%, transparent)' }}>
-                          {addr.street}<br />
-                          {addr.city}{addr.state ? `, ${addr.state}` : ''} {addr.zip}<br />
+                        <p
+                          className="text-xs leading-relaxed mt-1"
+                          style={{ color: 'color-mix(in srgb, var(--sf-text) 70%, transparent)' }}
+                        >
+                          {addr.street}
+                          <br />
+                          {addr.city}
+                          {addr.state ? `, ${addr.state}` : ''} {addr.zip}
+                          <br />
                           {addr.country}
                         </p>
                         {addr.phone && (
-                          <p className="text-xs font-mono mt-2" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+                          <p
+                            className="text-xs font-mono mt-2"
+                            style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
+                          >
                             Phone: {addr.phone}
                           </p>
                         )}
@@ -963,7 +1291,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
                     </div>
 
                     {/* Actions footer */}
-                    <div className="pt-3 border-t flex items-center justify-between gap-2" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)' }}>
+                    <div
+                      className="pt-3 border-t flex items-center justify-between gap-2"
+                      style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)' }}
+                    >
                       <div>
                         {!addr.isDefault && addr.id && (
                           <button
@@ -1020,7 +1351,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
             <h2 className="text-xl font-black" style={{ color: 'var(--sf-text)' }}>
               Edit Account Information
             </h2>
-            <p className="text-xs mt-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+            <p
+              className="text-xs mt-1"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+            >
               Keep your contact and communication preferences up to date.
             </p>
           </div>
@@ -1028,7 +1362,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
           <form onSubmit={handleEditProfile} className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-extrabold uppercase tracking-wider mb-2" style={{ color: 'var(--sf-text)' }}>
+                <label
+                  className="block text-xs font-extrabold uppercase tracking-wider mb-2"
+                  style={{ color: 'var(--sf-text)' }}
+                >
                   Full Name
                 </label>
                 <input
@@ -1041,7 +1378,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
               </div>
 
               <div>
-                <label className="block text-xs font-extrabold uppercase tracking-wider mb-2" style={{ color: 'var(--sf-text)' }}>
+                <label
+                  className="block text-xs font-extrabold uppercase tracking-wider mb-2"
+                  style={{ color: 'var(--sf-text)' }}
+                >
                   Email Address (Read-only)
                 </label>
                 <input
@@ -1054,7 +1394,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-extrabold uppercase tracking-wider mb-2" style={{ color: 'var(--sf-text)' }}>
+              <label
+                className="block text-xs font-extrabold uppercase tracking-wider mb-2"
+                style={{ color: 'var(--sf-text)' }}
+              >
                 Phone Number
               </label>
               <input
@@ -1076,19 +1419,29 @@ export function AccountBody({ theme }: AccountBodyProps) {
                 className="w-4 h-4 rounded"
                 style={{ accentColor: 'var(--sf-primary, #6366f1)' }}
               />
-              <label htmlFor="marketing" className="text-xs cursor-pointer font-medium" style={{ color: 'color-mix(in srgb, var(--sf-text) 70%, transparent)' }}>
+              <label
+                htmlFor="marketing"
+                className="text-xs cursor-pointer font-medium"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 70%, transparent)' }}
+              >
                 Receive order updates, VIP sales promotions, and new product announcements.
               </label>
             </div>
 
             {/* Password Change */}
-            <div className="pt-4 border-t" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
+            <div
+              className="pt-4 border-t"
+              style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+            >
               <h3 className="text-sm font-black mb-3" style={{ color: 'var(--sf-text)' }}>
                 Security & Password Update (Optional)
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs mb-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                  <label
+                    className="block text-xs mb-1"
+                    style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                  >
                     Current Password
                   </label>
                   <input
@@ -1100,7 +1453,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs mb-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                  <label
+                    className="block text-xs mb-1"
+                    style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                  >
                     New Password (min 6 chars)
                   </label>
                   <input
@@ -1136,12 +1492,19 @@ export function AccountBody({ theme }: AccountBodyProps) {
               borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
             }}
           >
-            <h3 className="text-base font-black flex items-center gap-2" style={{ color: 'var(--sf-text)' }}>
+            <h3
+              className="text-base font-black flex items-center gap-2"
+              style={{ color: 'var(--sf-text)' }}
+            >
               <MailIcon className="w-4 h-4 text-indigo-500" />
               <span>Contact Store Support</span>
             </h3>
-            <p className="text-xs" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
-              Need assistance with an order, return request, or delivery address inquiry? Reach out directly to our merchant team:
+            <p
+              className="text-xs"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
+            >
+              Need assistance with an order, return request, or delivery address inquiry? Reach out
+              directly to our merchant team:
             </p>
             <div className="space-y-2 text-xs">
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border flex items-center gap-3">
@@ -1164,11 +1527,17 @@ export function AccountBody({ theme }: AccountBodyProps) {
               borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
             }}
           >
-            <h3 className="text-base font-black flex items-center gap-2" style={{ color: 'var(--sf-text)' }}>
+            <h3
+              className="text-base font-black flex items-center gap-2"
+              style={{ color: 'var(--sf-text)' }}
+            >
               <ShieldCheckIcon className="w-4 h-4 text-emerald-500" />
               <span>Shipping & Delivery Guarantees</span>
             </h3>
-            <ul className="text-xs space-y-2 list-disc pl-4" style={{ color: 'color-mix(in srgb, var(--sf-text) 70%, transparent)' }}>
+            <ul
+              className="text-xs space-y-2 list-disc pl-4"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 70%, transparent)' }}
+            >
               <li>Multiple address saving with quick 1-click checkout destination selection.</li>
               <li>Real-time tracking updates via SMS and email.</li>
               <li>Free standard delivery on orders meeting the qualifying threshold.</li>
@@ -1204,7 +1573,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
             <form onSubmit={handleSaveAddress} className="p-6 space-y-4">
               {/* Address Label Selector: HOME | OFFICE | OTHER */}
               <div>
-                <label className="block text-xs font-extrabold uppercase tracking-wider mb-2" style={{ color: 'var(--sf-text)' }}>
+                <label
+                  className="block text-xs font-extrabold uppercase tracking-wider mb-2"
+                  style={{ color: 'var(--sf-text)' }}
+                >
                   Address Type / Label
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -1237,7 +1609,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
               {/* Recipient details */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs mb-1 font-semibold" style={{ color: 'var(--sf-text)' }}>
+                  <label
+                    className="block text-xs mb-1 font-semibold"
+                    style={{ color: 'var(--sf-text)' }}
+                  >
                     Contact Name
                   </label>
                   <input
@@ -1250,7 +1625,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs mb-1 font-semibold" style={{ color: 'var(--sf-text)' }}>
+                  <label
+                    className="block text-xs mb-1 font-semibold"
+                    style={{ color: 'var(--sf-text)' }}
+                  >
                     Phone Number
                   </label>
                   <input
@@ -1265,7 +1643,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
 
               {/* Street */}
               <div>
-                <label className="block text-xs mb-1 font-semibold" style={{ color: 'var(--sf-text)' }}>
+                <label
+                  className="block text-xs mb-1 font-semibold"
+                  style={{ color: 'var(--sf-text)' }}
+                >
                   Street Address
                 </label>
                 <input
@@ -1281,7 +1662,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
               {/* City, State, PIN */}
               <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="block text-xs mb-1 font-semibold" style={{ color: 'var(--sf-text)' }}>
+                  <label
+                    className="block text-xs mb-1 font-semibold"
+                    style={{ color: 'var(--sf-text)' }}
+                  >
                     City
                   </label>
                   <input
@@ -1294,7 +1678,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs mb-1 font-semibold" style={{ color: 'var(--sf-text)' }}>
+                  <label
+                    className="block text-xs mb-1 font-semibold"
+                    style={{ color: 'var(--sf-text)' }}
+                  >
                     State
                   </label>
                   <input
@@ -1306,7 +1693,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs mb-1 font-semibold" style={{ color: 'var(--sf-text)' }}>
+                  <label
+                    className="block text-xs mb-1 font-semibold"
+                    style={{ color: 'var(--sf-text)' }}
+                  >
                     PIN / ZIP
                   </label>
                   <input
@@ -1322,7 +1712,10 @@ export function AccountBody({ theme }: AccountBodyProps) {
 
               {/* Country */}
               <div>
-                <label className="block text-xs mb-1 font-semibold" style={{ color: 'var(--sf-text)' }}>
+                <label
+                  className="block text-xs mb-1 font-semibold"
+                  style={{ color: 'var(--sf-text)' }}
+                >
                   Country
                 </label>
                 <input
@@ -1345,7 +1738,11 @@ export function AccountBody({ theme }: AccountBodyProps) {
                   className="w-4 h-4 rounded"
                   style={{ accentColor: 'var(--sf-primary, #6366f1)' }}
                 />
-                <label htmlFor="makeDefault" className="text-xs font-semibold cursor-pointer" style={{ color: 'var(--sf-text)' }}>
+                <label
+                  htmlFor="makeDefault"
+                  className="text-xs font-semibold cursor-pointer"
+                  style={{ color: 'var(--sf-text)' }}
+                >
                   Set as default primary delivery address
                 </label>
               </div>
@@ -1387,13 +1784,20 @@ export function AccountBody({ theme }: AccountBodyProps) {
             <div className="p-6 bg-slate-900 text-white flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-black text-lg">Order #{selectedOrder.orderNumber || selectedOrder.id.slice(0, 8)}</h3>
+                  <h3 className="font-black text-lg">
+                    Order #{selectedOrder.orderNumber || selectedOrder.id.slice(0, 8)}
+                  </h3>
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300">
                     {selectedOrder.fulfillmentStatus || selectedOrder.status || 'CONFIRMED'}
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Placed on {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString(undefined, { dateStyle: 'full' }) : 'Recent'}
+                  Placed on{' '}
+                  {selectedOrder.createdAt
+                    ? new Date(selectedOrder.createdAt).toLocaleDateString(undefined, {
+                        dateStyle: 'full',
+                      })
+                    : 'Recent'}
                 </p>
               </div>
 
@@ -1437,22 +1841,35 @@ export function AccountBody({ theme }: AccountBodyProps) {
 
               {/* Items Breakdown */}
               <div className="space-y-3">
-                <h4 className="text-xs font-black uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                <h4
+                  className="text-xs font-black uppercase tracking-wider"
+                  style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                >
                   Ordered Items ({parseOrderItems(selectedOrder).length})
                 </h4>
-                <div className="divide-y border rounded-2xl overflow-hidden" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
+                <div
+                  className="divide-y border rounded-2xl overflow-hidden"
+                  style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+                >
                   {parseOrderItems(selectedOrder).map((item, idx) => (
                     <div key={idx} className="p-4 flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 border overflow-hidden shrink-0 flex items-center justify-center">
                           {item.image ? (
-                            <img src={item.image} alt={item.productName || item.name} className="w-full h-full object-cover" />
+                            <img
+                              src={item.image}
+                              alt={item.productName || item.name}
+                              className="w-full h-full object-cover"
+                            />
                           ) : (
                             <PackageIcon className="w-5 h-5 text-slate-400" />
                           )}
                         </div>
                         <div>
-                          <span className="font-extrabold text-xs block" style={{ color: 'var(--sf-text)' }}>
+                          <span
+                            className="font-extrabold text-xs block"
+                            style={{ color: 'var(--sf-text)' }}
+                          >
                             {item.productName || item.name}
                           </span>
                           {item.sku && (
@@ -1464,11 +1881,19 @@ export function AccountBody({ theme }: AccountBodyProps) {
                       </div>
 
                       <div className="text-right">
-                        <span className="text-xs font-extrabold block" style={{ color: 'var(--sf-text)' }}>
-                          {formatPrice(item.price || item.unitPrice || 0, selectedOrder.currency)} x {item.quantity}
+                        <span
+                          className="text-xs font-extrabold block"
+                          style={{ color: 'var(--sf-text)' }}
+                        >
+                          {formatPrice(item.price || item.unitPrice || 0, selectedOrder.currency)} x{' '}
+                          {item.quantity}
                         </span>
                         <span className="text-xs font-black font-mono text-indigo-600 block">
-                          {formatPrice(item.subtotal || (Number(item.price || item.unitPrice || 0) * item.quantity), selectedOrder.currency)}
+                          {formatPrice(
+                            item.subtotal ||
+                              Number(item.price || item.unitPrice || 0) * item.quantity,
+                            selectedOrder.currency,
+                          )}
                         </span>
                       </div>
                     </div>
@@ -1478,8 +1903,14 @@ export function AccountBody({ theme }: AccountBodyProps) {
 
               {/* Shipping Address & Pricing Summary Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 rounded-2xl border text-xs space-y-1" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
-                  <span className="font-black uppercase tracking-wider block mb-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                <div
+                  className="p-4 rounded-2xl border text-xs space-y-1"
+                  style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+                >
+                  <span
+                    className="font-black uppercase tracking-wider block mb-1"
+                    style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                  >
                     Shipping Address
                   </span>
                   {(() => {
@@ -1487,9 +1918,19 @@ export function AccountBody({ theme }: AccountBodyProps) {
                     if (addr) {
                       return (
                         <>
-                          <p className="font-bold" style={{ color: 'var(--sf-text)' }}>{addr.street}</p>
-                          <p style={{ color: 'color-mix(in srgb, var(--sf-text) 70%, transparent)' }}>{addr.city}, {addr.state} {addr.zip}</p>
-                          <p style={{ color: 'color-mix(in srgb, var(--sf-text) 70%, transparent)' }}>{addr.country}</p>
+                          <p className="font-bold" style={{ color: 'var(--sf-text)' }}>
+                            {addr.street}
+                          </p>
+                          <p
+                            style={{ color: 'color-mix(in srgb, var(--sf-text) 70%, transparent)' }}
+                          >
+                            {addr.city}, {addr.state} {addr.zip}
+                          </p>
+                          <p
+                            style={{ color: 'color-mix(in srgb, var(--sf-text) 70%, transparent)' }}
+                          >
+                            {addr.country}
+                          </p>
                         </>
                       );
                     }
@@ -1497,32 +1938,55 @@ export function AccountBody({ theme }: AccountBodyProps) {
                   })()}
                 </div>
 
-                <div className="p-4 rounded-2xl border text-xs space-y-2" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
-                  <span className="font-black uppercase tracking-wider block mb-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                <div
+                  className="p-4 rounded-2xl border text-xs space-y-2"
+                  style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+                >
+                  <span
+                    className="font-black uppercase tracking-wider block mb-1"
+                    style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                  >
                     Payment Summary
                   </span>
                   <div className="flex justify-between">
-                    <span style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>Subtotal:</span>
+                    <span style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+                      Subtotal:
+                    </span>
                     <span className="font-bold font-mono" style={{ color: 'var(--sf-text)' }}>
-                      {formatPrice(selectedOrder.subtotalAmount || (Number(selectedOrder.totalAmount || selectedOrder.total || 0) * 0.9), selectedOrder.currency)}
+                      {formatPrice(
+                        selectedOrder.subtotalAmount ||
+                          Number(selectedOrder.totalAmount || selectedOrder.total || 0) * 0.9,
+                        selectedOrder.currency,
+                      )}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>Tax:</span>
+                    <span style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+                      Tax:
+                    </span>
                     <span className="font-bold font-mono" style={{ color: 'var(--sf-text)' }}>
                       {formatPrice(selectedOrder.taxAmount || 0, selectedOrder.currency)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>Shipping:</span>
+                    <span style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+                      Shipping:
+                    </span>
                     <span className="font-bold font-mono" style={{ color: 'var(--sf-text)' }}>
                       {formatPrice(selectedOrder.shippingAmount || 0, selectedOrder.currency)}
                     </span>
                   </div>
-                  <div className="flex justify-between font-black text-sm pt-2 border-t" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
+                  <div
+                    className="flex justify-between font-black text-sm pt-2 border-t"
+                    style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+                  >
                     <span>Grand Total:</span>
                     <span className="text-indigo-600 font-mono">
-                      {formatPrice(selectedOrder.totalAmount || selectedOrder.total || 0, selectedOrder.currency)} {selectedOrder.currency || theme.currency}
+                      {formatPrice(
+                        selectedOrder.totalAmount || selectedOrder.total || 0,
+                        selectedOrder.currency,
+                      )}{' '}
+                      {selectedOrder.currency || theme.currency}
                     </span>
                   </div>
                 </div>
@@ -1569,7 +2033,12 @@ export function AccountBody({ theme }: AccountBodyProps) {
                 </div>
                 <div className="text-right text-xs">
                   <span className="font-extrabold text-slate-900 block">{theme.storeName}</span>
-                  <span className="text-slate-500 block">Date: {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString() : 'Recent'}</span>
+                  <span className="text-slate-500 block">
+                    Date:{' '}
+                    {selectedOrder.createdAt
+                      ? new Date(selectedOrder.createdAt).toLocaleDateString()
+                      : 'Recent'}
+                  </span>
                 </div>
               </div>
 
@@ -1587,8 +2056,15 @@ export function AccountBody({ theme }: AccountBodyProps) {
                     <tr key={idx}>
                       <td className="py-3 font-bold">{it.productName || it.name}</td>
                       <td className="py-3 text-center">{it.quantity}</td>
-                      <td className="py-3 text-right">{formatPrice(it.price || it.unitPrice || 0, selectedOrder.currency)}</td>
-                      <td className="py-3 text-right font-bold">{formatPrice(it.subtotal || (Number(it.price || it.unitPrice || 0) * it.quantity), selectedOrder.currency)}</td>
+                      <td className="py-3 text-right">
+                        {formatPrice(it.price || it.unitPrice || 0, selectedOrder.currency)}
+                      </td>
+                      <td className="py-3 text-right font-bold">
+                        {formatPrice(
+                          it.subtotal || Number(it.price || it.unitPrice || 0) * it.quantity,
+                          selectedOrder.currency,
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -1598,16 +2074,28 @@ export function AccountBody({ theme }: AccountBodyProps) {
                 <div className="w-60 space-y-1.5 text-xs text-slate-700">
                   <div className="flex justify-between">
                     <span>Subtotal:</span>
-                    <span className="font-bold">{formatPrice(selectedOrder.subtotalAmount || (Number(selectedOrder.totalAmount || selectedOrder.total || 0) * 0.9), selectedOrder.currency)}</span>
+                    <span className="font-bold">
+                      {formatPrice(
+                        selectedOrder.subtotalAmount ||
+                          Number(selectedOrder.totalAmount || selectedOrder.total || 0) * 0.9,
+                        selectedOrder.currency,
+                      )}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Tax:</span>
-                    <span className="font-bold">{formatPrice(selectedOrder.taxAmount || 0, selectedOrder.currency)}</span>
+                    <span className="font-bold">
+                      {formatPrice(selectedOrder.taxAmount || 0, selectedOrder.currency)}
+                    </span>
                   </div>
                   <div className="flex justify-between font-black text-sm text-slate-900 pt-2 border-t">
                     <span>Grand Total:</span>
                     <span className="text-indigo-600 font-mono">
-                      {formatPrice(selectedOrder.totalAmount || selectedOrder.total || 0, selectedOrder.currency)} {selectedOrder.currency || theme.currency}
+                      {formatPrice(
+                        selectedOrder.totalAmount || selectedOrder.total || 0,
+                        selectedOrder.currency,
+                      )}{' '}
+                      {selectedOrder.currency || theme.currency}
                     </span>
                   </div>
                 </div>

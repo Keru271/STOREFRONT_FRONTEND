@@ -42,12 +42,12 @@ export async function getWishlist(options?: WishlistOptions): Promise<WishlistRe
  */
 export async function addToWishlist(
   productId: string,
-  options?: { token?: string; customerEmail?: string }
+  options?: { token?: string; customerEmail?: string },
 ): Promise<WishlistResponse> {
   return apiClient.post<WishlistResponse>(
     'api/storefront/wishlist/add',
     { productId, customerEmail: options?.customerEmail },
-    { token: options?.token }
+    { token: options?.token },
   );
 }
 
@@ -56,12 +56,12 @@ export async function addToWishlist(
  */
 export async function deleteFromWishlist(
   productId: string,
-  options?: { token?: string; customerEmail?: string }
+  options?: { token?: string; customerEmail?: string },
 ): Promise<WishlistResponse> {
   return apiClient.post<WishlistResponse>(
     'api/storefront/wishlist/remove',
     { productId, customerEmail: options?.customerEmail },
-    { token: options?.token }
+    { token: options?.token },
   );
 }
 
@@ -73,12 +73,13 @@ export const removeFromWishlist = deleteFromWishlist;
 /**
  * Clears the customer's entire wishlist.
  */
-export async function clearWishlist(
-  options?: { token?: string; customerEmail?: string }
-): Promise<WishlistResponse> {
+export async function clearWishlist(options?: {
+  token?: string;
+  customerEmail?: string;
+}): Promise<WishlistResponse> {
   return apiClient.post<WishlistResponse>(
     'api/storefront/wishlist/clear',
     { customerEmail: options?.customerEmail },
-    { token: options?.token }
+    { token: options?.token },
   );
 }

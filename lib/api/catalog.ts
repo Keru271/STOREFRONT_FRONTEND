@@ -57,7 +57,7 @@ export async function getBrandBySlug(slug: string): Promise<Brand | null> {
       (b) =>
         b.slug?.toLowerCase() === normalized ||
         b.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') === normalized ||
-        b.name.toLowerCase() === normalized
+        b.name.toLowerCase() === normalized,
     );
     return found || null;
   } catch {
@@ -76,7 +76,7 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
       (c) =>
         c.slug?.toLowerCase() === normalized ||
         c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') === normalized ||
-        c.name.toLowerCase() === normalized
+        c.name.toLowerCase() === normalized,
     );
     return found || null;
   } catch {
@@ -106,7 +106,7 @@ export async function getMenu(handle: string = 'main-menu'): Promise<Menu | null
   try {
     const menu = await apiClient.get<Menu>(
       `api/storefront/catalog/menus/${encodeURIComponent(handle)}`,
-      { next: { revalidate: 0, tags: ['menus', `menu-${handle}`] } }
+      { next: { revalidate: 0, tags: ['menus', `menu-${handle}`] } },
     );
     if (menu && menu.items && menu.items.length > 0) {
       return menu;
@@ -119,10 +119,13 @@ export async function getMenu(handle: string = 'main-menu'): Promise<Menu | null
   try {
     const cmsBase = process.env.NEXT_PUBLIC_CMS_API_URL || 'http://localhost:5000/api';
     const storeId = process.env.NEXT_PUBLIC_STORE_ID || '';
-    const res = await fetch(`${cmsBase}/menus/${encodeURIComponent(handle)}${storeId ? `?storeId=${encodeURIComponent(storeId)}` : ''}`, {
-      headers: storeId ? { 'x-store-id': storeId } : {},
-      cache: 'no-store',
-    });
+    const res = await fetch(
+      `${cmsBase}/menus/${encodeURIComponent(handle)}${storeId ? `?storeId=${encodeURIComponent(storeId)}` : ''}`,
+      {
+        headers: storeId ? { 'x-store-id': storeId } : {},
+        cache: 'no-store',
+      },
+    );
     if (res.ok) {
       const data = await res.json();
       const rawItems = data.itemsJson
@@ -145,12 +148,16 @@ export async function getMenu(handle: string = 'main-menu'): Promise<Menu | null
           target: item.target || '_self',
           type: item.type || 'LINK',
           isMegaMenu: Boolean(item.isMegaMenu),
-          megaMenuConfig: item.megaMenuConfig || (item.isMegaMenu ? {
-            bannerImage: item.bannerImage,
-            headline: item.headline,
-            buttonLabel: item.buttonLabel,
-            buttonUrl: item.buttonUrl,
-          } : null),
+          megaMenuConfig:
+            item.megaMenuConfig ||
+            (item.isMegaMenu
+              ? {
+                  bannerImage: item.bannerImage,
+                  headline: item.headline,
+                  buttonLabel: item.buttonLabel,
+                  buttonUrl: item.buttonUrl,
+                }
+              : null),
           children: Array.isArray(item.children)
             ? item.children.map((c: any) => ({
                 id: c.id,
@@ -192,7 +199,7 @@ export async function getPage(slug: string): Promise<CmsPage | null> {
   try {
     const page = await apiClient.get<CmsPage>(
       `api/storefront/catalog/pages/${encodeURIComponent(slug)}`,
-      { next: { revalidate: 0, tags: ['pages', `page-${slug}`] } }
+      { next: { revalidate: 0, tags: ['pages', `page-${slug}`] } },
     );
     if (page) return page;
   } catch {
@@ -200,7 +207,10 @@ export async function getPage(slug: string): Promise<CmsPage | null> {
   }
 
   // Graceful fallback for standard storefront pages
-  const normalized = slug.toLowerCase().replace(/^\/+/, '').replace(/^(pages|policies)\/+/, '');
+  const normalized = slug
+    .toLowerCase()
+    .replace(/^\/+/, '')
+    .replace(/^(pages|policies)\/+/, '');
   if (normalized === 'about' || normalized === 'about-us') {
     return {
       id: 'fallback-about',
@@ -266,7 +276,7 @@ export async function getCollectionBySlug(slug: string): Promise<Collection | nu
   try {
     return await apiClient.get<Collection>(
       `api/storefront/catalog/collections/${encodeURIComponent(slug)}`,
-      { next: { revalidate: 300, tags: ['collections', `collection-${slug}`] } }
+      { next: { revalidate: 300, tags: ['collections', `collection-${slug}`] } },
     );
   } catch {
     return null;
@@ -276,7 +286,11 @@ export async function getCollectionBySlug(slug: string): Promise<Collection | nu
 /**
  * Fetches all published blog posts for the storefront.
  */
-export async function getBlogPosts(params?: { category?: string; tag?: string; search?: string }): Promise<BlogPost[]> {
+export async function getBlogPosts(params?: {
+  category?: string;
+  tag?: string;
+  search?: string;
+}): Promise<BlogPost[]> {
   try {
     const searchParams = new URLSearchParams();
     if (params?.category) searchParams.set('category', params.category);
@@ -301,10 +315,9 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
   try {
     return await apiClient.get<BlogPost>(
       `api/storefront/catalog/blogs/${encodeURIComponent(slug)}`,
-      { next: { revalidate: 60, tags: ['blogs', `blog-${slug}`] } }
+      { next: { revalidate: 60, tags: ['blogs', `blog-${slug}`] } },
     );
   } catch {
     return null;
   }
 }
-

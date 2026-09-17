@@ -27,8 +27,7 @@ export async function generateMetadata({ params }: CollectionPageProps): Promise
   return {
     title: collection.name,
     description:
-      collection.description ||
-      `Shop the ${collection.name} collection at ${theme.storeName}.`,
+      collection.description || `Shop the ${collection.name} collection at ${theme.storeName}.`,
     openGraph: {
       title: `${collection.name} — ${theme.storeName}`,
       description: collection.description || `Shop the ${collection.name} collection.`,
@@ -37,10 +36,7 @@ export async function generateMetadata({ params }: CollectionPageProps): Promise
   };
 }
 
-export default async function CollectionDetailPage({
-  params,
-  searchParams,
-}: CollectionPageProps) {
+export default async function CollectionDetailPage({ params, searchParams }: CollectionPageProps) {
   const { slug } = await params;
   const resolvedParams = await searchParams;
 
@@ -60,13 +56,13 @@ export default async function CollectionDetailPage({
   const products = await getProducts({
     collection: slug,
     category: resolvedParams.category as string | undefined,
-    brand:    resolvedParams.brand    as string | undefined,
-    search:   resolvedParams.search   as string | undefined,
-    sort:     resolvedParams.sort     as string | undefined,
+    brand: resolvedParams.brand as string | undefined,
+    search: resolvedParams.search as string | undefined,
+    sort: resolvedParams.sort as string | undefined,
     minPrice: resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
     maxPrice: resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
-    page:     resolvedParams.page     ? Number(resolvedParams.page)     : 1,
-    limit:    24,
+    page: resolvedParams.page ? Number(resolvedParams.page) : 1,
+    limit: 24,
   });
 
   const previewTemplate = resolvedParams?.previewTemplate as string | undefined;
@@ -79,9 +75,9 @@ export default async function CollectionDetailPage({
   // Pass collection context via searchParams so PLPPage can show the heading
   const enrichedParams: Record<string, string | string[] | undefined> = {
     ...resolvedParams,
-    _collectionName:        collection.name,
+    _collectionName: collection.name,
     _collectionDescription: collection.description || '',
-    _collectionSlug:        collection.slug,
+    _collectionSlug: collection.slug,
   };
 
   return (

@@ -61,12 +61,18 @@ export default function DefaultHeader() {
             <div className="flex items-center gap-4 truncate">
               {theme.contactPhone && (
                 <span className="hidden sm:inline">
-                  📞 <a href={`tel:${theme.contactPhone}`} className="hover:underline">{theme.contactPhone}</a>
+                  📞{' '}
+                  <a href={`tel:${theme.contactPhone}`} className="hover:underline">
+                    {theme.contactPhone}
+                  </a>
                 </span>
               )}
               {theme.contactEmail && (
                 <span className="hidden md:inline">
-                  ✉️ <a href={`mailto:${theme.contactEmail}`} className="hover:underline">{theme.contactEmail}</a>
+                  ✉️{' '}
+                  <a href={`mailto:${theme.contactEmail}`} className="hover:underline">
+                    {theme.contactEmail}
+                  </a>
                 </span>
               )}
               {theme.headerAnnouncement && (
@@ -74,7 +80,9 @@ export default function DefaultHeader() {
               )}
             </div>
             <div className="hidden md:flex items-center gap-3 flex-shrink-0">
-              <Link href="/wishlist" className="hover:underline">Wishlist ({wishlistCount})</Link>
+              <Link href="/wishlist" className="hover:underline">
+                Wishlist ({wishlistCount})
+              </Link>
             </div>
           </div>
         </div>
@@ -102,7 +110,12 @@ export default function DefaultHeader() {
                 aria-expanded={mobileMenuOpen}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
                 </svg>
               </button>
 
@@ -148,9 +161,22 @@ export default function DefaultHeader() {
                         style={{ color: 'var(--sf-text)' }}
                       >
                         <span>{label}</span>
-                        <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ backgroundColor: 'var(--sf-primary)' }} />
-                        <svg className="w-3.5 h-3.5 opacity-60 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        <span
+                          className="w-1.5 h-1.5 rounded-full inline-block"
+                          style={{ backgroundColor: 'var(--sf-primary)' }}
+                        />
+                        <svg
+                          className="w-3.5 h-3.5 opacity-60 transition-transform group-hover:rotate-180"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
                         </svg>
                       </Link>
 
@@ -172,8 +198,18 @@ export default function DefaultHeader() {
                         style={{ color: 'var(--sf-text)' }}
                       >
                         <span>{label}</span>
-                        <svg className="w-3.5 h-3.5 opacity-60 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        <svg
+                          className="w-3.5 h-3.5 opacity-60 transition-transform group-hover:rotate-180"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
                         </svg>
                       </Link>
 
@@ -191,7 +227,8 @@ export default function DefaultHeader() {
                             const subHref = sub.href || sub.url || '#';
                             const subLabel = sub.label || sub.title || 'Sublink';
                             const subTarget = sub.target || '_self';
-                            const subRel = subTarget === '_blank' ? 'noopener noreferrer' : undefined;
+                            const subRel =
+                              subTarget === '_blank' ? 'noopener noreferrer' : undefined;
                             return (
                               <Link
                                 key={sub.id || subHref || sIdx}
@@ -241,7 +278,12 @@ export default function DefaultHeader() {
                   aria-label="Search"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
                 </button>
               )}
@@ -254,7 +296,12 @@ export default function DefaultHeader() {
                 aria-label="Wishlist"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
                 </svg>
                 {wishlistCount > 0 && (
                   <span
@@ -274,7 +321,12 @@ export default function DefaultHeader() {
                 aria-label="Shopping Cart"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
                 </svg>
                 {itemCount > 0 && (
                   <span
@@ -295,7 +347,12 @@ export default function DefaultHeader() {
                   aria-label="Account"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
                   </svg>
                 </button>
 
@@ -309,19 +366,80 @@ export default function DefaultHeader() {
                   >
                     {isAuthenticated ? (
                       <>
-                        <div className="px-4 py-2.5 border-b" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
-                          <p className="text-[10px]" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>Signed in as</p>
-                          <p className="text-xs font-bold truncate" style={{ color: 'var(--sf-text)' }}>{customer?.email}</p>
+                        <div
+                          className="px-4 py-2.5 border-b"
+                          style={{
+                            borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
+                          }}
+                        >
+                          <p
+                            className="text-[10px]"
+                            style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
+                          >
+                            Signed in as
+                          </p>
+                          <p
+                            className="text-xs font-bold truncate"
+                            style={{ color: 'var(--sf-text)' }}
+                          >
+                            {customer?.email}
+                          </p>
                         </div>
-                        <Link href="/account" className="block px-3 py-2 rounded-lg text-xs hover:opacity-75 font-medium transition-opacity" style={{ color: 'var(--sf-text)' }} onClick={() => setUserMenuOpen(false)}>My Profile</Link>
-                        <Link href="/account/orders" className="block px-3 py-2 rounded-lg text-xs hover:opacity-75 font-medium transition-opacity" style={{ color: 'var(--sf-text)' }} onClick={() => setUserMenuOpen(false)}>My Orders</Link>
-                        <Link href="/wishlist" className="block px-3 py-2 rounded-lg text-xs hover:opacity-75 font-medium transition-opacity" style={{ color: 'var(--sf-text)' }} onClick={() => setUserMenuOpen(false)}>Wishlist ({wishlistCount})</Link>
-                        <button onClick={() => { logout(); setUserMenuOpen(false); }} className="w-full text-left px-3 py-2 rounded-lg text-xs hover:opacity-75 font-medium transition-opacity border-t text-rose-500 cursor-pointer" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>Sign Out</button>
+                        <Link
+                          href="/account"
+                          className="block px-3 py-2 rounded-lg text-xs hover:opacity-75 font-medium transition-opacity"
+                          style={{ color: 'var(--sf-text)' }}
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          My Profile
+                        </Link>
+                        <Link
+                          href="/account/orders"
+                          className="block px-3 py-2 rounded-lg text-xs hover:opacity-75 font-medium transition-opacity"
+                          style={{ color: 'var(--sf-text)' }}
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          My Orders
+                        </Link>
+                        <Link
+                          href="/wishlist"
+                          className="block px-3 py-2 rounded-lg text-xs hover:opacity-75 font-medium transition-opacity"
+                          style={{ color: 'var(--sf-text)' }}
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          Wishlist ({wishlistCount})
+                        </Link>
+                        <button
+                          onClick={() => {
+                            logout();
+                            setUserMenuOpen(false);
+                          }}
+                          className="w-full text-left px-3 py-2 rounded-lg text-xs hover:opacity-75 font-medium transition-opacity border-t text-rose-500 cursor-pointer"
+                          style={{
+                            borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
+                          }}
+                        >
+                          Sign Out
+                        </button>
                       </>
                     ) : (
                       <>
-                        <Link href="/auth/login" className="block px-3 py-2 rounded-lg text-xs font-bold hover:opacity-75 transition-opacity" style={{ color: 'var(--sf-text)' }} onClick={() => setUserMenuOpen(false)}>Sign In</Link>
-                        <Link href="/auth/signup" className="block px-3 py-2 rounded-lg text-xs hover:opacity-75 transition-opacity" style={{ color: 'var(--sf-text)' }} onClick={() => setUserMenuOpen(false)}>Create Account</Link>
+                        <Link
+                          href="/auth/login"
+                          className="block px-3 py-2 rounded-lg text-xs font-bold hover:opacity-75 transition-opacity"
+                          style={{ color: 'var(--sf-text)' }}
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          Sign In
+                        </Link>
+                        <Link
+                          href="/auth/signup"
+                          className="block px-3 py-2 rounded-lg text-xs hover:opacity-75 transition-opacity"
+                          style={{ color: 'var(--sf-text)' }}
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          Create Account
+                        </Link>
                       </>
                     )}
                   </div>
@@ -369,7 +487,11 @@ export default function DefaultHeader() {
               className="p-4 border-b flex items-center justify-between"
               style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
             >
-              <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2">
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2"
+              >
                 {theme.logo ? (
                   <Image
                     src={theme.logo}
@@ -391,7 +513,13 @@ export default function DefaultHeader() {
                 style={{ color: 'var(--sf-text)' }}
                 aria-label="Close navigation menu"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -423,7 +551,13 @@ export default function DefaultHeader() {
 
                   if (hasChildren) {
                     return (
-                      <div key={linkId} className="rounded-xl overflow-hidden" style={{ backgroundColor: 'color-mix(in srgb, var(--sf-text) 4%, transparent)' }}>
+                      <div
+                        key={linkId}
+                        className="rounded-xl overflow-hidden"
+                        style={{
+                          backgroundColor: 'color-mix(in srgb, var(--sf-text) 4%, transparent)',
+                        }}
+                      >
                         <div className="flex items-center justify-between">
                           <Link
                             href={href}
@@ -445,7 +579,11 @@ export default function DefaultHeader() {
                               strokeWidth={2}
                               viewBox="0 0 24 24"
                             >
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M19 9l-7 7-7-7"
+                              />
                             </svg>
                           </button>
                         </div>
@@ -453,7 +591,9 @@ export default function DefaultHeader() {
                         {isExpanded && (
                           <div
                             className="pl-4 pr-2 pb-2 space-y-1 border-t animate-in slide-in-from-top-1 duration-150"
-                            style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)' }}
+                            style={{
+                              borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)',
+                            }}
                           >
                             {link.children!.map((sub, sIdx) => {
                               const subHref = sub.href || sub.url || '#';
@@ -509,8 +649,15 @@ export default function DefaultHeader() {
                       {(customer?.name || customer?.email || 'U').charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold truncate" style={{ color: 'var(--sf-text)' }}>{customer?.name || 'Customer'}</p>
-                      <p className="text-[11px] opacity-60 truncate" style={{ color: 'var(--sf-text)' }}>{customer?.email}</p>
+                      <p className="text-xs font-bold truncate" style={{ color: 'var(--sf-text)' }}>
+                        {customer?.name || 'Customer'}
+                      </p>
+                      <p
+                        className="text-[11px] opacity-60 truncate"
+                        style={{ color: 'var(--sf-text)' }}
+                      >
+                        {customer?.email}
+                      </p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2 pt-1">

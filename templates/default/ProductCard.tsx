@@ -25,8 +25,10 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
   const variantPrices = hasVariants
     ? product.variants!.map((v) => Number(v.price)).filter((p) => !isNaN(p))
     : [];
-  const minVariantPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : Number(product.price);
-  const maxVariantPrice = variantPrices.length > 0 ? Math.max(...variantPrices) : Number(product.price);
+  const minVariantPrice =
+    variantPrices.length > 0 ? Math.min(...variantPrices) : Number(product.price);
+  const maxVariantPrice =
+    variantPrices.length > 0 ? Math.max(...variantPrices) : Number(product.price);
   const hasPriceRange = hasVariants && minVariantPrice !== maxVariantPrice;
 
   const discount = product.compareAtPrice
@@ -39,7 +41,11 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
 
   const stock = hasVariants
     ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
-    : (product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1);
+    : product.stockQuantity !== undefined
+      ? Number(product.stockQuantity)
+      : product.inventory !== undefined
+        ? Number(product.inventory)
+        : 1;
   const isOutOfStock = stock <= 0;
 
   const handleQuickAdd = async (e: React.MouseEvent) => {
@@ -81,7 +87,12 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
       {addedToast && (
         <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 bg-emerald-600 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg animate-bounce flex items-center gap-1.5 whitespace-nowrap">
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2.5}
+              d="M5 13l4 4L19 7"
+            />
           </svg>
           Added to cart!
         </div>
@@ -185,7 +196,14 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
             {isAdding ? (
               <span className="flex items-center gap-2">
                 <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                 </svg>
                 Adding...
@@ -195,14 +213,24 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
             ) : hasVariants ? (
               <>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16m-7 6h7"
+                  />
                 </svg>
                 Select Options ⚡
               </>
             ) : (
               <>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
                 </svg>
                 Quick Add
               </>
@@ -230,16 +258,13 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span
-                className="text-base font-bold"
-                style={{ color: 'var(--sf-primary)' }}
-              >
-                {hasPriceRange ? `From ${formatPrice(minVariantPrice)}` : formatPrice(minVariantPrice)}
+              <span className="text-base font-bold" style={{ color: 'var(--sf-primary)' }}>
+                {hasPriceRange
+                  ? `From ${formatPrice(minVariantPrice)}`
+                  : formatPrice(minVariantPrice)}
               </span>
               {product.compareAtPrice && (
-                <span
-                  className="text-sm line-through text-gray-400"
-                >
+                <span className="text-sm line-through text-gray-400">
                   {formatPrice(product.compareAtPrice)}
                 </span>
               )}

@@ -13,12 +13,12 @@ import type { Order } from '@/lib/api/types';
 
 function OrderStatusBadge({ status }: { status?: string }) {
   const statusMap: Record<string, { label: string; color: string; bg: string }> = {
-    PENDING:     { label: 'Pending',     color: '#92400e', bg: '#fef3c7' },
-    PROCESSING:  { label: 'Processing',  color: '#1e40af', bg: '#dbeafe' },
-    SHIPPED:     { label: 'Shipped',     color: '#065f46', bg: '#d1fae5' },
-    DELIVERED:   { label: 'Delivered',   color: '#14532d', bg: '#bbf7d0' },
-    CANCELLED:   { label: 'Cancelled',   color: '#991b1b', bg: '#fee2e2' },
-    REFUNDED:    { label: 'Refunded',    color: '#6b21a8', bg: '#f3e8ff' },
+    PENDING: { label: 'Pending', color: '#92400e', bg: '#fef3c7' },
+    PROCESSING: { label: 'Processing', color: '#1e40af', bg: '#dbeafe' },
+    SHIPPED: { label: 'Shipped', color: '#065f46', bg: '#d1fae5' },
+    DELIVERED: { label: 'Delivered', color: '#14532d', bg: '#bbf7d0' },
+    CANCELLED: { label: 'Cancelled', color: '#991b1b', bg: '#fee2e2' },
+    REFUNDED: { label: 'Refunded', color: '#6b21a8', bg: '#f3e8ff' },
   };
   const key = (status || '').toUpperCase();
   const s = statusMap[key] || { label: status || 'Unknown', color: '#374151', bg: '#f3f4f6' };
@@ -44,20 +44,22 @@ function formatCurrency(amount?: number, currency?: string) {
 function formatDate(dateStr?: string) {
   if (!dateStr) return '—';
   return new Date(dateStr).toLocaleDateString('en-IN', {
-    year: 'numeric', month: 'long', day: 'numeric',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 }
 
 export default function OrderDetailPage() {
-  const router    = useRouter();
-  const params    = useParams<{ id: string }>();
-  const orderId   = params.id;
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const orderId = params.id;
 
   const { isAuthenticated, isLoading: authLoading } = useAuth();
 
-  const [order,     setOrder]     = useState<Order | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error,     setError]     = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -119,24 +121,24 @@ export default function OrderDetailPage() {
     if (Array.isArray(order.items) && order.items.length) return order.items;
     try {
       return order.itemsJson ? JSON.parse(order.itemsJson) : [];
-    } catch { return []; }
+    } catch {
+      return [];
+    }
   })();
 
   const shippingAddress = (() => {
     try {
       return order.shippingAddressJson ? JSON.parse(order.shippingAddressJson) : null;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   })();
 
   const grandTotal = order.totalAmount ?? order.total;
 
   return (
-    <div
-      className="min-h-screen"
-      style={{ backgroundColor: 'var(--sf-bg)' }}
-    >
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--sf-bg)' }}>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
         {/* ── Back nav ─────────────────────────────────────────────────────── */}
         <Link
           href="/account"
@@ -174,12 +176,8 @@ export default function OrderDetailPage() {
             </div>
             <div className="flex flex-wrap gap-2">
               <OrderStatusBadge status={order.status} />
-              {order.paymentStatus && (
-                <OrderStatusBadge status={order.paymentStatus} />
-              )}
-              {order.fulfillmentStatus && (
-                <OrderStatusBadge status={order.fulfillmentStatus} />
-              )}
+              {order.paymentStatus && <OrderStatusBadge status={order.paymentStatus} />}
+              {order.fulfillmentStatus && <OrderStatusBadge status={order.fulfillmentStatus} />}
             </div>
           </div>
         </div>
@@ -198,59 +196,79 @@ export default function OrderDetailPage() {
                 Items ({orderItems.length})
               </h2>
             </div>
-            <div className="divide-y" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)' }}>
-              {orderItems.map((item: { id: string; productName?: string; name?: string; quantity: number; price: number; image?: string }, idx: number) => (
-                <div key={item.id || idx} className="flex items-center gap-4 px-6 py-4">
-                  {item.image ? (
-                    <img
-                      src={item.image}
-                      alt={item.productName || item.name || 'Product'}
-                      className="w-16 h-16 rounded-xl object-cover flex-shrink-0"
-                    />
-                  ) : (
-                    <div
-                      className="w-16 h-16 rounded-xl flex-shrink-0 flex items-center justify-center text-2xl"
-                      style={{
-                        backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, var(--sf-bg))',
-                      }}
-                    >
-                      📦
+            <div
+              className="divide-y"
+              style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)' }}
+            >
+              {orderItems.map(
+                (
+                  item: {
+                    id: string;
+                    productName?: string;
+                    name?: string;
+                    quantity: number;
+                    price: number;
+                    image?: string;
+                  },
+                  idx: number,
+                ) => (
+                  <div key={item.id || idx} className="flex items-center gap-4 px-6 py-4">
+                    {item.image ? (
+                      <img
+                        src={item.image}
+                        alt={item.productName || item.name || 'Product'}
+                        className="w-16 h-16 rounded-xl object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <div
+                        className="w-16 h-16 rounded-xl flex-shrink-0 flex items-center justify-center text-2xl"
+                        style={{
+                          backgroundColor:
+                            'color-mix(in srgb, var(--sf-primary) 10%, var(--sf-bg))',
+                        }}
+                      >
+                        📦
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate" style={{ color: 'var(--sf-text)' }}>
+                        {item.productName || item.name || 'Product'}
+                      </p>
+                      <p
+                        className="text-sm"
+                        style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                      >
+                        Qty: {item.quantity}
+                      </p>
                     </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate" style={{ color: 'var(--sf-text)' }}>
-                      {item.productName || item.name || 'Product'}
-                    </p>
-                    <p
-                      className="text-sm"
-                      style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
-                    >
-                      Qty: {item.quantity}
+                    <p className="font-semibold flex-shrink-0" style={{ color: 'var(--sf-text)' }}>
+                      {formatCurrency(item.price * item.quantity, order.currency)}
                     </p>
                   </div>
-                  <p className="font-semibold flex-shrink-0" style={{ color: 'var(--sf-text)' }}>
-                    {formatCurrency(item.price * item.quantity, order.currency)}
-                  </p>
-                </div>
-              ))}
+                ),
+              )}
             </div>
           </div>
         )}
 
         {/* ── Summary + Shipping ───────────────────────────────────────────── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-
           {/* Shipping address */}
           {shippingAddress && (
             <div
               className="rounded-2xl border p-6"
               style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
             >
-              <h3 className="text-sm font-semibold uppercase tracking-wider mb-3"
-                style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+              <h3
+                className="text-sm font-semibold uppercase tracking-wider mb-3"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+              >
                 Shipping Address
               </h3>
-              <address className="not-italic text-sm space-y-0.5" style={{ color: 'var(--sf-text)' }}>
+              <address
+                className="not-italic text-sm space-y-0.5"
+                style={{ color: 'var(--sf-text)' }}
+              >
                 {shippingAddress.street && <p>{shippingAddress.street}</p>}
                 {(shippingAddress.city || shippingAddress.state) && (
                   <p>{[shippingAddress.city, shippingAddress.state].filter(Boolean).join(', ')}</p>
@@ -266,16 +284,20 @@ export default function OrderDetailPage() {
             className="rounded-2xl border p-6"
             style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
           >
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-3"
-              style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+            <h3
+              className="text-sm font-semibold uppercase tracking-wider mb-3"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+            >
               Order Total
             </h3>
             <p className="text-3xl font-bold" style={{ color: 'var(--sf-text)' }}>
               {formatCurrency(grandTotal, order.currency)}
             </p>
             {order.currency && (
-              <p className="text-xs mt-1"
-                style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+              <p
+                className="text-xs mt-1"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+              >
                 {order.currency}
               </p>
             )}

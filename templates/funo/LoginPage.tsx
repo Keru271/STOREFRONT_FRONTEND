@@ -41,7 +41,6 @@ export default function FunoLoginPage({ theme }: AuthPageProps) {
 
       <main className="flex-1 flex items-center justify-center py-16 px-4 sm:px-6">
         <div className="w-full max-w-md bg-white border border-[#eaeaea] rounded-3xl p-8 sm:p-10 shadow-xl text-center">
-          
           <div className="flex justify-center mb-6">
             <FunoLogo className="h-9" />
           </div>
@@ -61,9 +60,7 @@ export default function FunoLoginPage({ theme }: AuthPageProps) {
 
           <form onSubmit={handleSubmit} className="space-y-4 text-left">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Email Address
-              </label>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">Email Address</label>
               <input
                 type="email"
                 required
@@ -76,9 +73,7 @@ export default function FunoLoginPage({ theme }: AuthPageProps) {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-bold text-slate-700">
-                  Password
-                </label>
+                <label className="block text-xs font-bold text-slate-700">Password</label>
                 <Link
                   href="/auth/forgot-password"
                   className="text-[11px] font-bold text-orange-600 hover:underline"

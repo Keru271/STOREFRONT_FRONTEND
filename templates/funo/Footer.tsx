@@ -11,56 +11,72 @@ export default function FunoFooter() {
   return (
     <footer className="w-full bg-[#161616] text-[#a0a0a0] pt-16 pb-12 border-t border-[#262626]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* Top Newsletter & Brand Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-14 border-b border-[#282828]">
-          
           {/* Brand Column */}
           <div className="lg:col-span-4 space-y-5">
             <div className="text-white">
               <FunoLogo className="h-9 brightness-0 invert" />
             </div>
             <p className="text-xs text-[#888] leading-relaxed max-w-sm">
-              Contemporary furniture and Scandinavian interior objects designed for calm, functional living. Sourced responsibly and crafted to endure.
+              Contemporary furniture and Scandinavian interior objects designed for calm, functional
+              living. Sourced responsibly and crafted to endure.
             </p>
             <div className="space-y-1.5 text-xs text-[#aaa]">
               {theme.contactPhone && (
-                <div>📞 Direct Line: <strong className="text-white">{theme.contactPhone}</strong></div>
+                <div>
+                  📞 Direct Line: <strong className="text-white">{theme.contactPhone}</strong>
+                </div>
               )}
               {theme.contactEmail && (
-                <div>✉️ Concierge: <strong className="text-white">{theme.contactEmail}</strong></div>
+                <div>
+                  ✉️ Concierge: <strong className="text-white">{theme.contactEmail}</strong>
+                </div>
               )}
             </div>
           </div>
 
           {/* Quick Links Column 1: Shop */}
           <div className="lg:col-span-2 space-y-4">
-            <h4 className="text-xs font-black text-white uppercase tracking-widest">
-              Catalog
-            </h4>
+            <h4 className="text-xs font-black text-white uppercase tracking-widest">Catalog</h4>
             <ul className="space-y-2.5 text-xs font-medium">
               <li>
-                <Link href="/products?category=living-room" className="hover:text-white hover:underline transition">
+                <Link
+                  href="/products?category=living-room"
+                  className="hover:text-white hover:underline transition"
+                >
                   Living Room
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=bedroom" className="hover:text-white hover:underline transition">
+                <Link
+                  href="/products?category=bedroom"
+                  className="hover:text-white hover:underline transition"
+                >
                   Bedroom Suites
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=dining" className="hover:text-white hover:underline transition">
+                <Link
+                  href="/products?category=dining"
+                  className="hover:text-white hover:underline transition"
+                >
                   Dining & Kitchen
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=lighting" className="hover:text-white hover:underline transition">
+                <Link
+                  href="/products?category=lighting"
+                  className="hover:text-white hover:underline transition"
+                >
                   Lighting & Lamps
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=decor" className="hover:text-white hover:underline transition">
+                <Link
+                  href="/products?category=decor"
+                  className="hover:text-white hover:underline transition"
+                >
                   Ceramics & Accents
                 </Link>
               </li>
@@ -69,9 +85,7 @@ export default function FunoFooter() {
 
           {/* Quick Links Column 2: Studio */}
           <div className="lg:col-span-2 space-y-4">
-            <h4 className="text-xs font-black text-white uppercase tracking-widest">
-              Studio
-            </h4>
+            <h4 className="text-xs font-black text-white uppercase tracking-widest">Studio</h4>
             <ul className="space-y-2.5 text-xs font-medium">
               <li>
                 <Link href="/pages/about" className="hover:text-white hover:underline transition">
@@ -107,9 +121,16 @@ export default function FunoFooter() {
               Join Our Design Journal
             </h4>
             <p className="text-xs text-[#888] leading-relaxed">
-              Subscribe to receive preview invites for seasonal drops, craft stories, and exclusive subscriber perks.
+              Subscribe to receive preview invites for seasonal drops, craft stories, and exclusive
+              subscriber perks.
             </p>
-            <form onSubmit={(e) => { e.preventDefault(); alert('Thank you for subscribing to Funie Journal!'); }} className="flex gap-2">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                alert('Thank you for subscribing to Funie Journal!');
+              }}
+              className="flex gap-2"
+            >
               <input
                 type="email"
                 required
@@ -124,13 +145,13 @@ export default function FunoFooter() {
               </button>
             </form>
           </div>
-
         </div>
 
         {/* Bottom Copyright & Badges */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#666]">
           <div>
-            © {new Date().getFullYear()} {theme.storeName || 'Funie Furniture Studio'}. All rights reserved.
+            © {new Date().getFullYear()} {theme.storeName || 'Funie Furniture Studio'}. All rights
+            reserved.
           </div>
           <div className="flex items-center gap-6 text-[#888]">
             <span className="flex items-center gap-1.5">
@@ -144,7 +165,6 @@ export default function FunoFooter() {
             </span>
           </div>
         </div>
-
       </div>
     </footer>
   );

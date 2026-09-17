@@ -37,7 +37,8 @@ export default async function BrandsPage() {
             Explore All Brands
           </h1>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
-            Shop directly from our world-class brand partners, verified artisans, and premier product designers.
+            Shop directly from our world-class brand partners, verified artisans, and premier
+            product designers.
           </p>
         </div>
 
@@ -48,7 +49,9 @@ export default async function BrandsPage() {
               <Building2 className="w-8 h-8" />
             </div>
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">No brands found</h3>
-            <p className="text-xs text-slate-500">Brands will appear here once added in the CMS admin studio.</p>
+            <p className="text-xs text-slate-500">
+              Brands will appear here once added in the CMS admin studio.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -94,7 +97,8 @@ export default async function BrandsPage() {
                         {brand.name}
                       </h2>
                       <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-1.5 leading-relaxed">
-                        {brand.description || `Discover authentic products and collections from ${brand.name}.`}
+                        {brand.description ||
+                          `Discover authentic products and collections from ${brand.name}.`}
                       </p>
                     </div>
                   </div>

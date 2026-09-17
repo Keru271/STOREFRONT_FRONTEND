@@ -5,20 +5,20 @@
 import type { ThemeConfig } from './api/types';
 
 export const NEXT_FONT_MAP: Record<string, string> = {
-  'inter': 'var(--font-inter)',
+  inter: 'var(--font-inter)',
   'plus jakarta sans': 'var(--font-plus-jakarta)',
-  'plus_jakarta_sans': 'var(--font-plus-jakarta)',
+  plus_jakarta_sans: 'var(--font-plus-jakarta)',
   'playfair display': 'var(--font-playfair)',
-  'playfair_display': 'var(--font-playfair)',
-  'outfit': 'var(--font-outfit)',
+  playfair_display: 'var(--font-playfair)',
+  outfit: 'var(--font-outfit)',
   'space grotesk': 'var(--font-space-grotesk)',
-  'space_grotesk': 'var(--font-space-grotesk)',
-  'cinzel': 'var(--font-cinzel)',
-  'roboto': 'var(--font-roboto)',
+  space_grotesk: 'var(--font-space-grotesk)',
+  cinzel: 'var(--font-cinzel)',
+  roboto: 'var(--font-roboto)',
   'dm sans': 'var(--font-dm-sans)',
-  'dm_sans': 'var(--font-dm-sans)',
-  'lora': 'var(--font-lora)',
-  'geist': 'var(--font-geist-sans)',
+  dm_sans: 'var(--font-dm-sans)',
+  lora: 'var(--font-lora)',
+  geist: 'var(--font-geist-sans)',
   'geist sans': 'var(--font-geist-sans)',
   'geist mono': 'var(--font-geist-mono)',
 };
@@ -43,7 +43,12 @@ export function parseFontName(rawFont: string | null | undefined): {
   let fallback = parts.slice(1).join(', ');
   if (!fallback) {
     const lower = cleanName.toLowerCase();
-    if (lower.includes('playfair') || lower.includes('cinzel') || lower.includes('lora') || lower.includes('serif')) {
+    if (
+      lower.includes('playfair') ||
+      lower.includes('cinzel') ||
+      lower.includes('lora') ||
+      lower.includes('serif')
+    ) {
       fallback = 'serif';
     } else if (lower.includes('mono') || lower.includes('code')) {
       fallback = 'monospace';
@@ -56,7 +61,9 @@ export function parseFontName(rawFont: string | null | undefined): {
 }
 
 export function generateDynamicFontStyles(theme: ThemeConfig): string {
-  const { cleanName: headingName, fallback: headingFallback } = parseFontName(theme.themeHeadingFont);
+  const { cleanName: headingName, fallback: headingFallback } = parseFontName(
+    theme.themeHeadingFont,
+  );
   const { cleanName: bodyName, fallback: bodyFallback } = parseFontName(theme.themeBodyFont);
 
   const headingUrl = theme.themeHeadingFontUrl;
@@ -66,7 +73,17 @@ export function generateDynamicFontStyles(theme: ThemeConfig): string {
   const googleFontsToLoad = new Set<string>();
 
   const isWebSafe = (name: string) =>
-    ['system-ui', 'sans-serif', 'serif', 'monospace', 'arial', 'helvetica', 'georgia', 'times new roman', 'courier'].includes(name.toLowerCase());
+    [
+      'system-ui',
+      'sans-serif',
+      'serif',
+      'monospace',
+      'arial',
+      'helvetica',
+      'georgia',
+      'times new roman',
+      'courier',
+    ].includes(name.toLowerCase());
 
   // 1. Heading font resolution
   let headingVarValue: string;

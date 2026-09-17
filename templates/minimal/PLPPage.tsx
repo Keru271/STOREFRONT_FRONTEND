@@ -7,15 +7,26 @@ import MinimalFooter from './Footer';
 import MinimalProductCard from './ProductCard';
 import type { PLPPageProps } from '@/templates';
 
-export default function MinimalPLPPage({ products, categories, brands, filterFacets, searchParams }: PLPPageProps) {
+export default function MinimalPLPPage({
+  products,
+  categories,
+  brands,
+  filterFacets,
+  searchParams,
+}: PLPPageProps) {
   const router = useRouter();
   const pathname = usePathname();
   const currentParams = useSearchParams();
 
-  const activeCategory = (searchParams.category as string) || (searchParams.categories as string) || '';
+  const activeCategory =
+    (searchParams.category as string) || (searchParams.categories as string) || '';
   const activeBrand = (searchParams.brand as string) || (searchParams.brands as string) || '';
   const activeGender = (searchParams.gender as string) || '';
-  const activeDiscount = searchParams.discount ? Number(searchParams.discount) : (searchParams.minDiscount ? Number(searchParams.minDiscount) : 0);
+  const activeDiscount = searchParams.discount
+    ? Number(searchParams.discount)
+    : searchParams.minDiscount
+      ? Number(searchParams.minDiscount)
+      : 0;
   const activeSort = (searchParams.sort as string) || 'newest';
 
   const updateParams = (updates: Record<string, string | number | undefined | null>) => {
@@ -35,7 +46,14 @@ export default function MinimalPLPPage({ products, categories, brands, filterFac
     router.push(pathname);
   };
 
-  const hasFilters = Boolean(activeCategory || activeBrand || activeGender || activeDiscount > 0 || searchParams.minPrice || searchParams.maxPrice);
+  const hasFilters = Boolean(
+    activeCategory ||
+    activeBrand ||
+    activeGender ||
+    activeDiscount > 0 ||
+    searchParams.minPrice ||
+    searchParams.maxPrice,
+  );
 
   const availableCategories = filterFacets?.categories?.length
     ? filterFacets.categories
@@ -56,25 +74,39 @@ export default function MinimalPLPPage({ products, categories, brands, filterFac
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--sf-bg)' }}>
       <MinimalHeader />
       <main className="flex-1 max-w-6xl mx-auto px-6 w-full py-12">
-
         {/* Title bar */}
-        <div className="flex items-baseline justify-between mb-8 pb-6" style={{ borderBottom: '1px solid color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
+        <div
+          className="flex items-baseline justify-between mb-8 pb-6"
+          style={{ borderBottom: '1px solid color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+        >
           <div>
-            <span className="text-xs tracking-widest uppercase block mb-2" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+            <span
+              className="text-xs tracking-widest uppercase block mb-2"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+            >
               {products.length} {products.length === 1 ? 'product' : 'products'}
             </span>
             <h1 className="text-4xl font-extralight" style={{ color: 'var(--sf-text)' }}>
               {activeBrand ? (
-                <span className="capitalize">{(searchParams._brandName as string) || activeBrand}</span>
+                <span className="capitalize">
+                  {(searchParams._brandName as string) || activeBrand}
+                </span>
               ) : activeCategory ? (
-                <span className="capitalize">{(searchParams._categoryName as string) || activeCategory}</span>
+                <span className="capitalize">
+                  {(searchParams._categoryName as string) || activeCategory}
+                </span>
               ) : (
                 'Shop All'
               )}
             </h1>
-            {((searchParams._brandDescription as string) || (searchParams._categoryDescription as string)) && (
-              <p className="mt-2 text-xs font-light max-w-xl" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
-                {(searchParams._brandDescription as string) || (searchParams._categoryDescription as string)}
+            {((searchParams._brandDescription as string) ||
+              (searchParams._categoryDescription as string)) && (
+              <p
+                className="mt-2 text-xs font-light max-w-xl"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+              >
+                {(searchParams._brandDescription as string) ||
+                  (searchParams._categoryDescription as string)}
               </p>
             )}
           </div>
@@ -93,11 +125,15 @@ export default function MinimalPLPPage({ products, categories, brands, filterFac
 
         {/* Gender / Target */}
         <div className="flex flex-wrap gap-4 mb-4 text-xs tracking-widest uppercase">
-          <span style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>Target:</span>
+          <span style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+            Target:
+          </span>
           <button
             onClick={() => updateParams({ gender: undefined })}
             style={{
-              color: !activeGender ? 'var(--sf-primary)' : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
+              color: !activeGender
+                ? 'var(--sf-primary)'
+                : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
               textDecoration: !activeGender ? 'underline' : 'none',
             }}
           >
@@ -106,10 +142,19 @@ export default function MinimalPLPPage({ products, categories, brands, filterFac
           {genderOptions.map((g) => (
             <button
               key={g.value}
-              onClick={() => updateParams({ gender: activeGender.toLowerCase() === g.value.toLowerCase() ? undefined : g.value })}
+              onClick={() =>
+                updateParams({
+                  gender:
+                    activeGender.toLowerCase() === g.value.toLowerCase() ? undefined : g.value,
+                })
+              }
               style={{
-                color: activeGender.toLowerCase() === g.value.toLowerCase() ? 'var(--sf-primary)' : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
-                textDecoration: activeGender.toLowerCase() === g.value.toLowerCase() ? 'underline' : 'none',
+                color:
+                  activeGender.toLowerCase() === g.value.toLowerCase()
+                    ? 'var(--sf-primary)'
+                    : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
+                textDecoration:
+                  activeGender.toLowerCase() === g.value.toLowerCase() ? 'underline' : 'none',
               }}
             >
               {g.label}
@@ -124,7 +169,9 @@ export default function MinimalPLPPage({ products, categories, brands, filterFac
               onClick={() => updateParams({ category: undefined, categories: undefined })}
               className="text-xs tracking-widest uppercase transition-opacity"
               style={{
-                color: !activeCategory ? 'var(--sf-primary)' : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
+                color: !activeCategory
+                  ? 'var(--sf-primary)'
+                  : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
                 textDecoration: !activeCategory ? 'underline' : 'none',
               }}
             >
@@ -133,11 +180,24 @@ export default function MinimalPLPPage({ products, categories, brands, filterFac
             {availableCategories.map((cat) => (
               <button
                 key={cat.name}
-                onClick={() => updateParams({ category: activeCategory.toLowerCase() === (cat.slug || cat.name).toLowerCase() ? undefined : (cat.slug || cat.name) })}
+                onClick={() =>
+                  updateParams({
+                    category:
+                      activeCategory.toLowerCase() === (cat.slug || cat.name).toLowerCase()
+                        ? undefined
+                        : cat.slug || cat.name,
+                  })
+                }
                 className="text-xs tracking-widest uppercase transition-opacity"
                 style={{
-                  color: activeCategory.toLowerCase() === (cat.slug || cat.name).toLowerCase() ? 'var(--sf-primary)' : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
-                  textDecoration: activeCategory.toLowerCase() === (cat.slug || cat.name).toLowerCase() ? 'underline' : 'none',
+                  color:
+                    activeCategory.toLowerCase() === (cat.slug || cat.name).toLowerCase()
+                      ? 'var(--sf-primary)'
+                      : 'color-mix(in srgb, var(--sf-text) 50%, transparent)',
+                  textDecoration:
+                    activeCategory.toLowerCase() === (cat.slug || cat.name).toLowerCase()
+                      ? 'underline'
+                      : 'none',
                 }}
               >
                 {cat.name}
@@ -147,20 +207,37 @@ export default function MinimalPLPPage({ products, categories, brands, filterFac
         )}
 
         {/* Brand & Discount Filters */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-10 pb-6 border-b" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)' }}>
+        <div
+          className="flex flex-wrap items-center justify-between gap-4 mb-10 pb-6 border-b"
+          style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)' }}
+        >
           {availableBrands.length > 0 && (
             <div className="flex flex-wrap gap-2 items-center">
-              <span className="text-xs tracking-widest uppercase" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+              <span
+                className="text-xs tracking-widest uppercase"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+              >
                 Brands:
               </span>
               {availableBrands.map((brand) => (
                 <button
                   key={brand.name}
-                  onClick={() => updateParams({ brand: activeBrand === (brand.slug || brand.name) ? undefined : (brand.slug || brand.name) })}
+                  onClick={() =>
+                    updateParams({
+                      brand:
+                        activeBrand === (brand.slug || brand.name)
+                          ? undefined
+                          : brand.slug || brand.name,
+                    })
+                  }
                   className="text-xs px-3 py-1 border transition-all"
                   style={{
-                    color: activeBrand === (brand.slug || brand.name) ? 'var(--sf-bg)' : 'var(--sf-text)',
-                    backgroundColor: activeBrand === (brand.slug || brand.name) ? 'var(--sf-text)' : 'transparent',
+                    color:
+                      activeBrand === (brand.slug || brand.name)
+                        ? 'var(--sf-bg)'
+                        : 'var(--sf-text)',
+                    backgroundColor:
+                      activeBrand === (brand.slug || brand.name) ? 'var(--sf-text)' : 'transparent',
                     borderColor: 'color-mix(in srgb, var(--sf-text) 20%, transparent)',
                   }}
                 >
@@ -171,7 +248,10 @@ export default function MinimalPLPPage({ products, categories, brands, filterFac
           )}
 
           {hasFilters && (
-            <button onClick={clearFilters} className="text-xs tracking-widest uppercase underline text-rose-500">
+            <button
+              onClick={clearFilters}
+              className="text-xs tracking-widest uppercase underline text-rose-500"
+            >
               Clear All
             </button>
           )}
@@ -180,10 +260,16 @@ export default function MinimalPLPPage({ products, categories, brands, filterFac
         {/* Product Grid */}
         {products.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="text-lg font-extralight" style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}>
+            <p
+              className="text-lg font-extralight"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}
+            >
               No products found
             </p>
-            <button onClick={clearFilters} className="mt-4 text-xs tracking-widest uppercase underline">
+            <button
+              onClick={clearFilters}
+              className="mt-4 text-xs tracking-widest uppercase underline"
+            >
               Reset Filters
             </button>
           </div>
