@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* ─── Storefront CSS Custom Properties ───────────────────────────────────────
    These are default values. The ThemeProvider (client component) overwrites
@@ -8,20 +8,20 @@
 
 :root {
   /* Brand Colors — overwritten by ThemeProvider */
-  --sf-primary:       #6366f1;
+  --sf-primary: #6366f1;
   --sf-primary-hover: #4f46e5;
-  --sf-secondary:     #8b5cf6;
-  --sf-bg:            #ffffff;
-  --sf-text:          #111827;
-  --sf-accent:        #f59e0b;
+  --sf-secondary: #8b5cf6;
+  --sf-bg: #ffffff;
+  --sf-text: #111827;
+  --sf-accent: #f59e0b;
 
   /* Typography — overwritten by ThemeProvider */
   --sf-heading-font: var(--font-heading, 'Inter', system-ui, sans-serif);
-  --sf-body-font:    var(--font-body, 'Inter', system-ui, sans-serif);
-  --sf-font-size:    16px;
+  --sf-body-font: var(--font-body, 'Inter', system-ui, sans-serif);
+  --sf-font-size: 16px;
 
   /* Background Image — overwritten by ThemeProvider */
-  --sf-bg-image:     none;
+  --sf-bg-image: none;
 
   /* Shape — overwritten by ThemeProvider */
   --sf-radius: 0.5rem;
@@ -42,12 +42,12 @@
   --font-mono: var(--font-geist-mono);
 
   /* Storefront brand palette */
-  --color-primary:       var(--sf-primary);
+  --color-primary: var(--sf-primary);
   --color-primary-hover: var(--sf-primary-hover);
-  --color-secondary:     var(--sf-secondary);
-  --color-surface:       var(--sf-bg);
-  --color-body-color:    var(--sf-text);
-  --color-accent:        var(--sf-accent);
+  --color-secondary: var(--sf-secondary);
+  --color-surface: var(--sf-bg);
+  --color-body-color: var(--sf-text);
+  --color-accent: var(--sf-accent);
 }
 
 /* ─── Base Styles ─────────────────────────────────────────────────────────── */
@@ -63,7 +63,9 @@ html {
   scroll-behavior: smooth;
 }
 
-body, [class*="font-sans"], .font-sans {
+body,
+[class*='font-sans'],
+.font-sans {
   background-color: var(--sf-bg);
   color: var(--sf-text);
   font-family: var(--sf-body-font);
@@ -72,7 +74,14 @@ body, [class*="font-sans"], .font-sans {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6, .font-heading, [class*="font-heading"] {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading,
+[class*='font-heading'] {
   font-family: var(--sf-heading-font) !important;
   line-height: 1.2;
 }
@@ -90,7 +99,10 @@ h1, h2, h3, h4, h5, h6, .font-heading, [class*="font-heading"] {
   background-color: var(--sf-primary);
   color: #ffffff;
   border-radius: var(--sf-radius);
-  transition: background-color 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease,
+    opacity 0.2s ease;
 }
 
 .btn-primary:hover {
@@ -122,7 +134,9 @@ h1, h2, h3, h4, h5, h6, .font-heading, [class*="font-heading"] {
   color: var(--sf-text);
   border: 1.5px solid color-mix(in srgb, var(--sf-text) 20%, transparent);
   border-radius: var(--sf-radius);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
   outline: none;
 }
 
@@ -161,29 +175,59 @@ h1, h2, h3, h4, h5, h6, .font-heading, [class*="font-heading"] {
 /* ─── Animations ─────────────────────────────────────────────────────────── */
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.animate-fadeIn  { animation: fadeIn  0.2s ease forwards; }
-.animate-slideUp { animation: slideUp 0.3s ease forwards; }
-.animate-scaleIn { animation: scaleIn 0.2s ease forwards; }
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease forwards;
+}
+.animate-slideUp {
+  animation: slideUp 0.3s ease forwards;
+}
+.animate-scaleIn {
+  animation: scaleIn 0.2s ease forwards;
+}
 
 /* ─── Aspect Ratio Utilities ─────────────────────────────────────────────── */
 
-.aspect-product  { aspect-ratio: 4 / 5; }
-.aspect-banner   { aspect-ratio: 16 / 5; }
-.aspect-square   { aspect-ratio: 1 / 1; }
+.aspect-product {
+  aspect-ratio: 4 / 5;
+}
+.aspect-banner {
+  aspect-ratio: 16 / 5;
+}
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
 
 /* ─── Line Clamp ─────────────────────────────────────────────────────────── */
 /* Tailwind v4 includes line-clamp natively; these are explicit fallbacks */
@@ -219,16 +263,20 @@ h1, h2, h3, h4, h5, h6, .font-heading, [class*="font-heading"] {
 /* ─── Skeleton Loader ────────────────────────────────────────────────────── */
 
 @keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .skeleton {
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--sf-text) 8%,  var(--sf-bg)) 25%,
+    color-mix(in srgb, var(--sf-text) 8%, var(--sf-bg)) 25%,
     color-mix(in srgb, var(--sf-text) 14%, var(--sf-bg)) 50%,
-    color-mix(in srgb, var(--sf-text) 8%,  var(--sf-bg)) 75%
+    color-mix(in srgb, var(--sf-text) 8%, var(--sf-bg)) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.6s infinite;

@@ -31,24 +31,26 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
   // Derive filter params from URL
   const products = await getProducts({
-    category:    resolvedParams.category as string | undefined,
-    categories:  resolvedParams.categories as string | undefined,
-    brand:       resolvedParams.brand as string | undefined,
-    brands:      resolvedParams.brands as string | undefined,
-    search:      (resolvedParams.search || resolvedParams.q) as string | undefined,
-    sort:        resolvedParams.sort as string | undefined,
-    minPrice:    resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
-    maxPrice:    resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
-    discount:    resolvedParams.discount ? Number(resolvedParams.discount) : undefined,
+    category: resolvedParams.category as string | undefined,
+    categories: resolvedParams.categories as string | undefined,
+    brand: resolvedParams.brand as string | undefined,
+    brands: resolvedParams.brands as string | undefined,
+    search: (resolvedParams.search || resolvedParams.q) as string | undefined,
+    sort: resolvedParams.sort as string | undefined,
+    minPrice: resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
+    maxPrice: resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
+    discount: resolvedParams.discount ? Number(resolvedParams.discount) : undefined,
     minDiscount: resolvedParams.minDiscount ? Number(resolvedParams.minDiscount) : undefined,
-    gender:      resolvedParams.gender as string | undefined,
-    page:        resolvedParams.page ? Number(resolvedParams.page) : 1,
-    limit:       24,
+    gender: resolvedParams.gender as string | undefined,
+    page: resolvedParams.page ? Number(resolvedParams.page) : 1,
+    limit: 24,
   });
 
   // Allow CMS to preview any template via ?previewTemplate=<slug>
   const previewTemplate = resolvedParams?.previewTemplate as string | undefined;
-  const effectiveTheme = previewTemplate ? { ...theme, activeTemplateSlug: previewTemplate } : theme;
+  const effectiveTheme = previewTemplate
+    ? { ...theme, activeTemplateSlug: previewTemplate }
+    : theme;
 
   const { PLPPage } = resolveTemplate(effectiveTheme.activeTemplateSlug);
 

@@ -29,7 +29,8 @@ export default async function CategoriesPage() {
             Explore All Categories
           </h1>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
-            Find exactly what you are looking for by exploring our curated collections and department categories.
+            Find exactly what you are looking for by exploring our curated collections and
+            department categories.
           </p>
         </div>
 
@@ -37,8 +38,12 @@ export default async function CategoriesPage() {
         {categories.length === 0 ? (
           <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8">
             <ShoppingBag className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">No categories found</h3>
-            <p className="text-sm text-slate-500 mt-1">Categories will appear here once added in the CMS.</p>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+              No categories found
+            </h3>
+            <p className="text-sm text-slate-500 mt-1">
+              Categories will appear here once added in the CMS.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">

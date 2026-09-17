@@ -66,7 +66,8 @@ export default function LuxeHeader() {
           position: theme.headerSticky ? 'sticky' : 'relative',
           top: 0,
           zIndex: 40,
-          borderBottom: '1px solid color-mix(in srgb, var(--sf-primary) 25%, color-mix(in srgb, var(--sf-text) 8%, transparent))',
+          borderBottom:
+            '1px solid color-mix(in srgb, var(--sf-primary) 25%, color-mix(in srgb, var(--sf-text) 8%, transparent))',
         }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 sm:py-5">
@@ -80,7 +81,13 @@ export default function LuxeHeader() {
                 aria-label="Open navigation menu"
                 aria-expanded={menuOpen}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
@@ -106,8 +113,18 @@ export default function LuxeHeader() {
                         >
                           <span>{label}</span>
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-600/70 inline-block" />
-                          <svg className="w-3 h-3 opacity-60 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
+                          <svg
+                            className="w-3 h-3 opacity-60 transition-transform group-hover:rotate-180"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.5}
+                              d="M19 9l-7 7-7-7"
+                            />
                           </svg>
                         </Link>
 
@@ -129,8 +146,18 @@ export default function LuxeHeader() {
                           style={{ color: 'var(--sf-text)' }}
                         >
                           <span>{label}</span>
-                          <svg className="w-3 h-3 opacity-60 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
+                          <svg
+                            className="w-3 h-3 opacity-60 transition-transform group-hover:rotate-180"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.5}
+                              d="M19 9l-7 7-7-7"
+                            />
                           </svg>
                         </Link>
 
@@ -147,7 +174,8 @@ export default function LuxeHeader() {
                               const subHref = sub.href || sub.url || '#';
                               const subLabel = sub.label || sub.title || 'Sublink';
                               const subTarget = sub.target || '_self';
-                              const subRel = subTarget === '_blank' ? 'noopener noreferrer' : undefined;
+                              const subRel =
+                                subTarget === '_blank' ? 'noopener noreferrer' : undefined;
                               return (
                                 <Link
                                   key={sub.id || subHref || sIdx}
@@ -221,8 +249,18 @@ export default function LuxeHeader() {
                   className="p-1.5 transition-opacity hover:opacity-50"
                   aria-label="Search"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
                 </Link>
               )}
@@ -234,8 +272,18 @@ export default function LuxeHeader() {
                 style={{ color: 'var(--sf-text)' }}
                 aria-label="Wishlist"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
                 </svg>
                 {wishlistCount > 0 && (
                   <span
@@ -254,8 +302,18 @@ export default function LuxeHeader() {
                 style={{ color: 'var(--sf-text)' }}
                 aria-label="Shopping Cart"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
                 </svg>
                 {itemCount > 0 && (
                   <span
@@ -316,7 +374,10 @@ export default function LuxeHeader() {
               className="p-5 border-b flex items-center justify-between"
               style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
             >
-              <span className="text-xs tracking-[0.25em] uppercase font-semibold" style={{ color: 'var(--sf-text)' }}>
+              <span
+                className="text-xs tracking-[0.25em] uppercase font-semibold"
+                style={{ color: 'var(--sf-text)' }}
+              >
                 {theme.storeName}
               </span>
               <button
@@ -356,8 +417,18 @@ export default function LuxeHeader() {
                             className="p-1 opacity-60 hover:opacity-100 cursor-pointer"
                             aria-label={`Toggle ${label}`}
                           >
-                            <svg className={`w-3.5 h-3.5 transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
+                            <svg
+                              className={`w-3.5 h-3.5 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M19 9l-7 7-7-7"
+                              />
                             </svg>
                           </button>
                         </div>
@@ -365,7 +436,9 @@ export default function LuxeHeader() {
                         {isExpanded && (
                           <div
                             className="pl-4 space-y-1.5 border-l animate-in slide-in-from-top-1 duration-150"
-                            style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 15%, transparent)' }}
+                            style={{
+                              borderColor: 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
+                            }}
                           >
                             {link.children!.map((sub, sIdx) => {
                               const subHref = sub.href || sub.url || '#';
@@ -410,7 +483,10 @@ export default function LuxeHeader() {
             >
               {isAuthenticated ? (
                 <div className="space-y-2">
-                  <p className="text-[11px] tracking-wider uppercase opacity-60 truncate" style={{ color: 'var(--sf-text)' }}>
+                  <p
+                    className="text-[11px] tracking-wider uppercase opacity-60 truncate"
+                    style={{ color: 'var(--sf-text)' }}
+                  >
                     {customer?.name || customer?.email}
                   </p>
                   <div className="grid grid-cols-2 gap-2">
@@ -418,12 +494,18 @@ export default function LuxeHeader() {
                       href="/account"
                       onClick={() => setMenuOpen(false)}
                       className="text-center py-2 text-xs tracking-[0.1em] uppercase border transition hover:opacity-75"
-                      style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 20%, transparent)', color: 'var(--sf-text)' }}
+                      style={{
+                        borderColor: 'color-mix(in srgb, var(--sf-text) 20%, transparent)',
+                        color: 'var(--sf-text)',
+                      }}
                     >
                       Account
                     </Link>
                     <button
-                      onClick={() => { logout(); setMenuOpen(false); }}
+                      onClick={() => {
+                        logout();
+                        setMenuOpen(false);
+                      }}
                       className="text-center py-2 text-xs tracking-[0.1em] uppercase text-rose-500 transition cursor-pointer"
                     >
                       Sign Out
@@ -444,7 +526,10 @@ export default function LuxeHeader() {
                     href="/auth/signup"
                     onClick={() => setMenuOpen(false)}
                     className="text-center py-2.5 text-xs tracking-[0.15em] uppercase border transition hover:opacity-75"
-                    style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 20%, transparent)', color: 'var(--sf-text)' }}
+                    style={{
+                      borderColor: 'color-mix(in srgb, var(--sf-text) 20%, transparent)',
+                      color: 'var(--sf-text)',
+                    }}
                   >
                     Register
                   </Link>

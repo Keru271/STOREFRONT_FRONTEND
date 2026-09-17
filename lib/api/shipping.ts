@@ -24,15 +24,18 @@ export async function checkShippingServiceability(
   pincode: string,
   country: string = 'India',
   weightKg: number = 0.5,
-  cod: boolean = false
+  cod: boolean = false,
 ): Promise<ServiceabilityCheckResponse> {
   try {
-    const res = await apiClient.post<ServiceabilityCheckResponse>('/api/storefront/shipping/serviceability', {
-      pincode,
-      country,
-      weightKg,
-      cod,
-    });
+    const res = await apiClient.post<ServiceabilityCheckResponse>(
+      '/api/storefront/shipping/serviceability',
+      {
+        pincode,
+        country,
+        weightKg,
+        cod,
+      },
+    );
     return res;
   } catch (error) {
     console.warn('Failed to check shipping serviceability, returning fallback:', error);
@@ -62,7 +65,10 @@ export async function getShippingRateQuotes(payload: {
   cartSubtotal?: number;
 }): Promise<CarrierRateQuote[]> {
   try {
-    const res = await apiClient.post<RateQuotesResponse>('/api/storefront/shipping/quotes', payload);
+    const res = await apiClient.post<RateQuotesResponse>(
+      '/api/storefront/shipping/quotes',
+      payload,
+    );
     if (res && Array.isArray(res.quotes)) {
       return res.quotes;
     }
@@ -107,13 +113,13 @@ export interface TrackingApiResponse {
 
 export async function trackShipmentAwb(
   awb: string,
-  carrier: string = 'SHIPROCKET'
+  carrier: string = 'SHIPROCKET',
 ): Promise<TrackingStatusResponse | null> {
   try {
     const encodedAwb = encodeURIComponent(awb);
     const encodedCarrier = encodeURIComponent(carrier);
     const res = await apiClient.get<TrackingApiResponse>(
-      `/api/storefront/shipping/track/${encodedAwb}?carrier=${encodedCarrier}`
+      `/api/storefront/shipping/track/${encodedAwb}?carrier=${encodedCarrier}`,
     );
     return res.tracking || null;
   } catch (error) {

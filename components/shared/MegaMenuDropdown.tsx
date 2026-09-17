@@ -48,7 +48,9 @@ export const MegaMenuDropdown: React.FC<MegaMenuDropdownProps> = ({
       >
         <div className="grid grid-cols-12 gap-8 items-stretch">
           {/* Left Column: Sublinks & Collections */}
-          <div className={`${bannerImage ? 'col-span-7' : 'col-span-12'} flex flex-col justify-between`}>
+          <div
+            className={`${bannerImage ? 'col-span-7' : 'col-span-12'} flex flex-col justify-between`}
+          >
             <div>
               <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200/60 dark:border-slate-800">
                 <div className="flex items-center gap-2">
@@ -116,8 +118,16 @@ export const MegaMenuDropdown: React.FC<MegaMenuDropdownProps> = ({
                   {[
                     { label: 'All Products', href: '/products', desc: 'Browse the full catalog' },
                     { label: 'Featured Drops', href: '/collections', desc: 'Seasonal top picks' },
-                    { label: 'Special Offers', href: '/products?sale=true', desc: 'Limited deals & bundles' },
-                    { label: 'New Arrivals', href: '/products?sort=newest', desc: 'Fresh arrivals this week' },
+                    {
+                      label: 'Special Offers',
+                      href: '/products?sale=true',
+                      desc: 'Limited deals & bundles',
+                    },
+                    {
+                      label: 'New Arrivals',
+                      href: '/products?sort=newest',
+                      desc: 'Fresh arrivals this week',
+                    },
                   ].map((preset, idx) => (
                     <Link
                       key={idx}
@@ -177,8 +187,18 @@ export const MegaMenuDropdown: React.FC<MegaMenuDropdownProps> = ({
                   }}
                 >
                   <span>{buttonLabel}</span>
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
                   </svg>
                 </Link>
               </div>

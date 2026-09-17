@@ -38,15 +38,15 @@ type ValidTag = (typeof VALID_TAGS)[number];
 
 // Map tags → paths that should be revalidated
 const TAG_TO_PATHS: Record<ValidTag, string[]> = {
-  theme:       ['/', '/products', '/collections'],
-  products:    ['/', '/products', '/search'],
-  categories:  ['/', '/products'],
+  theme: ['/', '/products', '/collections'],
+  products: ['/', '/products', '/search'],
+  categories: ['/', '/products'],
   collections: ['/', '/collections'],
-  brands:      ['/products'],
-  menus:       ['/'],
-  pages:       ['/'],
-  orders:      ['/account'],
-  sections:    ['/'],
+  brands: ['/products'],
+  menus: ['/'],
+  pages: ['/'],
+  orders: ['/account'],
+  sections: ['/'],
 };
 
 export async function POST(request: NextRequest) {
@@ -60,10 +60,7 @@ export async function POST(request: NextRequest) {
 
   // Validate secret
   if (REVALIDATE_SECRET && body.secret !== REVALIDATE_SECRET) {
-    return NextResponse.json(
-      { message: 'Invalid revalidation secret' },
-      { status: 401 }
-    );
+    return NextResponse.json({ message: 'Invalid revalidation secret' }, { status: 401 });
   }
 
   // Revalidate ALL paths
@@ -99,7 +96,7 @@ export async function POST(request: NextRequest) {
         message: 'Provide either `tag`, `path`, or `all: true` in the request body',
         validTags: VALID_TAGS,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -109,7 +106,7 @@ export async function POST(request: NextRequest) {
         message: `Unknown tag "${body.tag}"`,
         validTags: VALID_TAGS,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

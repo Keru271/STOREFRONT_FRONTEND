@@ -2,12 +2,7 @@
 // Cart operations: getCart, addToCart, deleteToCart, updateCartItem, clearCart
 
 import { apiClient } from './client';
-import type {
-  Cart,
-  AddToCartInput,
-  UpdateCartInput,
-  RemoveCartInput,
-} from './types';
+import type { Cart, AddToCartInput, UpdateCartInput, RemoveCartInput } from './types';
 
 /**
  * Fetches the current cart by cartToken.

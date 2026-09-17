@@ -79,14 +79,19 @@ export default function MincomHeader() {
               )}
             </div>
             <div className="flex items-center gap-3 sm:gap-4 text-[11px] flex-shrink-0">
-              <Link href="/wishlist" className="hover:text-white transition flex items-center gap-1">
+              <Link
+                href="/wishlist"
+                className="hover:text-white transition flex items-center gap-1"
+              >
                 <span>❤️</span>
                 <span className="hidden sm:inline">Wishlist</span>
-                {wishlistCount > 0 && <span className="text-amber-400 font-bold">({wishlistCount})</span>}
+                {wishlistCount > 0 && (
+                  <span className="text-amber-400 font-bold">({wishlistCount})</span>
+                )}
               </Link>
               <span className="text-[#4b5563] hidden sm:inline">|</span>
               <Link href="/account" className="hover:text-white transition hidden sm:inline">
-                {isAuthenticated ? (customer?.name?.split(' ')[0] || 'My Account') : 'Sign In'}
+                {isAuthenticated ? customer?.name?.split(' ')[0] || 'My Account' : 'Sign In'}
               </Link>
               {showCurrency && (
                 <>
@@ -114,7 +119,13 @@ export default function MincomHeader() {
               aria-label="Open navigation menu"
               aria-expanded={mobileMenuOpen}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
@@ -172,15 +183,27 @@ export default function MincomHeader() {
               <button
                 onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
                 className={`lg:hidden min-w-[38px] min-h-[38px] flex items-center justify-center p-2 rounded-xl transition ${
-                  mobileSearchOpen ? 'text-amber-400 bg-slate-800' : 'text-slate-200 hover:text-white hover:bg-slate-800/60'
+                  mobileSearchOpen
+                    ? 'text-amber-400 bg-slate-800'
+                    : 'text-slate-200 hover:text-white hover:bg-slate-800/60'
                 }`}
                 aria-label="Toggle search"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
                   {mobileSearchOpen ? (
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   )}
                 </svg>
               </button>
@@ -197,14 +220,26 @@ export default function MincomHeader() {
                   className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center"
                   style={{ color: 'var(--sf-primary)' }}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
                   </svg>
                 </div>
                 <div className="hidden xl:block">
-                  <span className="block text-[10px] text-slate-400 uppercase leading-none">Account</span>
+                  <span className="block text-[10px] text-slate-400 uppercase leading-none">
+                    Account
+                  </span>
                   <span className="block font-bold text-white text-xs mt-0.5">
-                    {isAuthenticated ? (customer?.name?.split(' ')[0] || 'Member') : 'Sign In'}
+                    {isAuthenticated ? customer?.name?.split(' ')[0] || 'Member' : 'Sign In'}
                   </span>
                 </div>
               </button>
@@ -214,18 +249,60 @@ export default function MincomHeader() {
                   {isAuthenticated ? (
                     <>
                       <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100">
-                        <p className="text-[10px] text-slate-400 uppercase font-semibold">Signed in as</p>
-                        <p className="font-bold text-slate-800 truncate text-xs">{customer?.email}</p>
+                        <p className="text-[10px] text-slate-400 uppercase font-semibold">
+                          Signed in as
+                        </p>
+                        <p className="font-bold text-slate-800 truncate text-xs">
+                          {customer?.email}
+                        </p>
                       </div>
-                      <Link href="/account" className="block px-4 py-2 hover:bg-slate-50 font-medium" onClick={() => setUserMenuOpen(false)}>My Profile & Orders</Link>
-                      <Link href="/wishlist" className="block px-4 py-2 hover:bg-slate-50 font-medium" onClick={() => setUserMenuOpen(false)}>Saved Wishlist ({wishlistCount})</Link>
-                      <button onClick={() => { logout(); setUserMenuOpen(false); }} className="w-full text-left px-4 py-2 text-rose-600 hover:bg-rose-50 border-t border-slate-100 font-medium cursor-pointer">Sign Out</button>
+                      <Link
+                        href="/account"
+                        className="block px-4 py-2 hover:bg-slate-50 font-medium"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        My Profile & Orders
+                      </Link>
+                      <Link
+                        href="/wishlist"
+                        className="block px-4 py-2 hover:bg-slate-50 font-medium"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        Saved Wishlist ({wishlistCount})
+                      </Link>
+                      <button
+                        onClick={() => {
+                          logout();
+                          setUserMenuOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-rose-600 hover:bg-rose-50 border-t border-slate-100 font-medium cursor-pointer"
+                      >
+                        Sign Out
+                      </button>
                     </>
                   ) : (
                     <>
-                      <Link href="/auth/login" className="block px-4 py-2.5 hover:bg-slate-50 font-bold text-slate-900" onClick={() => setUserMenuOpen(false)}>Sign In</Link>
-                      <Link href="/auth/signup" className="block px-4 py-2 hover:bg-slate-50 font-medium text-slate-700" onClick={() => setUserMenuOpen(false)}>Create New Account</Link>
-                      <Link href="/wishlist" className="block px-4 py-2 hover:bg-slate-50 font-medium text-slate-700 border-t border-slate-100" onClick={() => setUserMenuOpen(false)}>My Wishlist</Link>
+                      <Link
+                        href="/auth/login"
+                        className="block px-4 py-2.5 hover:bg-slate-50 font-bold text-slate-900"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        Sign In
+                      </Link>
+                      <Link
+                        href="/auth/signup"
+                        className="block px-4 py-2 hover:bg-slate-50 font-medium text-slate-700"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        Create New Account
+                      </Link>
+                      <Link
+                        href="/wishlist"
+                        className="block px-4 py-2 hover:bg-slate-50 font-medium text-slate-700 border-t border-slate-100"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        My Wishlist
+                      </Link>
                     </>
                   )}
                 </div>
@@ -239,8 +316,18 @@ export default function MincomHeader() {
               title="Wishlist"
               aria-label="Wishlist"
             >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              <svg
+                className="w-5 h-5 sm:w-6 sm:h-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.75}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
               </svg>
               {wishlistCount > 0 && (
                 <span
@@ -260,8 +347,18 @@ export default function MincomHeader() {
               aria-label="Cart"
             >
               <div className="relative">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                <svg
+                  className="w-5 h-5 sm:w-6 sm:h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.75}
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
                 </svg>
                 {itemCount > 0 && (
                   <span
@@ -304,7 +401,13 @@ export default function MincomHeader() {
               className="text-white font-bold text-xs uppercase tracking-wider px-5 py-3 flex items-center gap-2 transition shadow hover:brightness-110"
               style={{ backgroundColor: 'var(--sf-primary)' }}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2.5}
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
               <span>All Departments</span>
@@ -331,8 +434,18 @@ export default function MincomHeader() {
                       >
                         <span>{label}</span>
                         <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
-                        <svg className="w-3.5 h-3.5 transition-transform group-hover:rotate-180 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        <svg
+                          className="w-3.5 h-3.5 transition-transform group-hover:rotate-180 opacity-70"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
                         </svg>
                       </Link>
 
@@ -353,8 +466,18 @@ export default function MincomHeader() {
                         className="text-xs font-semibold px-4 py-3 hover:text-amber-400 transition-colors uppercase tracking-wider text-slate-200 inline-flex items-center gap-1.5"
                       >
                         <span>{label}</span>
-                        <svg className="w-3.5 h-3.5 transition-transform group-hover:rotate-180 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        <svg
+                          className="w-3.5 h-3.5 transition-transform group-hover:rotate-180 opacity-70"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
                         </svg>
                       </Link>
 
@@ -364,7 +487,8 @@ export default function MincomHeader() {
                             const subHref = sub.href || sub.url || '#';
                             const subLabel = sub.label || sub.title || 'Sublink';
                             const subTarget = sub.target || '_self';
-                            const subRel = subTarget === '_blank' ? 'noopener noreferrer' : undefined;
+                            const subRel =
+                              subTarget === '_blank' ? 'noopener noreferrer' : undefined;
                             return (
                               <Link
                                 key={sub.id || subHref || sIdx}
@@ -451,7 +575,13 @@ export default function MincomHeader() {
                 className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition cursor-pointer"
                 aria-label="Close menu"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -507,7 +637,11 @@ export default function MincomHeader() {
                                 strokeWidth={2}
                                 viewBox="0 0 24 24"
                               >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M19 9l-7 7-7-7"
+                                />
                               </svg>
                             </button>
                           </div>
@@ -603,7 +737,9 @@ export default function MincomHeader() {
                       {(customer?.name || customer?.email || 'U').charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-white truncate">{customer?.name || 'Customer'}</p>
+                      <p className="text-xs font-bold text-white truncate">
+                        {customer?.name || 'Customer'}
+                      </p>
                       <p className="text-[11px] text-slate-400 truncate">{customer?.email}</p>
                     </div>
                   </div>
@@ -650,7 +786,10 @@ export default function MincomHeader() {
               {(theme.contactPhone || theme.contactEmail) && (
                 <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
                   {theme.contactPhone && (
-                    <a href={`tel:${theme.contactPhone}`} className="hover:text-amber-400 transition">
+                    <a
+                      href={`tel:${theme.contactPhone}`}
+                      className="hover:text-amber-400 transition"
+                    >
                       📞 {theme.contactPhone}
                     </a>
                   )}

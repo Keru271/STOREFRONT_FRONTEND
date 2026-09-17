@@ -27,13 +27,13 @@ interface BlogIndexProps {
 
 export default async function BlogIndexPage({ searchParams }: BlogIndexProps) {
   const params = await searchParams;
-  const [theme, posts] = await Promise.all([
-    getTheme(),
-    getBlogPosts(params),
-  ]);
+  const [theme, posts] = await Promise.all([getTheme(), getBlogPosts(params)]);
 
   const activeCategory = params.category || 'ALL';
-  const categories = ['ALL', ...Array.from(new Set(posts.map((p) => p.category).filter((c): c is string => Boolean(c))))];
+  const categories = [
+    'ALL',
+    ...Array.from(new Set(posts.map((p) => p.category).filter((c): c is string => Boolean(c)))),
+  ];
 
   const featuredPost = posts[0];
   const regularPosts = posts.slice(1);
@@ -51,7 +51,8 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexProps) {
             The {theme.storeName} Journal
           </h1>
           <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400">
-            Inspiring designs, in-depth craftsmanship stories, sustainable living guides, and seasonal curation.
+            Inspiring designs, in-depth craftsmanship stories, sustainable living guides, and
+            seasonal curation.
           </p>
         </div>
 
@@ -116,7 +117,9 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexProps) {
                       <span>•</span>
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3.5 h-3.5" />
-                        {new Date(featuredPost.publishedAt || featuredPost.createdAt).toLocaleDateString(undefined, {
+                        {new Date(
+                          featuredPost.publishedAt || featuredPost.createdAt,
+                        ).toLocaleDateString(undefined, {
                           month: 'short',
                           day: 'numeric',
                           year: 'numeric',
@@ -200,10 +203,13 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexProps) {
                           <span>{post.author || 'Store Editorial'}</span>
                           <span>•</span>
                           <span>
-                            {new Date(post.publishedAt || post.createdAt).toLocaleDateString(undefined, {
-                              month: 'short',
-                              day: 'numeric',
-                            })}
+                            {new Date(post.publishedAt || post.createdAt).toLocaleDateString(
+                              undefined,
+                              {
+                                month: 'short',
+                                day: 'numeric',
+                              },
+                            )}
                           </span>
                         </div>
 
@@ -212,7 +218,8 @@ export default async function BlogIndexPage({ searchParams }: BlogIndexProps) {
                         </h3>
 
                         <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                          {post.excerpt || post.content.replace(/<[^>]*>?/gm, '').slice(0, 110) + '...'}
+                          {post.excerpt ||
+                            post.content.replace(/<[^>]*>?/gm, '').slice(0, 110) + '...'}
                         </p>
                       </div>
                     </div>

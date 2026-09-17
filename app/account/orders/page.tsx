@@ -20,13 +20,13 @@ import {
 
 function OrderStatusBadge({ status }: { status?: string }) {
   const statusMap: Record<string, { label: string; color: string; bg: string }> = {
-    CONFIRMED:   { label: 'Confirmed',   color: '#0284c7', bg: '#e0f2fe' },
-    PENDING:     { label: 'Pending',     color: '#92400e', bg: '#fef3c7' },
-    PROCESSING:  { label: 'Processing',  color: '#1e40af', bg: '#dbeafe' },
-    SHIPPED:     { label: 'Shipped',     color: '#065f46', bg: '#d1fae5' },
-    DELIVERED:   { label: 'Delivered',   color: '#14532d', bg: '#bbf7d0' },
-    CANCELLED:   { label: 'Cancelled',   color: '#991b1b', bg: '#fee2e2' },
-    REFUNDED:    { label: 'Refunded',    color: '#6b21a8', bg: '#f3e8ff' },
+    CONFIRMED: { label: 'Confirmed', color: '#0284c7', bg: '#e0f2fe' },
+    PENDING: { label: 'Pending', color: '#92400e', bg: '#fef3c7' },
+    PROCESSING: { label: 'Processing', color: '#1e40af', bg: '#dbeafe' },
+    SHIPPED: { label: 'Shipped', color: '#065f46', bg: '#d1fae5' },
+    DELIVERED: { label: 'Delivered', color: '#14532d', bg: '#bbf7d0' },
+    CANCELLED: { label: 'Cancelled', color: '#991b1b', bg: '#fee2e2' },
+    REFUNDED: { label: 'Refunded', color: '#6b21a8', bg: '#f3e8ff' },
   };
   const key = (status || '').toUpperCase();
   const s = statusMap[key] || { label: status || 'Unknown', color: '#374151', bg: '#f3f4f6' };
@@ -79,7 +79,10 @@ export default function AccountOrdersPage() {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4 sm:px-6 max-w-5xl mx-auto space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-28 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 animate-pulse" />
+          <div
+            key={i}
+            className="h-28 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 animate-pulse"
+          />
         ))}
       </div>
     );
@@ -127,7 +130,8 @@ export default function AccountOrdersPage() {
             <ShoppingBag className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto" />
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">No orders found</h3>
             <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto">
-              You haven&apos;t placed any orders yet. Discover our catalog and place your first order.
+              You haven&apos;t placed any orders yet. Discover our catalog and place your first
+              order.
             </p>
             <Link
               href="/products"
@@ -172,7 +176,9 @@ export default function AccountOrdersPage() {
                           : '—'}
                       </span>
                       <span>•</span>
-                      <span>{itemsCount} {itemsCount === 1 ? 'item' : 'items'}</span>
+                      <span>
+                        {itemsCount} {itemsCount === 1 ? 'item' : 'items'}
+                      </span>
                       {order.trackingNumber && (
                         <>
                           <span>•</span>

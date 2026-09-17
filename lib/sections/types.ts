@@ -22,8 +22,8 @@ export interface FeaturedProductsSectionConfig {
   config: {
     title?: string;
     subtitle?: string;
-    collection?: string;   // collection slug to filter
-    category?: string;     // category slug to filter
+    collection?: string; // collection slug to filter
+    category?: string; // category slug to filter
     limit?: number;
     viewAllHref?: string;
   };
@@ -123,7 +123,8 @@ export const DEFAULT_HOME_LAYOUT: PageLayout = {
       type: 'hero',
       config: {
         headline: 'Shop the Latest Drops',
-        subheadline: 'Discover thousands of products curated just for you. Free shipping on orders over $50.',
+        subheadline:
+          'Discover thousands of products curated just for you. Free shipping on orders over $50.',
         ctaLabel: 'Shop Now',
         ctaHref: '/products',
         secondaryCtaLabel: 'Explore Collections',
@@ -139,10 +140,10 @@ export const DEFAULT_HOME_LAYOUT: PageLayout = {
       type: 'trust-badges',
       config: {
         badges: [
-          { icon: '🚚', title: 'Free Shipping',   desc: 'On orders over $50' },
-          { icon: '↩️', title: 'Easy Returns',    desc: '30-day return policy' },
-          { icon: '🔒', title: 'Secure Payment',  desc: 'SSL encrypted checkout' },
-          { icon: '💬', title: '24/7 Support',    desc: 'Always here to help' },
+          { icon: '🚚', title: 'Free Shipping', desc: 'On orders over $50' },
+          { icon: '↩️', title: 'Easy Returns', desc: '30-day return policy' },
+          { icon: '🔒', title: 'Secure Payment', desc: 'SSL encrypted checkout' },
+          { icon: '💬', title: '24/7 Support', desc: 'Always here to help' },
         ],
       },
     },
@@ -167,7 +168,8 @@ export const DEFAULT_HOME_LAYOUT: PageLayout = {
       type: 'banner',
       config: {
         title: 'Members get more',
-        description: 'Join thousands of shoppers and unlock exclusive deals, early access, and free shipping.',
+        description:
+          'Join thousands of shoppers and unlock exclusive deals, early access, and free shipping.',
         ctaLabel: 'Join Free Today',
         ctaHref: '/auth/signup',
         variant: 'accent',

@@ -1,5 +1,14 @@
 import { apiClient } from './client';
-import type { Product, ProductDetail, ProductsQueryParams, ProductReview, FilterFacetsResponse, SearchSuggestionsResponse, ProductStockResponse, EligibleCoupon } from './types';
+import type {
+  Product,
+  ProductDetail,
+  ProductsQueryParams,
+  ProductReview,
+  FilterFacetsResponse,
+  SearchSuggestionsResponse,
+  ProductStockResponse,
+  EligibleCoupon,
+} from './types';
 
 // Backend wraps the list response in this shape
 interface ProductsApiResponse {
@@ -20,8 +29,12 @@ export async function getProducts(params?: ProductsQueryParams): Promise<Product
   const searchParams = new URLSearchParams();
 
   if (params) {
-    const brandsVal = Array.isArray(params.brands) ? params.brands.join(',') : params.brands || params.brand;
-    const categoriesVal = Array.isArray(params.categories) ? params.categories.join(',') : params.categories || params.category;
+    const brandsVal = Array.isArray(params.brands)
+      ? params.brands.join(',')
+      : params.brands || params.brand;
+    const categoriesVal = Array.isArray(params.categories)
+      ? params.categories.join(',')
+      : params.categories || params.category;
     const searchVal = params.search || params.q;
 
     const mapped: Record<string, string> = {
@@ -70,7 +83,11 @@ export async function getFilterFacets(): Promise<FilterFacetsResponse | null> {
 /**
  * Fetches instant live search auto-complete suggestions (matching products, categories, brands, popular searches).
  */
-export async function getSearchSuggestions(query?: string, category?: string, limit?: number): Promise<SearchSuggestionsResponse | null> {
+export async function getSearchSuggestions(
+  query?: string,
+  category?: string,
+  limit?: number,
+): Promise<SearchSuggestionsResponse | null> {
   const params = new URLSearchParams();
   if (query) params.set('q', query.trim());
   if (category && category !== 'all') params.set('category', category);
@@ -79,7 +96,7 @@ export async function getSearchSuggestions(query?: string, category?: string, li
   const qs = params.toString();
   try {
     return await apiClient.get<SearchSuggestionsResponse>(
-      `api/storefront/products/suggestions${qs ? `?${qs}` : ''}`
+      `api/storefront/products/suggestions${qs ? `?${qs}` : ''}`,
     );
   } catch {
     return null;
@@ -94,7 +111,7 @@ export async function getProductDetail(idOrSlug: string): Promise<ProductDetail 
   try {
     return await apiClient.get<ProductDetail>(
       `api/storefront/products/${encodeURIComponent(idOrSlug)}`,
-      { next: { revalidate: 60, tags: ['products', `product-${idOrSlug}`] } }
+      { next: { revalidate: 60, tags: ['products', `product-${idOrSlug}`] } },
     );
   } catch {
     return null;
@@ -106,12 +123,15 @@ export async function getProductDetail(idOrSlug: string): Promise<ProductDetail 
  */
 export const getProductsDetails = getProductDetail;
 
-const inFlightReviewsMap = new Map<string, Promise<{
-  productId: string;
-  reviews: ProductReview[];
-  total: number;
-  averageRating: number;
-}>>();
+const inFlightReviewsMap = new Map<
+  string,
+  Promise<{
+    productId: string;
+    reviews: ProductReview[];
+    total: number;
+    averageRating: number;
+  }>
+>();
 
 /**
  * Fetch approved customer reviews for a specific product with in-flight deduplication.
@@ -157,11 +177,11 @@ export async function postProductReview(
     title?: string;
     comment: string;
     imageUrl?: string;
-  }
+  },
 ): Promise<{ success: boolean; message: string; review: ProductReview }> {
   return await apiClient.post<{ success: boolean; message: string; review: ProductReview }>(
     `api/storefront/products/${encodeURIComponent(productId)}/reviews`,
-    review
+    review,
   );
 }
 
@@ -177,11 +197,11 @@ export async function editProductReview(
     title?: string;
     comment?: string;
     imageUrl?: string;
-  }
+  },
 ): Promise<{ success: boolean; message: string; review: ProductReview }> {
   return await apiClient.put<{ success: boolean; message: string; review: ProductReview }>(
     `api/storefront/products/${encodeURIComponent(productId)}/reviews/${encodeURIComponent(reviewId)}`,
-    review
+    review,
   );
 }
 
@@ -190,10 +210,10 @@ export async function editProductReview(
  */
 export async function deleteProductReview(
   productId: string,
-  reviewId: string
+  reviewId: string,
 ): Promise<{ success: boolean; message: string }> {
   return await apiClient.delete<{ success: boolean; message: string }>(
-    `api/storefront/products/${encodeURIComponent(productId)}/reviews/${encodeURIComponent(reviewId)}`
+    `api/storefront/products/${encodeURIComponent(productId)}/reviews/${encodeURIComponent(reviewId)}`,
   );
 }
 
@@ -203,11 +223,16 @@ export async function deleteProductReview(
 export async function upvoteProductReview(
   productId: string,
   reviewId: string,
-  userIdentifier?: string
+  userIdentifier?: string,
 ): Promise<{ success: boolean; helpfulCount: number; hasLiked?: boolean; likedBy?: string[] }> {
-  return await apiClient.post<{ success: boolean; helpfulCount: number; hasLiked?: boolean; likedBy?: string[] }>(
+  return await apiClient.post<{
+    success: boolean;
+    helpfulCount: number;
+    hasLiked?: boolean;
+    likedBy?: string[];
+  }>(
     `api/storefront/products/${encodeURIComponent(productId)}/reviews/${encodeURIComponent(reviewId)}/helpful`,
-    userIdentifier ? { userIdentifier } : {}
+    userIdentifier ? { userIdentifier } : {},
   );
 }
 
@@ -217,12 +242,12 @@ export async function upvoteProductReview(
  */
 export async function getProductStock(
   idOrSlug: string,
-  variantId?: string
+  variantId?: string,
 ): Promise<ProductStockResponse> {
   const query = variantId ? `?variantId=${encodeURIComponent(variantId)}` : '';
   return await apiClient.get<ProductStockResponse>(
     `api/storefront/products/${encodeURIComponent(idOrSlug)}/stock${query}`,
-    { next: { revalidate: 0 } }
+    { next: { revalidate: 0 } },
   );
 }
 
@@ -231,12 +256,11 @@ export async function getProductStock(
  */
 export async function getProductEligibleCoupons(
   idOrSlug: string,
-  price?: number
+  price?: number,
 ): Promise<EligibleCoupon[]> {
   const query = price !== undefined ? `?price=${encodeURIComponent(price)}` : '';
   return await apiClient.get<EligibleCoupon[]>(
     `api/storefront/discounts/product/${encodeURIComponent(idOrSlug)}${query}`,
-    { next: { revalidate: 0 } }
+    { next: { revalidate: 0 } },
   );
 }
-

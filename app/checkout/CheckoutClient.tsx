@@ -55,7 +55,14 @@ interface CheckoutClientProps {
 
 export default function CheckoutClient({ theme }: CheckoutClientProps) {
   const router = useRouter();
-  const { items, itemCount, totalAmount, clearCart, cartToken, isLoading: isCartLoading } = useCart();
+  const {
+    items,
+    itemCount,
+    totalAmount,
+    clearCart,
+    cartToken,
+    isLoading: isCartLoading,
+  } = useCart();
   const { formatPrice, currency: storeCurrency } = useCurrency();
   const toast = useToast();
   const { startLoading, stopLoading } = useLoader();
@@ -71,7 +78,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
   const [fulfillmentType, setFulfillmentType] = useState<'DELIVERY' | 'PICKUP'>('DELIVERY');
 
   // Delivery speed options ('STANDARD' | 'PRIORITY' | 'SCHEDULE')
-  const [deliverySpeed, setDeliverySpeed] = useState<'STANDARD' | 'PRIORITY' | 'SCHEDULE'>('STANDARD');
+  const [deliverySpeed, setDeliverySpeed] = useState<'STANDARD' | 'PRIORITY' | 'SCHEDULE'>(
+    'STANDARD',
+  );
   const [scheduledTime, setScheduledTime] = useState<string>('Wed, Aug 7, 11:30 AM – 12:00 PM');
 
   // Address details
@@ -89,7 +98,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
   });
 
   // Dropoff options
-  const [dropoffOption, setDropoffOption] = useState<'MEET_AT_DOOR' | 'MEET_OUTSIDE' | 'MEET_IN_LOBBY' | 'LEAVE_AT_DOOR' | 'LEAVE_AT_RECEPTION'>('MEET_AT_DOOR');
+  const [dropoffOption, setDropoffOption] = useState<
+    'MEET_AT_DOOR' | 'MEET_OUTSIDE' | 'MEET_IN_LOBBY' | 'LEAVE_AT_DOOR' | 'LEAVE_AT_RECEPTION'
+  >('MEET_AT_DOOR');
 
   // Customer contact
   const [contactData, setContactData] = useState({
@@ -99,7 +110,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
   });
 
   // Payment details
-  const [paymentMethod, setPaymentMethod] = useState<'CARD' | 'RAZORPAY' | 'STRIPE' | 'COD'>('CARD');
+  const [paymentMethod, setPaymentMethod] = useState<'CARD' | 'RAZORPAY' | 'STRIPE' | 'COD'>(
+    'CARD',
+  );
   const [cardData, setCardData] = useState({
     cardNumber: '4003 8301 7187 4018',
     expDate: '01/28',
@@ -146,7 +159,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
   // Base pricing
   const standardShipping = fulfillmentType === 'PICKUP' ? 0 : (theme.shippingFlatRate ?? 0.49);
-  const priorityExtraFee = deliverySpeed === 'PRIORITY' && fulfillmentType === 'DELIVERY' ? 1.99 : 0;
+  const priorityExtraFee =
+    deliverySpeed === 'PRIORITY' && fulfillmentType === 'DELIVERY' ? 1.99 : 0;
   const deliveryFee = standardShipping + priorityExtraFee;
 
   const discountSavings = appliedDiscount ? appliedDiscount.savings : 0;
@@ -160,7 +174,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
     : Number(((discountedSubtotal * taxRate) / 100).toFixed(2));
 
   const taxesAndOtherFees = Number((serviceFee + calculatedTax).toFixed(2));
-  const totalOrderAmount = Number((discountedSubtotal + deliveryFee + taxesAndOtherFees).toFixed(2));
+  const totalOrderAmount = Number(
+    (discountedSubtotal + deliveryFee + taxesAndOtherFees).toFixed(2),
+  );
 
   // Gift card deduction
   const giftCardDeduction = appliedGiftCard ? Math.min(appliedGiftCard.balance, totalOrderAmount) : 0;
@@ -369,7 +385,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 shippingFee: deliveryFee,
               });
               await clearCart();
-              router.push(`/checkout/success?orderNumber=${verifyRes.order?.orderNumber || orderRes.orderNumber || orderRes.razorpayOrderId}`);
+              router.push(
+                `/checkout/success?orderNumber=${verifyRes.order?.orderNumber || orderRes.orderNumber || orderRes.razorpayOrderId}`,
+              );
             },
             prefill: {
               name: contactData.name,
@@ -410,7 +428,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
         });
 
         await clearCart();
-        router.push(`/checkout/success?orderNumber=${verified.order?.orderNumber || stripeRes.orderNumber || 'STRIPE-' + Date.now()}`);
+        router.push(
+          `/checkout/success?orderNumber=${verified.order?.orderNumber || stripeRes.orderNumber || 'STRIPE-' + Date.now()}`,
+        );
         return;
       }
 
@@ -431,7 +451,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
       });
 
       await clearCart();
-      const orderNum = result.order?.orderNumber || `UB-${Math.floor(100000 + Math.random() * 900000)}`;
+      const orderNum =
+        result.order?.orderNumber || `UB-${Math.floor(100000 + Math.random() * 900000)}`;
       router.push(`/checkout/success?orderNumber=${orderNum}`);
     } catch (err: any) {
       toast.error(err.message || 'Failed to complete order. Please try again.');
@@ -589,7 +610,11 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                   {/* Route Illustration Map Card */}
                   <div className="relative w-full h-36 rounded-2xl overflow-hidden bg-emerald-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center">
                     <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:16px_16px]" />
-                    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 500 150" fill="none">
+                    <svg
+                      className="absolute inset-0 w-full h-full"
+                      viewBox="0 0 500 150"
+                      fill="none"
+                    >
                       <path
                         d="M 50 110 C 180 120, 240 40, 420 50"
                         stroke="#000000"
@@ -658,7 +683,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                         </div>
                       </div>
                     </div>
-                    <span className="font-bold text-sm text-neutral-900 dark:text-white">+$1.99</span>
+                    <span className="font-bold text-sm text-neutral-900 dark:text-white">
+                      +$1.99
+                    </span>
                   </div>
 
                   {/* Standard Option (Selected default with thick border) */}
@@ -782,7 +809,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                       {getPaymentDisplayLabel()}
                     </div>
                     <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                      {paymentMethod === 'CARD' ? `Exp ${cardData.expDate} • Safe 256-bit encryption` : 'Instant verification on order'}
+                      {paymentMethod === 'CARD'
+                        ? `Exp ${cardData.expDate} • Safe 256-bit encryption`
+                        : 'Instant verification on order'}
                     </div>
                   </div>
                 </div>
@@ -870,7 +899,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                               className="object-cover"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-sm">🛍️</div>
+                            <div className="w-full h-full flex items-center justify-center text-sm">
+                              🛍️
+                            </div>
                           )}
                         </div>
 
@@ -878,9 +909,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                           <div className="font-bold text-neutral-900 dark:text-white line-clamp-1">
                             {item.name}
                           </div>
-                          <div className="text-neutral-400 mt-0.5">
-                            {formatPrice(item.price)}
-                          </div>
+                          <div className="text-neutral-400 mt-0.5">{formatPrice(item.price)}</div>
                         </div>
 
                         <div className="w-6 h-6 rounded-md bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center font-bold text-neutral-700 dark:text-neutral-300 text-xs shrink-0">
@@ -905,7 +934,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                     <Tag className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
                     <span className="text-sm font-semibold text-neutral-900 dark:text-white">
                       {appliedDiscount ? (
-                        <span className="text-emerald-600 font-bold uppercase">{appliedDiscount.code} (-{formatPrice(appliedDiscount.savings)})</span>
+                        <span className="text-emerald-600 font-bold uppercase">
+                          {appliedDiscount.code} (-{formatPrice(appliedDiscount.savings)})
+                        </span>
                       ) : (
                         'Add promo code'
                       )}
@@ -949,11 +980,15 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
               {/* Order Total Breakdown (Matching Step 2 / Step 8) */}
               <div className="border-t border-neutral-100 dark:border-neutral-800 pt-4 space-y-3 text-sm">
-                <h4 className="text-base font-bold text-neutral-900 dark:text-white">Order total</h4>
+                <h4 className="text-base font-bold text-neutral-900 dark:text-white">
+                  Order total
+                </h4>
 
                 <div className="flex items-center justify-between text-neutral-600 dark:text-neutral-400">
                   <span>Subtotal</span>
-                  <span className="font-semibold text-neutral-900 dark:text-white">{formatPrice(totalAmount)}</span>
+                  <span className="font-semibold text-neutral-900 dark:text-white">
+                    {formatPrice(totalAmount)}
+                  </span>
                 </div>
 
                 {appliedDiscount && (
@@ -982,7 +1017,11 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                     </button>
                   </div>
                   <span className="font-semibold text-neutral-900 dark:text-white">
-                    {deliveryFee === 0 ? <span className="text-emerald-600">FREE</span> : formatPrice(deliveryFee)}
+                    {deliveryFee === 0 ? (
+                      <span className="text-emerald-600">FREE</span>
+                    ) : (
+                      formatPrice(deliveryFee)
+                    )}
                   </span>
 
                   {/* Delivery Fee Popover Modal/Card (Step 3) */}
@@ -998,7 +1037,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                         </button>
                       </div>
                       <p className="text-neutral-500 dark:text-neutral-300 leading-relaxed">
-                        This fee helps cover delivery costs. The amount varies for each order based on things like your location and courier availability.
+                        This fee helps cover delivery costs. The amount varies for each order based
+                        on things like your location and courier availability.
                       </p>
                     </div>
                   )}
@@ -1040,7 +1080,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
               <div className="pt-2 text-[11px] text-neutral-400 dark:text-neutral-500 space-y-1.5 leading-relaxed">
                 <p>Prices may be lower in store.</p>
                 <p>
-                  If you're not around when the delivery person arrives, they'll leave your order at the door. By placing your order, you agree to take full responsibility for it once it's delivered.
+                  If you're not around when the delivery person arrives, they'll leave your order at
+                  the door. By placing your order, you agree to take full responsibility for it once
+                  it's delivered.
                 </p>
               </div>
             </div>
@@ -1086,10 +1128,14 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
             <div className="space-y-4 text-xs">
               {/* Building Type Dropdown */}
               <div>
-                <label className="font-bold text-neutral-700 dark:text-neutral-300 block mb-1">Building type</label>
+                <label className="font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
+                  Building type
+                </label>
                 <select
                   value={addressData.buildingType}
-                  onChange={(e) => setAddressData({ ...addressData, buildingType: e.target.value as any })}
+                  onChange={(e) =>
+                    setAddressData({ ...addressData, buildingType: e.target.value as any })
+                  }
                   className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 font-semibold outline-hidden"
                 >
                   <option value="House">House</option>
@@ -1102,7 +1148,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
               {/* Apt / Suite / Floor */}
               <div>
-                <label className="font-bold text-neutral-700 dark:text-neutral-300 block mb-1">Apt / Suite / Floor</label>
+                <label className="font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
+                  Apt / Suite / Floor
+                </label>
                 <input
                   type="text"
                   placeholder="e.g. 1208"
@@ -1114,7 +1162,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
               {/* Business / Building Name */}
               <div>
-                <label className="font-bold text-neutral-700 dark:text-neutral-300 block mb-1">Business / Building name</label>
+                <label className="font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
+                  Business / Building name
+                </label>
                 <input
                   type="text"
                   placeholder="e.g. Central Tower"
@@ -1140,7 +1190,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
               {/* Address label */}
               <div>
-                <label className="font-bold text-neutral-700 dark:text-neutral-300 block mb-1">Address label</label>
+                <label className="font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
+                  Address label
+                </label>
                 <input
                   type="text"
                   placeholder="Add a label (e.g. Home, Work, School)"
@@ -1308,7 +1360,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                   <div className="text-xs font-bold text-neutral-900 dark:text-white">
                     {day.split(' ')[0]}
                   </div>
-                  <div className="text-[11px] text-neutral-400">{day.split(' ').slice(1).join(' ')}</div>
+                  <div className="text-[11px] text-neutral-400">
+                    {day.split(' ').slice(1).join(' ')}
+                  </div>
                 </button>
               ))}
             </div>
@@ -1428,7 +1482,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 <div className="font-extrabold text-sm text-neutral-900 dark:text-white">
                   $0 Delivery Fee + up to 10% off
                 </div>
-                <div className="text-xs text-neutral-500 mt-0.5">With store membership benefits</div>
+                <div className="text-xs text-neutral-500 mt-0.5">
+                  With store membership benefits
+                </div>
               </div>
               <span className="px-3 py-1.5 rounded-xl bg-white dark:bg-neutral-900 text-xs font-bold shadow-xs">
                 Active
@@ -1550,7 +1606,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                     Service Fee and Other Fees
                   </div>
                   <div className="text-neutral-500 mt-1 leading-relaxed">
-                    These fees vary based on factors like basket size and help cover costs related to order processing and fulfillment.
+                    These fees vary based on factors like basket size and help cover costs related
+                    to order processing and fulfillment.
                   </div>
                 </div>
                 <span className="font-bold text-sm ml-4">{formatPrice(serviceFee)}</span>
@@ -1599,7 +1656,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
               {[
                 { id: 'CARD', label: 'Card', icon: '💳' },
-                ...(isRazorpayEnabled ? [{ id: 'RAZORPAY', label: 'UPI / India', icon: '⚡' }] : []),
+                ...(isRazorpayEnabled
+                  ? [{ id: 'RAZORPAY', label: 'UPI / India', icon: '⚡' }]
+                  : []),
                 ...(isStripeEnabled ? [{ id: 'STRIPE', label: 'Stripe', icon: '🌍' }] : []),
                 ...(isCodEnabled ? [{ id: 'COD', label: 'Cash', icon: '💵' }] : []),
               ].map((m) => (
@@ -1709,7 +1768,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
             {paymentMethod === 'RAZORPAY' && (
               <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-300">
-                ⚡ Secure UPI, Google Pay, PhonePe, Paytm & NetBanking will launch automatically when you confirm.
+                ⚡ Secure UPI, Google Pay, PhonePe, Paytm & NetBanking will launch automatically
+                when you confirm.
               </div>
             )}
 

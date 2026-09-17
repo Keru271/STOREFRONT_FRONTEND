@@ -37,7 +37,8 @@ function CheckoutSuccessContent({ theme }: { theme: ThemeConfig }) {
           Thank you for your order!
         </h1>
         <p className="text-sm text-gray-500 max-w-md mx-auto">
-          We've received your order at {theme.storeName} and are getting it ready. A confirmation email with tracking details has been sent to your inbox.
+          We've received your order at {theme.storeName} and are getting it ready. A confirmation
+          email with tracking details has been sent to your inbox.
         </p>
       </div>
 
@@ -57,25 +58,30 @@ function CheckoutSuccessContent({ theme }: { theme: ThemeConfig }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs">
           <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl space-y-1">
-            <span className="text-gray-400 font-semibold uppercase text-[10px]">Payment Method</span>
+            <span className="text-gray-400 font-semibold uppercase text-[10px]">
+              Payment Method
+            </span>
             <p className="font-bold text-gray-900 dark:text-gray-100">
               {gateway === 'UPI' || gateway === 'RAZORPAY'
                 ? '📱 UPI & QR Code'
                 : gateway === 'CARD' || gateway === 'STRIPE'
-                ? '💳 Credit / Debit Card'
-                : '💵 Cash on Delivery'}
+                  ? '💳 Credit / Debit Card'
+                  : '💵 Cash on Delivery'}
             </p>
           </div>
 
           <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl space-y-1">
             <span className="text-gray-400 font-semibold uppercase text-[10px]">Total Paid</span>
             <p className="font-bold text-base" style={{ color: 'var(--sf-primary)' }}>
-              {symbol}{parseFloat(total).toFixed(2)} {currency}
+              {symbol}
+              {parseFloat(total).toFixed(2)} {currency}
             </p>
           </div>
 
           <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl space-y-1">
-            <span className="text-gray-400 font-semibold uppercase text-[10px]">Transaction ID</span>
+            <span className="text-gray-400 font-semibold uppercase text-[10px]">
+              Transaction ID
+            </span>
             <p className="font-mono font-semibold text-gray-700 dark:text-gray-300 truncate">
               {paymentId || 'N/A (Doorstep Cash)'}
             </p>
@@ -120,7 +126,11 @@ export default function CheckoutSuccessPage() {
   return (
     <TemplateLayout theme={currentTheme as ThemeConfig}>
       <main className="w-full flex-grow">
-        <Suspense fallback={<div className="p-16 text-center text-sm text-gray-400">Loading order receipt...</div>}>
+        <Suspense
+          fallback={
+            <div className="p-16 text-center text-sm text-gray-400">Loading order receipt...</div>
+          }
+        >
           <CheckoutSuccessContent theme={currentTheme as ThemeConfig} />
         </Suspense>
       </main>

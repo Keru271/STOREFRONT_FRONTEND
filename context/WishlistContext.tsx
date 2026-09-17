@@ -81,7 +81,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   const isInWishlist = useCallback(
     (productId: string) => productIds.includes(productId),
-    [productIds]
+    [productIds],
   );
 
   const addToWishlist = useCallback(
@@ -110,7 +110,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         console.error('Error in addToWishlist:', err);
       }
     },
-    [productIds, toast]
+    [productIds, toast],
   );
 
   const deleteFromWishlist = useCallback(
@@ -133,7 +133,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         console.error('Error in deleteFromWishlist:', err);
       }
     },
-    [productIds, toast]
+    [productIds, toast],
   );
 
   const toggleWishlist = useCallback(
@@ -144,7 +144,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         await addToWishlist(productId);
       }
     },
-    [isInWishlist, deleteFromWishlist, addToWishlist]
+    [isInWishlist, deleteFromWishlist, addToWishlist],
   );
 
   const clearWishlist = useCallback(async () => {

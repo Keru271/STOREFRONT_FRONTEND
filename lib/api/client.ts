@@ -9,8 +9,7 @@
 
 import type { ApiErrorResponse } from './types';
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_STOREFRONT_API_URL || 'http://localhost:5001';
+const BASE_URL = process.env.NEXT_PUBLIC_STOREFRONT_API_URL || 'http://localhost:5001';
 
 // Store identification — set via environment variables.
 // In server components these are the only source of truth.
@@ -20,7 +19,7 @@ const ENV_STORE_SLUG = process.env.NEXT_PUBLIC_STORE_SLUG || '';
 
 // ── Custom API Error ──────────────────────────────────────────────────────────
 
-console.log({ ENV_STORE_ID, ENV_STORE_SLUG })
+console.log({ ENV_STORE_ID, ENV_STORE_SLUG });
 
 export class ApiError extends Error {
   statusCode: number;
@@ -31,9 +30,15 @@ export class ApiError extends Error {
     this.name = 'ApiError';
   }
 
-  isNotFound() { return this.statusCode === 404; }
-  isUnauthorized() { return this.statusCode === 401; }
-  isForbidden() { return this.statusCode === 403; }
+  isNotFound() {
+    return this.statusCode === 404;
+  }
+  isUnauthorized() {
+    return this.statusCode === 401;
+  }
+  isForbidden() {
+    return this.statusCode === 403;
+  }
 }
 
 // ── Store ID resolution ───────────────────────────────────────────────────────
@@ -123,7 +128,7 @@ export interface ClientFetchOptions extends Omit<RequestInit, 'body'> {
 
 async function apiFetch<T>(
   endpoint: string,
-  options: ClientFetchOptions & { body?: string } = {}
+  options: ClientFetchOptions & { body?: string } = {},
 ): Promise<T> {
   const { token, storeId, storeSlug, storeHost, next, ...fetchOptions } = options;
 
@@ -132,7 +137,10 @@ async function apiFetch<T>(
   };
 
   // Only set Content-Type for requests that have a body
-  if (fetchOptions.body !== undefined || (fetchOptions.method && ['POST', 'PUT', 'PATCH'].includes(fetchOptions.method.toUpperCase()))) {
+  if (
+    fetchOptions.body !== undefined ||
+    (fetchOptions.method && ['POST', 'PUT', 'PATCH'].includes(fetchOptions.method.toUpperCase()))
+  ) {
     headers['Content-Type'] = 'application/json';
   }
 
@@ -193,7 +201,11 @@ async function apiFetch<T>(
   let cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
 
   // Append storeId query param if not already present
-  if (resolvedStoreId && resolvedStoreId !== 'default-store-id' && !cleanEndpoint.includes('storeId=')) {
+  if (
+    resolvedStoreId &&
+    resolvedStoreId !== 'default-store-id' &&
+    !cleanEndpoint.includes('storeId=')
+  ) {
     const separator = cleanEndpoint.includes('?') ? '&' : '?';
     cleanEndpoint = `${cleanEndpoint}${separator}storeId=${encodeURIComponent(resolvedStoreId)}`;
   }
@@ -205,17 +217,14 @@ async function apiFetch<T>(
     ...(next ? { next } : {}),
   });
 
-  console.log({ response })
+  console.log({ response });
 
   if (!response.ok) {
     const errorData: ApiErrorResponse = await response
       .json()
       .catch(() => ({ message: `Request failed with status ${response.status}` }));
 
-    throw new ApiError(
-      errorData.message || `HTTP ${response.status}`,
-      response.status
-    );
+    throw new ApiError(errorData.message || `HTTP ${response.status}`, response.status);
   }
 
   // Handle 204 No Content
@@ -233,11 +242,7 @@ export const apiClient = {
     return apiFetch<T>(endpoint, { ...options, method: 'GET' });
   },
 
-  post<T>(
-    endpoint: string,
-    body: unknown,
-    options?: ClientFetchOptions
-  ): Promise<T> {
+  post<T>(endpoint: string, body: unknown, options?: ClientFetchOptions): Promise<T> {
     return apiFetch<T>(endpoint, {
       ...options,
       method: 'POST',
@@ -245,11 +250,7 @@ export const apiClient = {
     });
   },
 
-  put<T>(
-    endpoint: string,
-    body: unknown,
-    options?: ClientFetchOptions
-  ): Promise<T> {
+  put<T>(endpoint: string, body: unknown, options?: ClientFetchOptions): Promise<T> {
     return apiFetch<T>(endpoint, {
       ...options,
       method: 'PUT',
@@ -257,11 +258,7 @@ export const apiClient = {
     });
   },
 
-  patch<T>(
-    endpoint: string,
-    body: unknown,
-    options?: ClientFetchOptions
-  ): Promise<T> {
+  patch<T>(endpoint: string, body: unknown, options?: ClientFetchOptions): Promise<T> {
     return apiFetch<T>(endpoint, {
       ...options,
       method: 'PATCH',

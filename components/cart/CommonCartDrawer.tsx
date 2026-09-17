@@ -10,7 +10,16 @@ import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
 
 export default function CommonCartDrawer() {
   const router = useRouter();
-  const { items, itemCount, totalAmount, isOpen, closeCart, updateQuantity, deleteToCart, clearCart } = useCart();
+  const {
+    items,
+    itemCount,
+    totalAmount,
+    isOpen,
+    closeCart,
+    updateQuantity,
+    deleteToCart,
+    clearCart,
+  } = useCart();
   const { formatPrice } = useCurrency();
   const drawerRef = useRef<HTMLDivElement>(null);
 
@@ -98,7 +107,9 @@ export default function CommonCartDrawer() {
             <div className="w-20 h-20 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mb-4 text-neutral-400">
               <ShoppingBag className="w-10 h-10" />
             </div>
-            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-1">Your cart is empty</h3>
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-1">
+              Your cart is empty
+            </h3>
             <p className="text-sm text-neutral-500 max-w-xs mb-6">
               Explore our curated selection and add items to your cart to get started.
             </p>
@@ -114,7 +125,10 @@ export default function CommonCartDrawer() {
             {/* Items List */}
             <div className="flex-1 overflow-y-auto px-6 py-4 divide-y divide-neutral-100 dark:divide-neutral-800">
               {items.map((item) => (
-                <div key={`${item.productId}-${item.variantId || 'base'}`} className="py-4 flex items-start gap-4">
+                <div
+                  key={`${item.productId}-${item.variantId || 'base'}`}
+                  className="py-4 flex items-start gap-4"
+                >
                   {/* Left: Quantity Pill Stepper (Uber Eats style: '1 ⌄' / stepper) */}
                   <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5">
                     <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-neutral-100 dark:bg-neutral-800 border border-neutral-200/60 dark:border-neutral-700 text-xs font-bold">
@@ -129,11 +143,17 @@ export default function CommonCartDrawer() {
                         className="text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition p-0.5"
                         aria-label="Decrease quantity"
                       >
-                        {item.quantity <= 1 ? <Trash2 className="w-3 h-3 text-rose-500" /> : <Minus className="w-3 h-3" />}
+                        {item.quantity <= 1 ? (
+                          <Trash2 className="w-3 h-3 text-rose-500" />
+                        ) : (
+                          <Minus className="w-3 h-3" />
+                        )}
                       </button>
                       <span className="w-4 text-center">{item.quantity}</span>
                       <button
-                        onClick={() => updateQuantity(item.productId, item.quantity + 1, item.variantId)}
+                        onClick={() =>
+                          updateQuantity(item.productId, item.quantity + 1, item.variantId)
+                        }
                         className="text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition p-0.5"
                         aria-label="Increase quantity"
                       >
@@ -192,7 +212,9 @@ export default function CommonCartDrawer() {
             <div className="p-6 border-t border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 space-y-4">
               {/* Subtotal */}
               <div className="flex items-center justify-between">
-                <span className="text-base font-bold text-neutral-900 dark:text-white">Subtotal</span>
+                <span className="text-base font-bold text-neutral-900 dark:text-white">
+                  Subtotal
+                </span>
                 <span className="text-xl font-extrabold text-neutral-900 dark:text-white">
                   {formatPrice(totalAmount)}
                 </span>

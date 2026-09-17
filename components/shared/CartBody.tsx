@@ -19,7 +19,8 @@ export interface CartBodyProps {
 }
 
 export function CartBody({ theme }: CartBodyProps) {
-  const { items, itemCount, totalAmount, updateQuantity, deleteToCart, clearCart, isLoading } = useCart();
+  const { items, itemCount, totalAmount, updateQuantity, deleteToCart, clearCart, isLoading } =
+    useCart();
   const { formatPrice } = useCurrency();
   const { startLoading, stopLoading } = useLoader();
   const [couponCode, setCouponCode] = useState('');
@@ -238,7 +239,10 @@ export function CartBody({ theme }: CartBodyProps) {
           >
             Shopping Bag
           </h1>
-          <p className="text-xs mt-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+          <p
+            className="text-xs mt-1"
+            style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+          >
             {itemCount} {itemCount === 1 ? 'item' : 'items'} in your cart
           </p>
         </div>
@@ -269,8 +273,12 @@ export function CartBody({ theme }: CartBodyProps) {
           >
             Your bag is empty
           </h2>
-          <p className="text-xs max-w-sm mx-auto mb-6" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
-            Looks like you haven't added anything to your cart yet. Explore our curated collections to find what you love.
+          <p
+            className="text-xs max-w-sm mx-auto mb-6"
+            style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+          >
+            Looks like you haven't added anything to your cart yet. Explore our curated collections
+            to find what you love.
           </p>
           <Link
             href="/products"
@@ -301,7 +309,8 @@ export function CartBody({ theme }: CartBodyProps) {
                       </span>
                     ) : (
                       <span>
-                        Add <strong>{formatPrice(freeThreshold - discountedSubtotal)}</strong> more to unlock <strong>FREE Shipping</strong>!
+                        Add <strong>{formatPrice(freeThreshold - discountedSubtotal)}</strong> more
+                        to unlock <strong>FREE Shipping</strong>!
                       </span>
                     )}
                   </span>
@@ -362,11 +371,12 @@ export function CartBody({ theme }: CartBodyProps) {
                       {item.name}
                     </Link>
 
-                    {((item as any).isOutOfStock || (item as any).stockQuantity === 0) ? (
+                    {(item as any).isOutOfStock || (item as any).stockQuantity === 0 ? (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500 text-white shadow-xs">
                         Out of Stock
                       </span>
-                    ) : typeof (item as any).stockQuantity === 'number' && (item as any).stockQuantity <= 5 ? (
+                    ) : typeof (item as any).stockQuantity === 'number' &&
+                      (item as any).stockQuantity <= 5 ? (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400">
                         Only {(item as any).stockQuantity} left
                       </span>
@@ -374,18 +384,25 @@ export function CartBody({ theme }: CartBodyProps) {
                   </div>
 
                   {item.sku && (
-                    <p className="text-xs mt-0.5" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+                    <p
+                      className="text-xs mt-0.5"
+                      style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+                    >
                       SKU: {item.sku}
                     </p>
                   )}
 
                   {item.options && (
-                    <div className="flex flex-wrap items-center gap-2 mt-1 justify-center sm:justify-start text-xs" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                    <div
+                      className="flex flex-wrap items-center gap-2 mt-1 justify-center sm:justify-start text-xs"
+                      style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                    >
                       {item.options.variant && (
                         <span
                           className="font-semibold px-2 py-0.5 rounded-md"
                           style={{
-                            backgroundColor: 'color-mix(in srgb, var(--sf-primary) 12%, transparent)',
+                            backgroundColor:
+                              'color-mix(in srgb, var(--sf-primary) 12%, transparent)',
                             color: 'var(--sf-primary)',
                           }}
                         >
@@ -403,7 +420,10 @@ export function CartBody({ theme }: CartBodyProps) {
                     </p>
                   )}
 
-                  <div className="mt-2 text-sm font-extrabold" style={{ color: 'var(--sf-primary)' }}>
+                  <div
+                    className="mt-2 text-sm font-extrabold"
+                    style={{ color: 'var(--sf-primary)' }}
+                  >
                     {formatPrice(item.price)}
                   </div>
                 </div>
@@ -417,28 +437,48 @@ export function CartBody({ theme }: CartBodyProps) {
                   }}
                 >
                   <button
-                    onClick={() => handleUpdateQuantity(item.productId, item.quantity - 1, item.variantId)}
+                    onClick={() =>
+                      handleUpdateQuantity(item.productId, item.quantity - 1, item.variantId)
+                    }
                     className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs hover:opacity-70 transition cursor-pointer"
                     style={{ color: 'var(--sf-text)' }}
                   >
                     -
                   </button>
-                  <span className="w-8 text-center font-bold text-xs" style={{ color: 'var(--sf-text)' }}>
+                  <span
+                    className="w-8 text-center font-bold text-xs"
+                    style={{ color: 'var(--sf-text)' }}
+                  >
                     {item.quantity}
                   </span>
                   <button
-                    onClick={() => handleUpdateQuantity(item.productId, item.quantity + 1, item.variantId)}
-                    disabled={(item as any).isOutOfStock || (item as any).stockQuantity === 0 || (typeof (item as any).stockQuantity === 'number' && item.quantity >= (item as any).stockQuantity)}
+                    onClick={() =>
+                      handleUpdateQuantity(item.productId, item.quantity + 1, item.variantId)
+                    }
+                    disabled={
+                      (item as any).isOutOfStock ||
+                      (item as any).stockQuantity === 0 ||
+                      (typeof (item as any).stockQuantity === 'number' &&
+                        item.quantity >= (item as any).stockQuantity)
+                    }
                     className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs hover:opacity-70 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                     style={{ color: 'var(--sf-text)' }}
-                    title={typeof (item as any).stockQuantity === 'number' && item.quantity >= (item as any).stockQuantity ? 'Maximum available stock reached' : 'Add one more'}
+                    title={
+                      typeof (item as any).stockQuantity === 'number' &&
+                      item.quantity >= (item as any).stockQuantity
+                        ? 'Maximum available stock reached'
+                        : 'Add one more'
+                    }
                   >
                     +
                   </button>
                 </div>
 
                 {/* Line Total */}
-                <div className="text-right font-black text-base w-24" style={{ color: 'var(--sf-text)' }}>
+                <div
+                  className="text-right font-black text-base w-24"
+                  style={{ color: 'var(--sf-text)' }}
+                >
                   {formatPrice(item.price * item.quantity)}
                 </div>
 
@@ -451,7 +491,12 @@ export function CartBody({ theme }: CartBodyProps) {
                   aria-label="Remove item"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
                   </svg>
                 </button>
               </div>
@@ -489,15 +534,21 @@ export function CartBody({ theme }: CartBodyProps) {
                         <span>{appliedDiscount.isAutomatic ? '⚡' : '🏷️'}</span>
                         <span
                           className={`font-mono tracking-wider uppercase ${
-                            appliedDiscount.isAutomatic ? 'text-amber-700 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'
+                            appliedDiscount.isAutomatic
+                              ? 'text-amber-700 dark:text-amber-400'
+                              : 'text-emerald-600 dark:text-emerald-400'
                           }`}
                         >
-                          {appliedDiscount.isAutomatic ? 'Automatic Promotion' : appliedDiscount.code}
+                          {appliedDiscount.isAutomatic
+                            ? 'Automatic Promotion'
+                            : appliedDiscount.code}
                         </span>
                       </div>
                       <p
                         className={`text-[11px] truncate mt-0.5 font-medium ${
-                          appliedDiscount.isAutomatic ? 'text-amber-800 dark:text-amber-300' : 'text-emerald-700/80 dark:text-emerald-300'
+                          appliedDiscount.isAutomatic
+                            ? 'text-amber-800 dark:text-amber-300'
+                            : 'text-emerald-700/80 dark:text-emerald-300'
                         }`}
                       >
                         {appliedDiscount.title} (-{formatPrice(appliedDiscount.savings)})
@@ -537,7 +588,9 @@ export function CartBody({ theme }: CartBodyProps) {
                     </div>
                     {couponError && <p className="text-xs text-rose-500 mt-1">{couponError}</p>}
                     {couponSuccessMessage && !appliedDiscount?.isAutomatic && (
-                      <p className="text-xs text-emerald-600 mt-1 font-semibold">{couponSuccessMessage}</p>
+                      <p className="text-xs text-emerald-600 mt-1 font-semibold">
+                        {couponSuccessMessage}
+                      </p>
                     )}
                   </form>
                 )}
@@ -548,9 +601,14 @@ export function CartBody({ theme }: CartBodyProps) {
                 className="space-y-3 text-sm divide-y"
                 style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 8%, transparent)' }}
               >
-                <div className="flex justify-between pt-2" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+                <div
+                  className="flex justify-between pt-2"
+                  style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
+                >
                   <span>Subtotal</span>
-                  <span className="font-semibold" style={{ color: 'var(--sf-text)' }}>{formatPrice(totalAmount)}</span>
+                  <span className="font-semibold" style={{ color: 'var(--sf-text)' }}>
+                    {formatPrice(totalAmount)}
+                  </span>
                 </div>
 
                 {appliedDiscount && appliedDiscount.savings > 0 && (
@@ -560,17 +618,29 @@ export function CartBody({ theme }: CartBodyProps) {
                   </div>
                 )}
 
-                <div className="flex justify-between pt-2" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+                <div
+                  className="flex justify-between pt-2"
+                  style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
+                >
                   <span>Shipping</span>
                   <span className="font-semibold" style={{ color: 'var(--sf-text)' }}>
-                    {shipping === 0 ? <span className="text-emerald-600">FREE</span> : formatPrice(shipping)}
+                    {shipping === 0 ? (
+                      <span className="text-emerald-600">FREE</span>
+                    ) : (
+                      formatPrice(shipping)
+                    )}
                   </span>
                 </div>
 
                 {isTaxInclusive ? (
-                  <div className="flex justify-between pt-2" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+                  <div
+                    className="flex justify-between pt-2"
+                    style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
+                  >
                     <div className="flex items-center gap-1.5">
-                      <span>Included {taxName} ({taxRate}%)</span>
+                      <span>
+                        Included {taxName} ({taxRate}%)
+                      </span>
                       <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-semibold">
                         Included
                       </span>
@@ -580,8 +650,13 @@ export function CartBody({ theme }: CartBodyProps) {
                     </span>
                   </div>
                 ) : (
-                  <div className="flex justify-between pt-2" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
-                    <span>Estimated {taxName} ({taxRate}%)</span>
+                  <div
+                    className="flex justify-between pt-2"
+                    style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
+                  >
+                    <span>
+                      Estimated {taxName} ({taxRate}%)
+                    </span>
                     <span className="font-semibold" style={{ color: 'var(--sf-text)' }}>
                       {taxAmount === 0 ? formatPrice(0) : `+${formatPrice(taxAmount)}`}
                     </span>
@@ -590,7 +665,9 @@ export function CartBody({ theme }: CartBodyProps) {
 
                 <div className="flex justify-between pt-4 text-base font-black">
                   <span style={{ color: 'var(--sf-text)' }}>Estimated Total</span>
-                  <span className="text-xl" style={{ color: 'var(--sf-primary)' }}>{formatPrice(finalTotal)}</span>
+                  <span className="text-xl" style={{ color: 'var(--sf-primary)' }}>
+                    {formatPrice(finalTotal)}
+                  </span>
                 </div>
               </div>
 
@@ -598,7 +675,10 @@ export function CartBody({ theme }: CartBodyProps) {
               {items.some((it) => (it as any).isOutOfStock || (it as any).stockQuantity === 0) && (
                 <div className="mt-4 p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-start gap-2">
                   <span className="text-sm">⚠️</span>
-                  <span>Some items in your shopping bag are currently Out of Stock. Please remove them to proceed with checkout.</span>
+                  <span>
+                    Some items in your shopping bag are currently Out of Stock. Please remove them
+                    to proceed with checkout.
+                  </span>
                 </div>
               )}
 
@@ -613,7 +693,11 @@ export function CartBody({ theme }: CartBodyProps) {
                 </button>
               ) : (
                 <Link
-                  href={appliedDiscount ? `/checkout?coupon=${encodeURIComponent(appliedDiscount.code)}` : '/checkout'}
+                  href={
+                    appliedDiscount
+                      ? `/checkout?coupon=${encodeURIComponent(appliedDiscount.code)}`
+                      : '/checkout'
+                  }
                   onClick={() => startLoading('Navigating to secure checkout...')}
                   className="w-full mt-6 py-4 rounded-2xl font-bold text-sm text-white shadow-xl transition-all duration-200 flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] cursor-pointer"
                   style={{ backgroundColor: 'var(--sf-primary)' }}
@@ -624,11 +708,17 @@ export function CartBody({ theme }: CartBodyProps) {
               )}
 
               <div className="space-y-1.5 mt-4 text-center">
-                <p className="text-xs" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+                <p
+                  className="text-xs"
+                  style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+                >
                   🔒 Guaranteed Safe & Secure Checkout
                 </p>
                 {theme?.taxNumber && (
-                  <p className="text-[11px] font-mono" style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}>
+                  <p
+                    className="text-[11px] font-mono"
+                    style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}
+                  >
                     Tax ID: {theme.taxNumber}
                   </p>
                 )}

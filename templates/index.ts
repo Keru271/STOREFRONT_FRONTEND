@@ -12,73 +12,81 @@
 // The slug must match exactly what the CMS admin stores in `activeTemplateSlug`.
 
 import dynamic from 'next/dynamic';
-import type { ThemeConfig, Product, ProductDetail, Collection, Category, Brand, FilterFacetsResponse } from '@/lib/api/types';
+import type {
+  ThemeConfig,
+  Product,
+  ProductDetail,
+  Collection,
+  Category,
+  Brand,
+  FilterFacetsResponse,
+} from '@/lib/api/types';
 
 // Default template (dynamic chunks)
-const DefaultHomePage           = dynamic(() => import('./default/HomePage'));
-const DefaultPLPPage            = dynamic(() => import('./default/PLPPage'));
-const DefaultLoginPage          = dynamic(() => import('./default/LoginPage'));
-const DefaultSignupPage         = dynamic(() => import('./default/SignupPage'));
+const DefaultHomePage = dynamic(() => import('./default/HomePage'));
+const DefaultPLPPage = dynamic(() => import('./default/PLPPage'));
+const DefaultLoginPage = dynamic(() => import('./default/LoginPage'));
+const DefaultSignupPage = dynamic(() => import('./default/SignupPage'));
 const DefaultForgotPasswordPage = dynamic(() => import('./default/ForgotPasswordPage'));
-const DefaultPDPPage            = dynamic(() => import('./default/PDPPage'));
-const DefaultWishlistPage       = dynamic(() => import('./default/WishlistPage'));
-const DefaultCartPage           = dynamic(() => import('./default/CartPage'));
-const DefaultAccountPage        = dynamic(() => import('./default/AccountPage'));
+const DefaultPDPPage = dynamic(() => import('./default/PDPPage'));
+const DefaultWishlistPage = dynamic(() => import('./default/WishlistPage'));
+const DefaultCartPage = dynamic(() => import('./default/CartPage'));
+const DefaultAccountPage = dynamic(() => import('./default/AccountPage'));
 
 // Minimal template (dynamic chunks)
-const MinimalHomePage           = dynamic(() => import('./minimal/HomePage'));
-const MinimalPLPPage            = dynamic(() => import('./minimal/PLPPage'));
-const MinimalLoginPage          = dynamic(() => import('./minimal/LoginPage'));
-const MinimalSignupPage         = dynamic(() => import('./minimal/SignupPage'));
+const MinimalHomePage = dynamic(() => import('./minimal/HomePage'));
+const MinimalPLPPage = dynamic(() => import('./minimal/PLPPage'));
+const MinimalLoginPage = dynamic(() => import('./minimal/LoginPage'));
+const MinimalSignupPage = dynamic(() => import('./minimal/SignupPage'));
 const MinimalForgotPasswordPage = dynamic(() => import('./minimal/ForgotPasswordPage'));
-const MinimalPDPPage            = dynamic(() => import('./minimal/PDPPage'));
-const MinimalWishlistPage       = dynamic(() => import('./minimal/WishlistPage'));
-const MinimalCartPage           = dynamic(() => import('./minimal/CartPage'));
-const MinimalAccountPage        = dynamic(() => import('./minimal/AccountPage'));
+const MinimalPDPPage = dynamic(() => import('./minimal/PDPPage'));
+const MinimalWishlistPage = dynamic(() => import('./minimal/WishlistPage'));
+const MinimalCartPage = dynamic(() => import('./minimal/CartPage'));
+const MinimalAccountPage = dynamic(() => import('./minimal/AccountPage'));
 
 // Luxe template (dynamic chunks)
-const LuxeHomePage           = dynamic(() => import('./luxe/HomePage'));
-const LuxePLPPage            = dynamic(() => import('./luxe/PLPPage'));
-const LuxeLoginPage          = dynamic(() => import('./luxe/LoginPage'));
-const LuxeSignupPage         = dynamic(() => import('./luxe/SignupPage'));
+const LuxeHomePage = dynamic(() => import('./luxe/HomePage'));
+const LuxePLPPage = dynamic(() => import('./luxe/PLPPage'));
+const LuxeLoginPage = dynamic(() => import('./luxe/LoginPage'));
+const LuxeSignupPage = dynamic(() => import('./luxe/SignupPage'));
 const LuxeForgotPasswordPage = dynamic(() => import('./luxe/ForgotPasswordPage'));
-const LuxePDPPage            = dynamic(() => import('./luxe/PDPPage'));
-const LuxeWishlistPage       = dynamic(() => import('./luxe/WishlistPage'));
-const LuxeCartPage           = dynamic(() => import('./luxe/CartPage'));
-const LuxeAccountPage        = dynamic(() => import('./luxe/AccountPage'));
+const LuxePDPPage = dynamic(() => import('./luxe/PDPPage'));
+const LuxeWishlistPage = dynamic(() => import('./luxe/WishlistPage'));
+const LuxeCartPage = dynamic(() => import('./luxe/CartPage'));
+const LuxeAccountPage = dynamic(() => import('./luxe/AccountPage'));
 
 // Nova template (Apple Design System - dynamic chunks, aliases to minimal)
-const NovaHomePage           = MinimalHomePage;
-const NovaPLPPage            = MinimalPLPPage;
-const NovaLoginPage          = MinimalLoginPage;
-const NovaSignupPage         = MinimalSignupPage;
+const NovaHomePage = MinimalHomePage;
+const NovaPLPPage = MinimalPLPPage;
+const NovaLoginPage = MinimalLoginPage;
+const NovaSignupPage = MinimalSignupPage;
 const NovaForgotPasswordPage = MinimalForgotPasswordPage;
-const NovaPDPPage            = MinimalPDPPage;
-const NovaWishlistPage       = MinimalWishlistPage;
-const NovaCartPage           = MinimalCartPage;
-const NovaAccountPage        = MinimalAccountPage;
+const NovaPDPPage = MinimalPDPPage;
+const NovaWishlistPage = MinimalWishlistPage;
+const NovaCartPage = MinimalCartPage;
+const NovaAccountPage = MinimalAccountPage;
 
 // Mincom template (Modern Furniture & Living - dynamic chunks)
-const MincomHomePage           = dynamic(() => import('./mincom/HomePage'));
-const MincomPLPPage            = dynamic(() => import('./mincom/PLPPage'));
-const MincomLoginPage          = dynamic(() => import('./mincom/LoginPage'));
-const MincomSignupPage         = dynamic(() => import('./mincom/SignupPage'));
+const MincomHomePage = dynamic(() => import('./mincom/HomePage'));
+const MincomPLPPage = dynamic(() => import('./mincom/PLPPage'));
+const MincomLoginPage = dynamic(() => import('./mincom/LoginPage'));
+const MincomSignupPage = dynamic(() => import('./mincom/SignupPage'));
 const MincomForgotPasswordPage = dynamic(() => import('./mincom/ForgotPasswordPage'));
-const MincomPDPPage            = dynamic(() => import('./mincom/PDPPage'));
-const MincomWishlistPage       = dynamic(() => import('./mincom/WishlistPage'));
-const MincomCartPage           = dynamic(() => import('./mincom/CartPage'));
-const MincomAccountPage        = dynamic(() => import('./mincom/AccountPage'));
+const MincomPDPPage = dynamic(() => import('./mincom/PDPPage'));
+const MincomWishlistPage = dynamic(() => import('./mincom/WishlistPage'));
+const MincomCartPage = dynamic(() => import('./mincom/CartPage'));
+const MincomAccountPage = dynamic(() => import('./mincom/AccountPage'));
 
 // Funo template (Scandinavian Modern Furniture & Decor - dynamic chunks)
-const FunoHomePage           = dynamic(() => import('./funo/HomePage'));
-const FunoPLPPage            = dynamic(() => import('./funo/PLPPage'));
-const FunoLoginPage          = dynamic(() => import('./funo/LoginPage'));
-const FunoSignupPage         = dynamic(() => import('./funo/SignupPage'));
+const FunoHomePage = dynamic(() => import('./funo/HomePage'));
+const FunoPLPPage = dynamic(() => import('./funo/PLPPage'));
+const FunoLoginPage = dynamic(() => import('./funo/LoginPage'));
+const FunoSignupPage = dynamic(() => import('./funo/SignupPage'));
 const FunoForgotPasswordPage = dynamic(() => import('./funo/ForgotPasswordPage'));
-const FunoPDPPage            = dynamic(() => import('./funo/PDPPage'));
-const FunoWishlistPage       = dynamic(() => import('./funo/WishlistPage'));
-const FunoCartPage           = dynamic(() => import('./funo/CartPage'));
-const FunoAccountPage        = dynamic(() => import('./funo/AccountPage'));
+const FunoPDPPage = dynamic(() => import('./funo/PDPPage'));
+const FunoWishlistPage = dynamic(() => import('./funo/WishlistPage'));
+const FunoCartPage = dynamic(() => import('./funo/CartPage'));
+const FunoAccountPage = dynamic(() => import('./funo/AccountPage'));
 
 // ── Shared Prop Interfaces ────────────────────────────────────────────────────
 // All page components in all templates must satisfy these contracts.
@@ -142,95 +150,95 @@ export interface CollectionsPageProps {
 }
 
 export interface TemplateComponents {
-  HomePage:           React.ComponentType<HomePageProps>;
-  PLPPage:            React.ComponentType<PLPPageProps>;
-  LoginPage:          React.ComponentType<AuthPageProps>;
-  SignupPage:         React.ComponentType<AuthPageProps>;
+  HomePage: React.ComponentType<HomePageProps>;
+  PLPPage: React.ComponentType<PLPPageProps>;
+  LoginPage: React.ComponentType<AuthPageProps>;
+  SignupPage: React.ComponentType<AuthPageProps>;
   ForgotPasswordPage: React.ComponentType<AuthPageProps>;
   /** Per-template product detail page (required). */
-  PDPPage:            React.ComponentType<PDPPageProps>;
+  PDPPage: React.ComponentType<PDPPageProps>;
   /** Per-template wishlist page (required). */
-  WishlistPage:       React.ComponentType<WishlistPageProps>;
+  WishlistPage: React.ComponentType<WishlistPageProps>;
   /** Per-template cart page (required). */
-  CartPage:           React.ComponentType<CartPageProps>;
+  CartPage: React.ComponentType<CartPageProps>;
   /** Per-template customer account page (required). */
-  AccountPage:        React.ComponentType<AccountPageProps>;
+  AccountPage: React.ComponentType<AccountPageProps>;
   /** Optional: per-template collections index. Falls back to shared /collections if absent. */
-  CollectionsPage?:   React.ComponentType<CollectionsPageProps>;
+  CollectionsPage?: React.ComponentType<CollectionsPageProps>;
 }
 
 // ── Registry ──────────────────────────────────────────────────────────────────
 
 const mincomComponents: TemplateComponents = {
-  HomePage:           MincomHomePage,
-  PLPPage:            MincomPLPPage,
-  LoginPage:          MincomLoginPage,
-  SignupPage:         MincomSignupPage,
+  HomePage: MincomHomePage,
+  PLPPage: MincomPLPPage,
+  LoginPage: MincomLoginPage,
+  SignupPage: MincomSignupPage,
   ForgotPasswordPage: MincomForgotPasswordPage,
-  PDPPage:            MincomPDPPage,
-  WishlistPage:       MincomWishlistPage,
-  CartPage:           MincomCartPage,
-  AccountPage:        MincomAccountPage,
+  PDPPage: MincomPDPPage,
+  WishlistPage: MincomWishlistPage,
+  CartPage: MincomCartPage,
+  AccountPage: MincomAccountPage,
 };
 
 const novaComponents: TemplateComponents = {
-  HomePage:           NovaHomePage,
-  PLPPage:            NovaPLPPage,
-  LoginPage:          NovaLoginPage,
-  SignupPage:         NovaSignupPage,
+  HomePage: NovaHomePage,
+  PLPPage: NovaPLPPage,
+  LoginPage: NovaLoginPage,
+  SignupPage: NovaSignupPage,
   ForgotPasswordPage: NovaForgotPasswordPage,
-  PDPPage:            NovaPDPPage,
-  WishlistPage:       NovaWishlistPage,
-  CartPage:           NovaCartPage,
-  AccountPage:        NovaAccountPage,
+  PDPPage: NovaPDPPage,
+  WishlistPage: NovaWishlistPage,
+  CartPage: NovaCartPage,
+  AccountPage: NovaAccountPage,
 };
 
 const defaultComponents: TemplateComponents = {
-  HomePage:           DefaultHomePage,
-  PLPPage:            DefaultPLPPage,
-  LoginPage:          DefaultLoginPage,
-  SignupPage:         DefaultSignupPage,
+  HomePage: DefaultHomePage,
+  PLPPage: DefaultPLPPage,
+  LoginPage: DefaultLoginPage,
+  SignupPage: DefaultSignupPage,
   ForgotPasswordPage: DefaultForgotPasswordPage,
-  PDPPage:            DefaultPDPPage,
-  WishlistPage:       DefaultWishlistPage,
-  CartPage:           DefaultCartPage,
-  AccountPage:        DefaultAccountPage,
+  PDPPage: DefaultPDPPage,
+  WishlistPage: DefaultWishlistPage,
+  CartPage: DefaultCartPage,
+  AccountPage: DefaultAccountPage,
 };
 
 const minimalComponents: TemplateComponents = {
-  HomePage:           MinimalHomePage,
-  PLPPage:            MinimalPLPPage,
-  LoginPage:          MinimalLoginPage,
-  SignupPage:         MinimalSignupPage,
+  HomePage: MinimalHomePage,
+  PLPPage: MinimalPLPPage,
+  LoginPage: MinimalLoginPage,
+  SignupPage: MinimalSignupPage,
   ForgotPasswordPage: MinimalForgotPasswordPage,
-  PDPPage:            MinimalPDPPage,
-  WishlistPage:       MinimalWishlistPage,
-  CartPage:           MinimalCartPage,
-  AccountPage:        MinimalAccountPage,
+  PDPPage: MinimalPDPPage,
+  WishlistPage: MinimalWishlistPage,
+  CartPage: MinimalCartPage,
+  AccountPage: MinimalAccountPage,
 };
 
 const luxeComponents: TemplateComponents = {
-  HomePage:           LuxeHomePage,
-  PLPPage:            LuxePLPPage,
-  LoginPage:          LuxeLoginPage,
-  SignupPage:         LuxeSignupPage,
+  HomePage: LuxeHomePage,
+  PLPPage: LuxePLPPage,
+  LoginPage: LuxeLoginPage,
+  SignupPage: LuxeSignupPage,
   ForgotPasswordPage: LuxeForgotPasswordPage,
-  PDPPage:            LuxePDPPage,
-  WishlistPage:       LuxeWishlistPage,
-  CartPage:           LuxeCartPage,
-  AccountPage:        LuxeAccountPage,
+  PDPPage: LuxePDPPage,
+  WishlistPage: LuxeWishlistPage,
+  CartPage: LuxeCartPage,
+  AccountPage: LuxeAccountPage,
 };
 
 const funoComponents: TemplateComponents = {
-  HomePage:           FunoHomePage,
-  PLPPage:            FunoPLPPage,
-  LoginPage:          FunoLoginPage,
-  SignupPage:         FunoSignupPage,
+  HomePage: FunoHomePage,
+  PLPPage: FunoPLPPage,
+  LoginPage: FunoLoginPage,
+  SignupPage: FunoSignupPage,
   ForgotPasswordPage: FunoForgotPasswordPage,
-  PDPPage:            FunoPDPPage,
-  WishlistPage:       FunoWishlistPage,
-  CartPage:           FunoCartPage,
-  AccountPage:        FunoAccountPage,
+  PDPPage: FunoPDPPage,
+  WishlistPage: FunoWishlistPage,
+  CartPage: FunoCartPage,
+  AccountPage: FunoAccountPage,
 };
 
 const TEMPLATE_REGISTRY: Record<string, TemplateComponents> = {

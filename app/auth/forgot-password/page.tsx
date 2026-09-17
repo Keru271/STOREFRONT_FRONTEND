@@ -15,6 +15,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ForgotPasswordPage() {
   const theme = await getTheme();
-  const { ForgotPasswordPage: TemplateForgotPasswordPage } = resolveTemplate(theme.activeTemplateSlug);
+  const { ForgotPasswordPage: TemplateForgotPasswordPage } = resolveTemplate(
+    theme.activeTemplateSlug,
+  );
   return <TemplateForgotPasswordPage theme={theme} />;
 }

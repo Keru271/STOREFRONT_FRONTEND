@@ -9,7 +9,12 @@ import type { HomePageProps } from '@/templates';
 import type { Product } from '@/lib/api/types';
 import { useCurrency } from '@/hooks/useCurrency';
 
-export default function MincomHomePage({ theme, products, collections, categories }: HomePageProps) {
+export default function MincomHomePage({
+  theme,
+  products,
+  collections,
+  categories,
+}: HomePageProps) {
   const [selectedCategoryTab, setSelectedCategoryTab] = useState('all');
   const { formatPrice } = useCurrency();
 
@@ -29,23 +34,29 @@ export default function MincomHomePage({ theme, products, collections, categorie
   }, []);
 
   // Filter trending products
-  const displayProducts = selectedCategoryTab === 'all'
-    ? products.slice(0, 10)
-    : products.filter((p) => {
-        const cat = (p.categoryName || p.category || '').toLowerCase();
-        const name = (p.name || '').toLowerCase();
-        return cat.includes(selectedCategoryTab) || name.includes(selectedCategoryTab);
-      }).slice(0, 10);
+  const displayProducts =
+    selectedCategoryTab === 'all'
+      ? products.slice(0, 10)
+      : products
+          .filter((p) => {
+            const cat = (p.categoryName || p.category || '').toLowerCase();
+            const name = (p.name || '').toLowerCase();
+            return cat.includes(selectedCategoryTab) || name.includes(selectedCategoryTab);
+          })
+          .slice(0, 10);
 
   const featuredDealProduct = products[0] || {
     id: 'deal-1',
     name: 'Mid-Century Nordic Ergonomic Lounge Chair in Oat Bouclé',
-    price: 249.00,
-    compareAtPrice: 349.00,
+    price: 249.0,
+    compareAtPrice: 349.0,
     categoryName: 'Living Room',
     stockQuantity: 12,
-    images: ['https://images.unsplash.com/photo-1580481077194-4d22223a502f?q=80&w=800&auto=format&fit=crop'],
-    image: 'https://images.unsplash.com/photo-1580481077194-4d22223a502f?q=80&w=800&auto=format&fit=crop',
+    images: [
+      'https://images.unsplash.com/photo-1580481077194-4d22223a502f?q=80&w=800&auto=format&fit=crop',
+    ],
+    image:
+      'https://images.unsplash.com/photo-1580481077194-4d22223a502f?q=80&w=800&auto=format&fit=crop',
   };
 
   // 4 mini lists for bottom matrix
@@ -62,7 +73,10 @@ export default function MincomHomePage({ theme, products, collections, categorie
       <MincomHeader />
 
       {/* ── 1. Hero Lifestyle Banner ─────────────────────────────────────── */}
-      <section className="relative w-full overflow-hidden min-h-[500px] lg:min-h-[580px] flex items-center" style={{ backgroundColor: 'var(--sf-secondary)' }}>
+      <section
+        className="relative w-full overflow-hidden min-h-[500px] lg:min-h-[580px] flex items-center"
+        style={{ backgroundColor: 'var(--sf-secondary)' }}
+      >
         {/* Background lifestyle image */}
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -87,7 +101,8 @@ export default function MincomHomePage({ theme, products, collections, categorie
             </h1>
 
             <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-light">
-              Handcrafted solid oak timber, natural wool upholstery, and ergonomic aesthetics designed for everyday serenity.
+              Handcrafted solid oak timber, natural wool upholstery, and ergonomic aesthetics
+              designed for everyday serenity.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -162,12 +177,17 @@ export default function MincomHomePage({ theme, products, collections, categorie
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <span className="text-xs font-black uppercase tracking-widest text-amber-600">INSPIRATION</span>
+            <span className="text-xs font-black uppercase tracking-widest text-amber-600">
+              INSPIRATION
+            </span>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight mt-0.5">
               Shop by Living Space
             </h2>
           </div>
-          <Link href="/collections" className="text-xs font-bold text-slate-600 hover:text-amber-600 underline">
+          <Link
+            href="/collections"
+            className="text-xs font-bold text-slate-600 hover:text-amber-600 underline"
+          >
             All Spaces →
           </Link>
         </div>
@@ -178,28 +198,32 @@ export default function MincomHomePage({ theme, products, collections, categorie
               title: 'Living Room',
               sub: 'Sofas, Lounges & Coffee Tables',
               count: '48 items',
-              image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=600&auto=format&fit=crop',
+              image:
+                'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=600&auto=format&fit=crop',
               href: '/products?category=living-room',
             },
             {
               title: 'Bedroom Sets',
               sub: 'Platform Beds, Nightstands & Linens',
               count: '32 items',
-              image: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?q=80&w=600&auto=format&fit=crop',
+              image:
+                'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?q=80&w=600&auto=format&fit=crop',
               href: '/products?category=bedroom',
             },
             {
               title: 'Kitchen & Dining',
               sub: 'Solid Wood Dining Tables & Chairs',
               count: '24 items',
-              image: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?q=80&w=600&auto=format&fit=crop',
+              image:
+                'https://images.unsplash.com/photo-1617806118233-18e1de247200?q=80&w=600&auto=format&fit=crop',
               href: '/products?category=dining',
             },
             {
               title: 'Office & Decor',
               sub: 'Ergonomic Desks, Bookshelves & Lamps',
               count: '40 items',
-              image: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=600&auto=format&fit=crop',
+              image:
+                'https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=600&auto=format&fit=crop',
               href: '/products?category=office',
             },
           ].map((room) => (
@@ -215,7 +239,9 @@ export default function MincomHomePage({ theme, products, collections, categorie
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
               <div className="relative text-white space-y-1">
-                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">{room.count}</span>
+                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">
+                  {room.count}
+                </span>
                 <h3 className="text-lg font-black">{room.title}</h3>
                 <p className="text-xs text-slate-300 line-clamp-1">{room.sub}</p>
               </div>
@@ -228,7 +254,9 @@ export default function MincomHomePage({ theme, products, collections, categorie
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 border-b border-slate-200 pb-5">
           <div>
-            <span className="text-xs font-black uppercase tracking-widest text-amber-600">HANDPICKED</span>
+            <span className="text-xs font-black uppercase tracking-widest text-amber-600">
+              HANDPICKED
+            </span>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight mt-0.5">
               Trending Furniture
             </h2>
@@ -249,8 +277,16 @@ export default function MincomHomePage({ theme, products, collections, categorie
                 className="px-4 py-2 rounded-full transition text-xs font-bold"
                 style={
                   selectedCategoryTab === tab.key
-                    ? { backgroundColor: 'var(--sf-primary)', color: 'white', borderColor: 'var(--sf-primary)' }
-                    : { backgroundColor: 'var(--sf-bg)', color: 'var(--sf-text)', border: '1px solid rgba(150,150,150,0.2)' }
+                    ? {
+                        backgroundColor: 'var(--sf-primary)',
+                        color: 'white',
+                        borderColor: 'var(--sf-primary)',
+                      }
+                    : {
+                        backgroundColor: 'var(--sf-bg)',
+                        color: 'var(--sf-text)',
+                        border: '1px solid rgba(150,150,150,0.2)',
+                      }
                 }
               >
                 {tab.label}
@@ -280,13 +316,18 @@ export default function MincomHomePage({ theme, products, collections, categorie
             </h2>
 
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-              Designed with modular precision and high-density memory foam cushioning. Transform compact spaces into luxurious lounges.
+              Designed with modular precision and high-density memory foam cushioning. Transform
+              compact spaces into luxurious lounges.
             </p>
 
             <ul className="space-y-2 text-xs text-slate-200">
               <li className="flex items-center gap-2">✓ Stain-resistant textured woven fabric</li>
-              <li className="flex items-center gap-2">✓ Kiln-dried FSC-certified solid beech frame</li>
-              <li className="flex items-center gap-2">✓ Modular layout customizable in 4 colorways</li>
+              <li className="flex items-center gap-2">
+                ✓ Kiln-dried FSC-certified solid beech frame
+              </li>
+              <li className="flex items-center gap-2">
+                ✓ Modular layout customizable in 4 colorways
+              </li>
             </ul>
 
             <div className="pt-2">
@@ -333,7 +374,9 @@ export default function MincomHomePage({ theme, products, collections, categorie
             >
               <div
                 className="w-14 h-14 rounded-full flex items-center justify-center text-2xl transition"
-                style={{ backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)' }}
+                style={{
+                  backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)',
+                }}
               >
                 {cat.icon}
               </div>
@@ -354,7 +397,10 @@ export default function MincomHomePage({ theme, products, collections, categorie
               DEAL OF THE DAY
             </span>
             <img
-              src={featuredDealProduct.image || 'https://images.unsplash.com/photo-1580481077194-4d22223a502f?q=80&w=800&auto=format&fit=crop'}
+              src={
+                featuredDealProduct.image ||
+                'https://images.unsplash.com/photo-1580481077194-4d22223a502f?q=80&w=800&auto=format&fit=crop'
+              }
               alt={featuredDealProduct.name}
               className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
             />
@@ -363,37 +409,64 @@ export default function MincomHomePage({ theme, products, collections, categorie
           {/* Deal Details & Countdown */}
           <div className="lg:col-span-6 space-y-6">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--sf-primary)' }}>HURRY UP! OFFER ENDS IN:</span>
+              <span
+                className="text-xs font-bold uppercase tracking-widest"
+                style={{ color: 'var(--sf-primary)' }}
+              >
+                HURRY UP! OFFER ENDS IN:
+              </span>
               {/* Countdown Clocks */}
               <div className="flex gap-3 mt-2 font-mono">
                 <div className="bg-[#23272a] text-white px-4 py-2.5 rounded-xl text-center min-w-[60px]">
-                  <span className="text-xl font-black">{String(timeLeft.hours).padStart(2, '0')}</span>
-                  <span className="block text-[9px] uppercase tracking-wider text-amber-400">Hours</span>
+                  <span className="text-xl font-black">
+                    {String(timeLeft.hours).padStart(2, '0')}
+                  </span>
+                  <span className="block text-[9px] uppercase tracking-wider text-amber-400">
+                    Hours
+                  </span>
                 </div>
                 <div className="bg-[#23272a] text-white px-4 py-2.5 rounded-xl text-center min-w-[60px]">
-                  <span className="text-xl font-black">{String(timeLeft.minutes).padStart(2, '0')}</span>
-                  <span className="block text-[9px] uppercase tracking-wider text-amber-400">Mins</span>
+                  <span className="text-xl font-black">
+                    {String(timeLeft.minutes).padStart(2, '0')}
+                  </span>
+                  <span className="block text-[9px] uppercase tracking-wider text-amber-400">
+                    Mins
+                  </span>
                 </div>
                 <div className="bg-[#23272a] text-white px-4 py-2.5 rounded-xl text-center min-w-[60px]">
-                  <span className="text-xl font-black">{String(timeLeft.seconds).padStart(2, '0')}</span>
-                  <span className="block text-[9px] uppercase tracking-wider text-amber-400">Secs</span>
+                  <span className="text-xl font-black">
+                    {String(timeLeft.seconds).padStart(2, '0')}
+                  </span>
+                  <span className="block text-[9px] uppercase tracking-wider text-amber-400">
+                    Secs
+                  </span>
                 </div>
               </div>
             </div>
 
-            <h3 className="text-2xl sm:text-3xl font-black tracking-tight leading-snug font-heading" style={{ color: 'var(--sf-text)' }}>
+            <h3
+              className="text-2xl sm:text-3xl font-black tracking-tight leading-snug font-heading"
+              style={{ color: 'var(--sf-text)' }}
+            >
               {featuredDealProduct.name}
             </h3>
 
-            <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--sf-accent, var(--sf-primary))' }}>
+            <div
+              className="flex items-center gap-2 text-sm"
+              style={{ color: 'var(--sf-accent, var(--sf-primary))' }}
+            >
               {'★★★★★'}
               <span className="text-xs text-slate-500 font-bold ml-2">(124 Customer Reviews)</span>
             </div>
 
             <div className="flex items-baseline gap-3">
-              <span className="text-3xl font-black" style={{ color: 'var(--sf-text)' }}>{formatPrice(featuredDealProduct.price)}</span>
+              <span className="text-3xl font-black" style={{ color: 'var(--sf-text)' }}>
+                {formatPrice(featuredDealProduct.price)}
+              </span>
               {featuredDealProduct.compareAtPrice && (
-                <span className="text-lg opacity-50 line-through">{formatPrice(featuredDealProduct.compareAtPrice)}</span>
+                <span className="text-lg opacity-50 line-through">
+                  {formatPrice(featuredDealProduct.compareAtPrice)}
+                </span>
               )}
             </div>
 
@@ -404,7 +477,10 @@ export default function MincomHomePage({ theme, products, collections, categorie
                 <span style={{ color: 'var(--sf-primary)' }}>82% Claimed</span>
               </div>
               <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full rounded-full w-[82%]" style={{ backgroundColor: 'var(--sf-primary)' }} />
+                <div
+                  className="h-full rounded-full w-[82%]"
+                  style={{ backgroundColor: 'var(--sf-primary)' }}
+                />
               </div>
             </div>
 
@@ -440,7 +516,8 @@ export default function MincomHomePage({ theme, products, collections, categorie
           {
             title: 'Modern Creative Workspace',
             sub: 'Ergonomic oak desks, integrated cable management, and studio lighting.',
-            image: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?q=80&w=900&auto=format&fit=crop',
+            image:
+              'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?q=80&w=900&auto=format&fit=crop',
             tag: 'OFFICE & DESKS',
             href: '/products?category=office',
             reverse: false,
@@ -448,7 +525,8 @@ export default function MincomHomePage({ theme, products, collections, categorie
           {
             title: 'Scandinavian Living Room',
             sub: 'Warm mustard and saffron sofas paired with organic timber tables.',
-            image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=900&auto=format&fit=crop',
+            image:
+              'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=900&auto=format&fit=crop',
             tag: 'LIVING ROOM',
             href: '/products?category=living-room',
             reverse: true,
@@ -456,7 +534,8 @@ export default function MincomHomePage({ theme, products, collections, categorie
           {
             title: 'Atmospheric Mid-Century Lounge',
             sub: 'Charcoal wool armchairs, brass floor lamps, and sculptural planters.',
-            image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=900&auto=format&fit=crop',
+            image:
+              'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=900&auto=format&fit=crop',
             tag: 'ACCENT CHAIRS',
             href: '/products?category=chairs',
             reverse: false,
@@ -468,8 +547,12 @@ export default function MincomHomePage({ theme, products, collections, categorie
               block.reverse ? 'lg:flex-row-reverse' : ''
             }`}
           >
-            <div className={`lg:col-span-5 p-8 sm:p-12 space-y-4 ${block.reverse ? 'lg:order-2' : ''}`}>
-              <span className="text-xs font-black uppercase tracking-widest text-amber-600">{block.tag}</span>
+            <div
+              className={`lg:col-span-5 p-8 sm:p-12 space-y-4 ${block.reverse ? 'lg:order-2' : ''}`}
+            >
+              <span className="text-xs font-black uppercase tracking-widest text-amber-600">
+                {block.tag}
+              </span>
               <h3 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
                 {block.title}
               </h3>
@@ -482,8 +565,14 @@ export default function MincomHomePage({ theme, products, collections, categorie
               </Link>
             </div>
 
-            <div className={`lg:col-span-7 h-full min-h-[320px] relative ${block.reverse ? 'lg:order-1' : ''}`}>
-              <img src={block.image} alt={block.title} className="absolute inset-0 w-full h-full object-cover" />
+            <div
+              className={`lg:col-span-7 h-full min-h-[320px] relative ${block.reverse ? 'lg:order-1' : ''}`}
+            >
+              <img
+                src={block.image}
+                alt={block.title}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
             </div>
           </div>
         ))}
@@ -492,7 +581,9 @@ export default function MincomHomePage({ theme, products, collections, categorie
       {/* ── 9. Testimonials Strip ────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
         <div className="text-center max-w-xl mx-auto mb-10">
-          <span className="text-xs font-black uppercase tracking-widest text-amber-600">CLIENT EXPERIENCES</span>
+          <span className="text-xs font-black uppercase tracking-widest text-amber-600">
+            CLIENT EXPERIENCES
+          </span>
           <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight mt-1">
             Loved by 20,000+ Homeowners
           </h2>
@@ -503,23 +594,29 @@ export default function MincomHomePage({ theme, products, collections, categorie
             {
               name: 'Sarah Jenkins',
               role: 'Interior Architect, NY',
-              quote: 'The craftsmanship on our Nordic dining table is breathtaking. Solid oak, satin smooth finish, and delivered seamlessly.',
+              quote:
+                'The craftsmanship on our Nordic dining table is breathtaking. Solid oak, satin smooth finish, and delivered seamlessly.',
               rating: 5,
             },
             {
               name: 'David & Marcus L.',
               role: 'Verified Buyer, CA',
-              quote: 'The studio sofa exceeded every expectation. Supportive, luxurious upholstery, and assembled in less than 15 minutes.',
+              quote:
+                'The studio sofa exceeded every expectation. Supportive, luxurious upholstery, and assembled in less than 15 minutes.',
               rating: 5,
             },
             {
               name: 'Elena Rostova',
               role: 'Design Enthusiast, TX',
-              quote: 'Mincom furniture gave our home the exact warm Scandinavian aesthetic we had pinned for months. Five stars without a doubt!',
+              quote:
+                'Mincom furniture gave our home the exact warm Scandinavian aesthetic we had pinned for months. Five stars without a doubt!',
               rating: 5,
             },
           ].map((t) => (
-            <div key={t.name} className="p-8 bg-white rounded-3xl border border-slate-100 shadow-sm space-y-4">
+            <div
+              key={t.name}
+              className="p-8 bg-white rounded-3xl border border-slate-100 shadow-sm space-y-4"
+            >
               <div className="text-amber-400 text-sm">{'★'.repeat(t.rating)}</div>
               <p className="text-xs text-slate-600 leading-relaxed italic">"{t.quote}"</p>
               <div className="pt-2 border-t border-slate-100 flex items-center gap-3">
@@ -539,7 +636,6 @@ export default function MincomHomePage({ theme, products, collections, categorie
       {/* ── 10. 4-Column Compact Products Matrix ─────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full border-t border-slate-200">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          
           {/* Col 1: Top Rated */}
           <div>
             <h3 className="font-black text-sm text-slate-950 uppercase tracking-wider pb-3 border-b border-slate-200 mb-4">
@@ -547,14 +643,26 @@ export default function MincomHomePage({ theme, products, collections, categorie
             </h3>
             <div className="space-y-4">
               {topRated.map((p) => (
-                <Link key={p.id} href={`/products/${p.urlSlug || p.id}`} className="flex gap-3 group">
+                <Link
+                  key={p.id}
+                  href={`/products/${p.urlSlug || p.id}`}
+                  className="flex gap-3 group"
+                >
                   <div className="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0">
-                    <img src={p.image || p.images?.[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                    <img
+                      src={p.image || p.images?.[0]}
+                      alt={p.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-xs font-bold text-slate-800 group-hover:text-amber-600 transition line-clamp-1">{p.name}</h4>
+                    <h4 className="text-xs font-bold text-slate-800 group-hover:text-amber-600 transition line-clamp-1">
+                      {p.name}
+                    </h4>
                     <div className="text-amber-400 text-[10px]">★★★★★</div>
-                    <span className="text-xs font-black text-slate-950 mt-1 block">{formatPrice(p.price)}</span>
+                    <span className="text-xs font-black text-slate-950 mt-1 block">
+                      {formatPrice(p.price)}
+                    </span>
                   </div>
                 </Link>
               ))}
@@ -568,14 +676,26 @@ export default function MincomHomePage({ theme, products, collections, categorie
             </h3>
             <div className="space-y-4">
               {bestSelling.map((p) => (
-                <Link key={p.id} href={`/products/${p.urlSlug || p.id}`} className="flex gap-3 group">
+                <Link
+                  key={p.id}
+                  href={`/products/${p.urlSlug || p.id}`}
+                  className="flex gap-3 group"
+                >
                   <div className="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0">
-                    <img src={p.image || p.images?.[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                    <img
+                      src={p.image || p.images?.[0]}
+                      alt={p.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-xs font-bold text-slate-800 group-hover:text-amber-600 transition line-clamp-1">{p.name}</h4>
+                    <h4 className="text-xs font-bold text-slate-800 group-hover:text-amber-600 transition line-clamp-1">
+                      {p.name}
+                    </h4>
                     <div className="text-amber-400 text-[10px]">★★★★★</div>
-                    <span className="text-xs font-black text-slate-950 mt-1 block">{formatPrice(p.price)}</span>
+                    <span className="text-xs font-black text-slate-950 mt-1 block">
+                      {formatPrice(p.price)}
+                    </span>
                   </div>
                 </Link>
               ))}
@@ -589,14 +709,26 @@ export default function MincomHomePage({ theme, products, collections, categorie
             </h3>
             <div className="space-y-4">
               {onSale.map((p) => (
-                <Link key={p.id} href={`/products/${p.urlSlug || p.id}`} className="flex gap-3 group">
+                <Link
+                  key={p.id}
+                  href={`/products/${p.urlSlug || p.id}`}
+                  className="flex gap-3 group"
+                >
                   <div className="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0">
-                    <img src={p.image || p.images?.[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                    <img
+                      src={p.image || p.images?.[0]}
+                      alt={p.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-xs font-bold text-slate-800 group-hover:text-amber-600 transition line-clamp-1">{p.name}</h4>
+                    <h4 className="text-xs font-bold text-slate-800 group-hover:text-amber-600 transition line-clamp-1">
+                      {p.name}
+                    </h4>
                     <div className="text-amber-400 text-[10px]">★★★★★</div>
-                    <span className="text-xs font-black text-slate-950 mt-1 block">{formatPrice(p.price)}</span>
+                    <span className="text-xs font-black text-slate-950 mt-1 block">
+                      {formatPrice(p.price)}
+                    </span>
                   </div>
                 </Link>
               ))}
@@ -610,20 +742,31 @@ export default function MincomHomePage({ theme, products, collections, categorie
             </h3>
             <div className="space-y-4">
               {featuredPicks.map((p) => (
-                <Link key={p.id} href={`/products/${p.urlSlug || p.id}`} className="flex gap-3 group">
+                <Link
+                  key={p.id}
+                  href={`/products/${p.urlSlug || p.id}`}
+                  className="flex gap-3 group"
+                >
                   <div className="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0">
-                    <img src={p.image || p.images?.[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                    <img
+                      src={p.image || p.images?.[0]}
+                      alt={p.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-xs font-bold text-slate-800 group-hover:text-amber-600 transition line-clamp-1">{p.name}</h4>
+                    <h4 className="text-xs font-bold text-slate-800 group-hover:text-amber-600 transition line-clamp-1">
+                      {p.name}
+                    </h4>
                     <div className="text-amber-400 text-[10px]">★★★★★</div>
-                    <span className="text-xs font-black text-slate-950 mt-1 block">{formatPrice(p.price)}</span>
+                    <span className="text-xs font-black text-slate-950 mt-1 block">
+                      {formatPrice(p.price)}
+                    </span>
                   </div>
                 </Link>
               ))}
             </div>
           </div>
-
         </div>
       </section>
 
@@ -638,9 +781,14 @@ export default function MincomHomePage({ theme, products, collections, categorie
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent" />
             <div className="relative space-y-2">
-              <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">ARTISAN DECOR</span>
+              <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">
+                ARTISAN DECOR
+              </span>
               <h3 className="text-xl font-black">Handmade Ceramics & Lighting</h3>
-              <Link href="/products?category=decor" className="inline-block text-xs font-bold underline text-amber-400 hover:text-amber-300">
+              <Link
+                href="/products?category=decor"
+                className="inline-block text-xs font-bold underline text-amber-400 hover:text-amber-300"
+              >
                 Explore Accents →
               </Link>
             </div>
@@ -654,9 +802,14 @@ export default function MincomHomePage({ theme, products, collections, categorie
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent" />
             <div className="relative space-y-2">
-              <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">SOLID TIMBER</span>
+              <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">
+                SOLID TIMBER
+              </span>
               <h3 className="text-xl font-black">Vintage Storage & Credenzas</h3>
-              <Link href="/products?category=office" className="inline-block text-xs font-bold underline text-amber-400 hover:text-amber-300">
+              <Link
+                href="/products?category=office"
+                className="inline-block text-xs font-bold underline text-amber-400 hover:text-amber-300"
+              >
                 Shop Storage →
               </Link>
             </div>
@@ -668,12 +821,17 @@ export default function MincomHomePage({ theme, products, collections, categorie
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <span className="text-xs font-black uppercase tracking-widest text-amber-600">JOURNAL</span>
+            <span className="text-xs font-black uppercase tracking-widest text-amber-600">
+              JOURNAL
+            </span>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight mt-0.5">
               Interior Design Stories
             </h2>
           </div>
-          <Link href="/blog" className="text-xs font-bold text-slate-600 hover:text-amber-600 underline">
+          <Link
+            href="/blog"
+            className="text-xs font-bold text-slate-600 hover:text-amber-600 underline"
+          >
             Read All Articles →
           </Link>
         </div>
@@ -683,27 +841,44 @@ export default function MincomHomePage({ theme, products, collections, categorie
             {
               title: 'Top 7 Scandinavian Living Room Trends for 2026',
               date: 'August 18, 2026',
-              image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop',
+              image:
+                'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop',
             },
             {
               title: 'The Timeless Appeal of Solid Walnut and Oak Joinery',
               date: 'August 12, 2026',
-              image: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?q=80&w=600&auto=format&fit=crop',
+              image:
+                'https://images.unsplash.com/photo-1595428774223-ef52624120d2?q=80&w=600&auto=format&fit=crop',
             },
             {
               title: 'How to Layer Lighting for Cozy & Relaxing Bedrooms',
               date: 'August 05, 2026',
-              image: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?q=80&w=600&auto=format&fit=crop',
+              image:
+                'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?q=80&w=600&auto=format&fit=crop',
             },
           ].map((blog) => (
-            <div key={blog.title} className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm flex flex-col justify-between group">
+            <div
+              key={blog.title}
+              className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm flex flex-col justify-between group"
+            >
               <div className="aspect-[16/10] overflow-hidden">
-                <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                <img
+                  src={blog.image}
+                  alt={blog.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                />
               </div>
               <div className="p-6 space-y-2">
-                <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest">{blog.date}</span>
-                <h4 className="font-bold text-sm text-slate-900 group-hover:text-amber-600 transition leading-snug">{blog.title}</h4>
-                <Link href="/blog" className="inline-block text-xs font-bold text-slate-900 pt-2 hover:underline">
+                <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest">
+                  {blog.date}
+                </span>
+                <h4 className="font-bold text-sm text-slate-900 group-hover:text-amber-600 transition leading-snug">
+                  {blog.title}
+                </h4>
+                <Link
+                  href="/blog"
+                  className="inline-block text-xs font-bold text-slate-900 pt-2 hover:underline"
+                >
                   Read Article →
                 </Link>
               </div>

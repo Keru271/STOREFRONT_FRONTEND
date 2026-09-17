@@ -36,24 +36,51 @@ export default function MinimalSignupPage({ theme }: AuthPageProps) {
   const fields = [
     { id: 'min-signup-name', name: 'name', label: 'Full Name', type: 'text', autoComplete: 'name' },
     { id: 'min-signup-email', name: 'email', label: 'Email', type: 'email', autoComplete: 'email' },
-    { id: 'min-signup-password', name: 'password', label: 'Password', type: 'password', autoComplete: 'new-password' },
+    {
+      id: 'min-signup-password',
+      name: 'password',
+      label: 'Password',
+      type: 'password',
+      autoComplete: 'new-password',
+    },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12" style={{ backgroundColor: 'var(--sf-bg)' }}>
+    <div
+      className="min-h-screen flex flex-col items-center justify-center px-6 py-12"
+      style={{ backgroundColor: 'var(--sf-bg)' }}
+    >
       <div className="w-full max-w-md">
         <Link href="/" className="block text-center mb-12">
-          <span className="text-xs tracking-widest uppercase" style={{ color: 'var(--sf-text)' }}>{theme.storeName}</span>
+          <span className="text-xs tracking-widest uppercase" style={{ color: 'var(--sf-text)' }}>
+            {theme.storeName}
+          </span>
         </Link>
 
-        <h1 className="text-3xl font-extralight text-center mb-2" style={{ color: 'var(--sf-text)' }}>Create account</h1>
-        <p className="text-center text-sm mb-10 font-light" style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}>
+        <h1
+          className="text-3xl font-extralight text-center mb-2"
+          style={{ color: 'var(--sf-text)' }}
+        >
+          Create account
+        </h1>
+        <p
+          className="text-center text-sm mb-10 font-light"
+          style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}
+        >
           Already a member?{' '}
-          <Link href="/auth/login" className="transition-opacity hover:opacity-60" style={{ color: 'var(--sf-text)' }}>Sign in</Link>
+          <Link
+            href="/auth/login"
+            className="transition-opacity hover:opacity-60"
+            style={{ color: 'var(--sf-text)' }}
+          >
+            Sign in
+          </Link>
         </p>
 
         {error && (
-          <p className="text-center text-sm mb-6" style={{ color: 'var(--sf-primary)' }}>{error}</p>
+          <p className="text-center text-sm mb-6" style={{ color: 'var(--sf-primary)' }}>
+            {error}
+          </p>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -77,7 +104,8 @@ export default function MinimalSignupPage({ theme }: AuthPageProps) {
                   (e.target as HTMLInputElement).style.borderBottomColor = 'var(--sf-primary)';
                 }}
                 onBlur={(e) => {
-                  (e.target as HTMLInputElement).style.borderBottomColor = 'color-mix(in srgb, var(--sf-text) 25%, transparent)';
+                  (e.target as HTMLInputElement).style.borderBottomColor =
+                    'color-mix(in srgb, var(--sf-text) 25%, transparent)';
                 }}
               />
               <label
@@ -98,7 +126,10 @@ export default function MinimalSignupPage({ theme }: AuthPageProps) {
               onChange={(e) => setAcceptsMarketing(e.target.checked)}
               className="mt-0.5 rounded cursor-pointer accent-current"
             />
-            <span className="text-xs font-light leading-relaxed" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+            <span
+              className="text-xs font-light leading-relaxed"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
+            >
               Keep me updated with newsletters, exclusive drops, and private offers.
             </span>
           </label>

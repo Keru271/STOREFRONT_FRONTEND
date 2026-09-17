@@ -8,7 +8,14 @@ import DefaultProductCard from './ProductCard';
 import type { PLPPageProps } from '@/templates';
 import { useCurrency } from '@/hooks/useCurrency';
 
-export default function DefaultPLPPage({ theme, products, categories, brands, filterFacets, searchParams }: PLPPageProps) {
+export default function DefaultPLPPage({
+  theme,
+  products,
+  categories,
+  brands,
+  filterFacets,
+  searchParams,
+}: PLPPageProps) {
   const router = useRouter();
   const pathname = usePathname();
   const currentParams = useSearchParams();
@@ -18,10 +25,15 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
   const [priceMax, setPriceMax] = useState(searchParams.maxPrice?.toString() || '');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const activeCategory = (searchParams.category as string) || (searchParams.categories as string) || '';
+  const activeCategory =
+    (searchParams.category as string) || (searchParams.categories as string) || '';
   const activeBrand = (searchParams.brand as string) || (searchParams.brands as string) || '';
   const activeGender = (searchParams.gender as string) || '';
-  const activeDiscount = searchParams.discount ? Number(searchParams.discount) : (searchParams.minDiscount ? Number(searchParams.minDiscount) : 0);
+  const activeDiscount = searchParams.discount
+    ? Number(searchParams.discount)
+    : searchParams.minDiscount
+      ? Number(searchParams.minDiscount)
+      : 0;
   const activeSort = (searchParams.sort as string) || 'newest';
   const searchQuery = (searchParams.search as string) || (searchParams.q as string) || '';
 
@@ -59,7 +71,7 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
     activeDiscount > 0 ||
     priceMin ||
     priceMax ||
-    searchQuery
+    searchQuery,
   );
 
   const availableCategories = filterFacets?.categories?.length
@@ -99,14 +111,29 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
         >
           <div className="max-w-7xl mx-auto">
             {/* Breadcrumb */}
-            <div className="flex items-center gap-2 text-sm mb-4" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
-              <a href="/" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>Home</a>
+            <div
+              className="flex items-center gap-2 text-sm mb-4"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+            >
+              <a href="/" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                Home
+              </a>
               <span>/</span>
-              <a href="/products" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>Products</a>
+              <a
+                href="/products"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+              >
+                Products
+              </a>
               {activeBrand ? (
                 <>
                   <span>/</span>
-                  <a href="/brands" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>Brands</a>
+                  <a
+                    href="/brands"
+                    style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                  >
+                    Brands
+                  </a>
                   <span>/</span>
                   <span style={{ color: 'var(--sf-text)' }} className="capitalize font-bold">
                     {(searchParams._brandName as string) || activeBrand}
@@ -115,7 +142,12 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
               ) : activeCategory ? (
                 <>
                   <span>/</span>
-                  <a href="/categories" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>Categories</a>
+                  <a
+                    href="/categories"
+                    style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                  >
+                    Categories
+                  </a>
                   <span>/</span>
                   <span style={{ color: 'var(--sf-text)' }} className="capitalize font-bold">
                     {(searchParams._categoryName as string) || activeCategory}
@@ -128,9 +160,13 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
               <div>
                 <h1 className="text-3xl font-bold" style={{ color: 'var(--sf-text)' }}>
                   {activeBrand ? (
-                    <span className="capitalize">{(searchParams._brandName as string) || activeBrand}</span>
+                    <span className="capitalize">
+                      {(searchParams._brandName as string) || activeBrand}
+                    </span>
                   ) : activeCategory ? (
-                    <span className="capitalize">{(searchParams._categoryName as string) || activeCategory}</span>
+                    <span className="capitalize">
+                      {(searchParams._categoryName as string) || activeCategory}
+                    </span>
                   ) : searchQuery ? (
                     `Search: "${searchQuery}"`
                   ) : (
@@ -142,8 +178,8 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                   style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
                 >
                   {(searchParams._brandDescription as string) ||
-                   (searchParams._categoryDescription as string) ||
-                   `${products.length} ${products.length === 1 ? 'product' : 'products'}`}
+                    (searchParams._categoryDescription as string) ||
+                    `${products.length} ${products.length === 1 ? 'product' : 'products'}`}
                 </p>
               </div>
 
@@ -155,7 +191,9 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                 style={{ color: 'var(--sf-text)', minWidth: '180px' }}
               >
                 {sortOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -165,12 +203,13 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
         {/* ── Content Area ──────────────────────────────────────────────────── */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex gap-8 items-start">
-            
             {/* ── Sidebar Filters ────────────────────────────────────────────── */}
-            <aside className={`
+            <aside
+              className={`
               fixed inset-0 z-50 p-6 lg:p-0 lg:static lg:block lg:w-64 lg:flex-shrink-0 lg:z-auto
               ${sidebarOpen ? 'block bg-black/60 backdrop-blur-sm' : 'hidden'}
-            `}>
+            `}
+            >
               <div
                 className="h-full overflow-y-auto lg:h-auto lg:overflow-visible p-6 rounded-2xl border"
                 style={{
@@ -180,14 +219,20 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
               >
                 {/* Mobile Close Button */}
                 <div className="flex items-center justify-between lg:hidden mb-6 pb-4 border-b">
-                  <h2 className="font-bold text-lg" style={{ color: 'var(--sf-text)' }}>Filters</h2>
-                  <button onClick={() => setSidebarOpen(false)} className="p-1 rounded-lg">✕</button>
+                  <h2 className="font-bold text-lg" style={{ color: 'var(--sf-text)' }}>
+                    Filters
+                  </h2>
+                  <button onClick={() => setSidebarOpen(false)} className="p-1 rounded-lg">
+                    ✕
+                  </button>
                 </div>
 
                 <div className="space-y-6">
                   {/* Filter Header */}
                   <div className="hidden lg:flex items-center justify-between">
-                    <h2 className="text-base font-bold" style={{ color: 'var(--sf-text)' }}>Filters</h2>
+                    <h2 className="text-base font-bold" style={{ color: 'var(--sf-text)' }}>
+                      Filters
+                    </h2>
                     {hasFilters && (
                       <button
                         onClick={clearFilters}
@@ -201,7 +246,12 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
 
                   {/* 1. Gender */}
                   <div>
-                    <h3 className="text-sm font-semibold mb-2.5" style={{ color: 'var(--sf-text)' }}>Gender</h3>
+                    <h3
+                      className="text-sm font-semibold mb-2.5"
+                      style={{ color: 'var(--sf-text)' }}
+                    >
+                      Gender
+                    </h3>
                     <div className="grid grid-cols-2 gap-1.5">
                       <button
                         onClick={() => updateParams({ gender: undefined })}
@@ -209,7 +259,9 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                         style={{
                           backgroundColor: !activeGender ? 'var(--sf-primary)' : 'transparent',
                           color: !activeGender ? 'white' : 'var(--sf-text)',
-                          borderColor: !activeGender ? 'var(--sf-primary)' : 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
+                          borderColor: !activeGender
+                            ? 'var(--sf-primary)'
+                            : 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
                         }}
                       >
                         All
@@ -217,12 +269,28 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                       {genderOptions.map((g) => (
                         <button
                           key={g.value}
-                          onClick={() => updateParams({ gender: activeGender.toLowerCase() === g.value.toLowerCase() ? undefined : g.value })}
+                          onClick={() =>
+                            updateParams({
+                              gender:
+                                activeGender.toLowerCase() === g.value.toLowerCase()
+                                  ? undefined
+                                  : g.value,
+                            })
+                          }
                           className="py-1.5 px-2 text-xs font-medium rounded-lg border transition text-center"
                           style={{
-                            backgroundColor: activeGender.toLowerCase() === g.value.toLowerCase() ? 'var(--sf-primary)' : 'transparent',
-                            color: activeGender.toLowerCase() === g.value.toLowerCase() ? 'white' : 'var(--sf-text)',
-                            borderColor: activeGender.toLowerCase() === g.value.toLowerCase() ? 'var(--sf-primary)' : 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
+                            backgroundColor:
+                              activeGender.toLowerCase() === g.value.toLowerCase()
+                                ? 'var(--sf-primary)'
+                                : 'transparent',
+                            color:
+                              activeGender.toLowerCase() === g.value.toLowerCase()
+                                ? 'white'
+                                : 'var(--sf-text)',
+                            borderColor:
+                              activeGender.toLowerCase() === g.value.toLowerCase()
+                                ? 'var(--sf-primary)'
+                                : 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
                           }}
                         >
                           {g.label}
@@ -233,14 +301,26 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
 
                   {/* 2. Categories */}
                   {availableCategories.length > 0 && (
-                    <div className="pt-4 border-t" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
-                      <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--sf-text)' }}>Category</h3>
+                    <div
+                      className="pt-4 border-t"
+                      style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+                    >
+                      <h3
+                        className="text-sm font-semibold mb-3"
+                        style={{ color: 'var(--sf-text)' }}
+                      >
+                        Category
+                      </h3>
                       <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                         <button
-                          onClick={() => updateParams({ category: undefined, categories: undefined })}
+                          onClick={() =>
+                            updateParams({ category: undefined, categories: undefined })
+                          }
                           className="w-full text-left text-xs px-3 py-1.5 rounded-lg transition-all"
                           style={{
-                            backgroundColor: !activeCategory ? 'color-mix(in srgb, var(--sf-primary) 12%, transparent)' : 'transparent',
+                            backgroundColor: !activeCategory
+                              ? 'color-mix(in srgb, var(--sf-primary) 12%, transparent)'
+                              : 'transparent',
                             color: !activeCategory ? 'var(--sf-primary)' : 'var(--sf-text)',
                             fontWeight: !activeCategory ? '600' : '400',
                           }}
@@ -248,20 +328,29 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                           All Products
                         </button>
                         {availableCategories.map((cat) => {
-                          const isSelected = activeCategory.toLowerCase() === (cat.slug || cat.name).toLowerCase();
+                          const isSelected =
+                            activeCategory.toLowerCase() === (cat.slug || cat.name).toLowerCase();
                           return (
                             <button
                               key={cat.id || cat.slug || cat.name}
-                              onClick={() => updateParams({ category: isSelected ? undefined : (cat.slug || cat.name) })}
+                              onClick={() =>
+                                updateParams({
+                                  category: isSelected ? undefined : cat.slug || cat.name,
+                                })
+                              }
                               className="w-full text-left text-xs px-3 py-1.5 rounded-lg transition-all flex items-center justify-between"
                               style={{
-                                backgroundColor: isSelected ? 'color-mix(in srgb, var(--sf-primary) 12%, transparent)' : 'transparent',
+                                backgroundColor: isSelected
+                                  ? 'color-mix(in srgb, var(--sf-primary) 12%, transparent)'
+                                  : 'transparent',
                                 color: isSelected ? 'var(--sf-primary)' : 'var(--sf-text)',
                                 fontWeight: isSelected ? '600' : '400',
                               }}
                             >
                               <span className="truncate">{cat.name}</span>
-                              {cat.count > 0 && <span className="text-[10px] opacity-60">({cat.count})</span>}
+                              {cat.count > 0 && (
+                                <span className="text-[10px] opacity-60">({cat.count})</span>
+                              )}
                             </button>
                           );
                         })}
@@ -271,16 +360,29 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
 
                   {/* 3. Brands */}
                   {availableBrands.length > 0 && (
-                    <div className="pt-4 border-t" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
-                      <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--sf-text)' }}>Brand</h3>
+                    <div
+                      className="pt-4 border-t"
+                      style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+                    >
+                      <h3
+                        className="text-sm font-semibold mb-3"
+                        style={{ color: 'var(--sf-text)' }}
+                      >
+                        Brand
+                      </h3>
                       <div className="space-y-1.5 max-h-44 overflow-y-auto pr-1">
                         {availableBrands.map((brand) => {
-                          const isSelected = activeBrand.toLowerCase() === (brand.slug || brand.name).toLowerCase();
+                          const isSelected =
+                            activeBrand.toLowerCase() === (brand.slug || brand.name).toLowerCase();
                           return (
                             <label
                               key={brand.id || brand.slug || brand.name}
                               className="flex items-center gap-2.5 py-1 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer text-xs"
-                              onClick={() => updateParams({ brand: isSelected ? undefined : (brand.slug || brand.name) })}
+                              onClick={() =>
+                                updateParams({
+                                  brand: isSelected ? undefined : brand.slug || brand.name,
+                                })
+                              }
                             >
                               <input
                                 type="checkbox"
@@ -288,10 +390,17 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                                 onChange={() => {}}
                                 className="w-3.5 h-3.5 rounded text-blue-600"
                               />
-                              <span className="flex-1 truncate" style={{ color: isSelected ? 'var(--sf-primary)' : 'var(--sf-text)' }}>
+                              <span
+                                className="flex-1 truncate"
+                                style={{
+                                  color: isSelected ? 'var(--sf-primary)' : 'var(--sf-text)',
+                                }}
+                              >
                                 {brand.name}
                               </span>
-                              {brand.count > 0 && <span className="text-[10px] opacity-60">({brand.count})</span>}
+                              {brand.count > 0 && (
+                                <span className="text-[10px] opacity-60">({brand.count})</span>
+                              )}
                             </label>
                           );
                         })}
@@ -300,11 +409,18 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                   )}
 
                   {/* 4. Price Range */}
-                  <div className="pt-4 border-t" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
-                    <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--sf-text)' }}>Price Range</h3>
+                  <div
+                    className="pt-4 border-t"
+                    style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+                  >
+                    <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--sf-text)' }}>
+                      Price Range
+                    </h3>
                     <div className="flex gap-2 items-center">
                       <div className="relative flex-1">
-                        <span className="absolute left-2.5 top-2 text-xs opacity-50">{currencySymbol}</span>
+                        <span className="absolute left-2.5 top-2 text-xs opacity-50">
+                          {currencySymbol}
+                        </span>
                         <input
                           type="number"
                           placeholder="Min"
@@ -315,9 +431,15 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                           min="0"
                         />
                       </div>
-                      <span style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>–</span>
+                      <span
+                        style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+                      >
+                        –
+                      </span>
                       <div className="relative flex-1">
-                        <span className="absolute left-2.5 top-2 text-xs opacity-50">{currencySymbol}</span>
+                        <span className="absolute left-2.5 top-2 text-xs opacity-50">
+                          {currencySymbol}
+                        </span>
                         <input
                           type="number"
                           placeholder="Max"
@@ -330,7 +452,12 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                       </div>
                     </div>
                     <button
-                      onClick={() => updateParams({ minPrice: priceMin || undefined, maxPrice: priceMax || undefined })}
+                      onClick={() =>
+                        updateParams({
+                          minPrice: priceMin || undefined,
+                          maxPrice: priceMax || undefined,
+                        })
+                      }
                       className="w-full mt-2.5 py-1.5 rounded-lg text-xs font-semibold text-white transition-all"
                       style={{ backgroundColor: 'var(--sf-primary)' }}
                     >
@@ -339,27 +466,44 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                   </div>
 
                   {/* 5. Discounts */}
-                  <div className="pt-4 border-t" style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}>
-                    <h3 className="text-sm font-semibold mb-2.5" style={{ color: 'var(--sf-text)' }}>Discounts</h3>
+                  <div
+                    className="pt-4 border-t"
+                    style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
+                  >
+                    <h3
+                      className="text-sm font-semibold mb-2.5"
+                      style={{ color: 'var(--sf-text)' }}
+                    >
+                      Discounts
+                    </h3>
                     <div className="space-y-1 text-xs">
                       {discountOptions.map((d) => (
                         <button
                           key={d.value}
-                          onClick={() => updateParams({ discount: activeDiscount === d.value ? undefined : d.value })}
+                          onClick={() =>
+                            updateParams({
+                              discount: activeDiscount === d.value ? undefined : d.value,
+                            })
+                          }
                           className="w-full text-left py-1.5 px-2.5 rounded-lg transition-all flex items-center justify-between"
                           style={{
-                            backgroundColor: activeDiscount === d.value ? 'color-mix(in srgb, var(--sf-primary) 12%, transparent)' : 'transparent',
-                            color: activeDiscount === d.value ? 'var(--sf-primary)' : 'var(--sf-text)',
+                            backgroundColor:
+                              activeDiscount === d.value
+                                ? 'color-mix(in srgb, var(--sf-primary) 12%, transparent)'
+                                : 'transparent',
+                            color:
+                              activeDiscount === d.value ? 'var(--sf-primary)' : 'var(--sf-text)',
                             fontWeight: activeDiscount === d.value ? '600' : '400',
                           }}
                         >
                           <span>🏷️ {d.label}</span>
-                          {d.count > 0 && <span className="text-[10px] opacity-60">({d.count})</span>}
+                          {d.count > 0 && (
+                            <span className="text-[10px] opacity-60">({d.count})</span>
+                          )}
                         </button>
                       ))}
                     </div>
                   </div>
-
                 </div>
               </div>
             </aside>
@@ -376,7 +520,15 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                     borderColor: 'color-mix(in srgb, var(--sf-text) 20%, transparent)',
                   }}
                 >
-                  <span>⚙️</span> Filters {hasFilters && <span className="ml-1 px-1.5 py-0.5 rounded-full text-xs text-white" style={{ backgroundColor: 'var(--sf-primary)' }}>•</span>}
+                  <span>⚙️</span> Filters{' '}
+                  {hasFilters && (
+                    <span
+                      className="ml-1 px-1.5 py-0.5 rounded-full text-xs text-white"
+                      style={{ backgroundColor: 'var(--sf-primary)' }}
+                    >
+                      •
+                    </span>
+                  )}
                 </button>
               </div>
 
@@ -386,34 +538,54 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                   {searchQuery && (
                     <span
                       className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"
-                      style={{ backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)', color: 'var(--sf-primary)' }}
+                      style={{
+                        backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)',
+                        color: 'var(--sf-primary)',
+                      }}
                     >
                       Search: "{searchQuery}"
-                      <button onClick={() => updateParams({ search: undefined, q: undefined })}>×</button>
+                      <button onClick={() => updateParams({ search: undefined, q: undefined })}>
+                        ×
+                      </button>
                     </span>
                   )}
                   {activeCategory && (
                     <span
                       className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"
-                      style={{ backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)', color: 'var(--sf-primary)' }}
+                      style={{
+                        backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)',
+                        color: 'var(--sf-primary)',
+                      }}
                     >
                       Category: {activeCategory}
-                      <button onClick={() => updateParams({ category: undefined, categories: undefined })}>×</button>
+                      <button
+                        onClick={() => updateParams({ category: undefined, categories: undefined })}
+                      >
+                        ×
+                      </button>
                     </span>
                   )}
                   {activeBrand && (
                     <span
                       className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"
-                      style={{ backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)', color: 'var(--sf-primary)' }}
+                      style={{
+                        backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)',
+                        color: 'var(--sf-primary)',
+                      }}
                     >
                       Brand: {activeBrand}
-                      <button onClick={() => updateParams({ brand: undefined, brands: undefined })}>×</button>
+                      <button onClick={() => updateParams({ brand: undefined, brands: undefined })}>
+                        ×
+                      </button>
                     </span>
                   )}
                   {activeGender && (
                     <span
                       className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"
-                      style={{ backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)', color: 'var(--sf-primary)' }}
+                      style={{
+                        backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)',
+                        color: 'var(--sf-primary)',
+                      }}
                     >
                       Gender: {activeGender.toUpperCase()}
                       <button onClick={() => updateParams({ gender: undefined })}>×</button>
@@ -422,22 +594,49 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                   {activeDiscount > 0 && (
                     <span
                       className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"
-                      style={{ backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)', color: 'var(--sf-primary)' }}
+                      style={{
+                        backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)',
+                        color: 'var(--sf-primary)',
+                      }}
                     >
                       {activeDiscount}%+ Off
-                      <button onClick={() => updateParams({ discount: undefined, minDiscount: undefined })}>×</button>
+                      <button
+                        onClick={() =>
+                          updateParams({ discount: undefined, minDiscount: undefined })
+                        }
+                      >
+                        ×
+                      </button>
                     </span>
                   )}
                   {(searchParams.minPrice || searchParams.maxPrice) && (
                     <span
                       className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"
-                      style={{ backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)', color: 'var(--sf-primary)' }}
+                      style={{
+                        backgroundColor: 'color-mix(in srgb, var(--sf-primary) 10%, transparent)',
+                        color: 'var(--sf-primary)',
+                      }}
                     >
-                      Price: {currencySymbol}{searchParams.minPrice || '0'} - {currencySymbol}{searchParams.maxPrice || '∞'}
-                      <button onClick={() => { setPriceMin(''); setPriceMax(''); updateParams({ minPrice: undefined, maxPrice: undefined }); }}>×</button>
+                      Price: {currencySymbol}
+                      {searchParams.minPrice || '0'} - {currencySymbol}
+                      {searchParams.maxPrice || '∞'}
+                      <button
+                        onClick={() => {
+                          setPriceMin('');
+                          setPriceMax('');
+                          updateParams({ minPrice: undefined, maxPrice: undefined });
+                        }}
+                      >
+                        ×
+                      </button>
                     </span>
                   )}
-                  <button onClick={clearFilters} className="text-xs underline ml-auto text-rose-500 font-medium">Clear All</button>
+                  <button
+                    onClick={clearFilters}
+                    className="text-xs underline ml-auto text-rose-500 font-medium"
+                  >
+                    Clear All
+                  </button>
                 </div>
               )}
 
@@ -447,8 +646,13 @@ export default function DefaultPLPPage({ theme, products, categories, brands, fi
                   style={{ backgroundColor: 'color-mix(in srgb, var(--sf-text) 3%, var(--sf-bg))' }}
                 >
                   <div className="w-16 h-16 mb-4 text-3xl flex items-center justify-center">🔍</div>
-                  <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--sf-text)' }}>No products found</h3>
-                  <p className="text-sm mb-6" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+                  <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--sf-text)' }}>
+                    No products found
+                  </h3>
+                  <p
+                    className="text-sm mb-6"
+                    style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                  >
                     Try adjusting your filters or search terms.
                   </p>
                   <button

@@ -27,8 +27,10 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
   const variantPrices = hasVariants
     ? product.variants!.map((v) => Number(v.price)).filter((p) => !isNaN(p))
     : [];
-  const minVariantPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : Number(product.price);
-  const maxVariantPrice = variantPrices.length > 0 ? Math.max(...variantPrices) : Number(product.price);
+  const minVariantPrice =
+    variantPrices.length > 0 ? Math.min(...variantPrices) : Number(product.price);
+  const maxVariantPrice =
+    variantPrices.length > 0 ? Math.max(...variantPrices) : Number(product.price);
   const hasPriceRange = hasVariants && minVariantPrice !== maxVariantPrice;
 
   const imageUrl = product.image || product.images?.[0];
@@ -46,7 +48,11 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
 
   const stock = hasVariants
     ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
-    : (product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1);
+    : product.stockQuantity !== undefined
+      ? Number(product.stockQuantity)
+      : product.inventory !== undefined
+        ? Number(product.inventory)
+        : 1;
   const isOutOfStock = stock <= 0;
 
   return (
@@ -80,8 +86,19 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
                 background: `linear-gradient(160deg, color-mix(in srgb, var(--sf-primary) 6%, var(--sf-bg)), color-mix(in srgb, var(--sf-accent) 4%, var(--sf-bg)))`,
               }}
             >
-              <svg className="w-10 h-10 opacity-20" style={{ color: 'var(--sf-text)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.75} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <svg
+                className="w-10 h-10 opacity-20"
+                style={{ color: 'var(--sf-text)' }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={0.75}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
               </svg>
             </div>
           )}
@@ -101,9 +118,7 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
           {/* Badges */}
           <div className="absolute top-4 left-4 flex flex-col gap-1.5 z-10">
             {hasVariants && (
-              <span
-                className="px-2.5 py-0.5 text-xs font-semibold tracking-wider uppercase bg-black/80 text-white backdrop-blur-sm"
-              >
+              <span className="px-2.5 py-0.5 text-xs font-semibold tracking-wider uppercase bg-black/80 text-white backdrop-blur-sm">
                 {product.variants!.length} Editions
               </span>
             )}
@@ -116,9 +131,7 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
               </span>
             )}
             {isOutOfStock && (
-              <span
-                className="px-2.5 py-0.5 text-xs font-bold tracking-widest uppercase bg-rose-600 text-white shadow-sm"
-              >
+              <span className="px-2.5 py-0.5 text-xs font-bold tracking-widest uppercase bg-rose-600 text-white shadow-sm">
                 Out of Stock
               </span>
             )}
@@ -158,28 +171,35 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               {product.brandName && (
-                <p className="text-xs tracking-[0.15em] uppercase mb-1 font-light" style={{ color: 'var(--sf-primary)' }}>
+                <p
+                  className="text-xs tracking-[0.15em] uppercase mb-1 font-light"
+                  style={{ color: 'var(--sf-primary)' }}
+                >
                   {product.brandName}
                 </p>
               )}
-              <h3 className="text-sm font-light leading-snug transition-opacity group-hover:opacity-60" style={{ color: 'var(--sf-text)' }}>
+              <h3
+                className="text-sm font-light leading-snug transition-opacity group-hover:opacity-60"
+                style={{ color: 'var(--sf-text)' }}
+              >
                 {product.name}
               </h3>
             </div>
             <div className="text-right flex-shrink-0">
               <p className="text-sm font-medium" style={{ color: 'var(--sf-text)' }}>
-                {hasPriceRange ? `From ${formatPrice(minVariantPrice)}` : formatPrice(minVariantPrice)}
+                {hasPriceRange
+                  ? `From ${formatPrice(minVariantPrice)}`
+                  : formatPrice(minVariantPrice)}
               </p>
               {product.compareAtPrice && (
-                <p className="text-xs font-light line-through" style={{ color: 'color-mix(in srgb, var(--sf-text) 30%, transparent)' }}>
+                <p
+                  className="text-xs font-light line-through"
+                  style={{ color: 'color-mix(in srgb, var(--sf-text) 30%, transparent)' }}
+                >
                   {formatPrice(product.compareAtPrice)}
                 </p>
               )}
-              {isOutOfStock && (
-                <p className="text-[11px] font-bold text-rose-600">
-                  Out of Stock
-                </p>
-              )}
+              {isOutOfStock && <p className="text-[11px] font-bold text-rose-600">Out of Stock</p>}
             </div>
           </div>
 
@@ -191,7 +211,10 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
                   key={color}
                   title={color}
                   className="w-3 h-3 rounded-full border"
-                  style={{ backgroundColor: color.toLowerCase(), borderColor: 'color-mix(in srgb, var(--sf-text) 20%, transparent)' }}
+                  style={{
+                    backgroundColor: color.toLowerCase(),
+                    borderColor: 'color-mix(in srgb, var(--sf-text) 20%, transparent)',
+                  }}
                 />
               ))}
             </div>
@@ -209,8 +232,18 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
         }`}
         aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
       >
-        <svg className="w-4 h-4" fill={isWishlisted ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        <svg
+          className="w-4 h-4"
+          fill={isWishlisted ? 'currentColor' : 'none'}
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+          />
         </svg>
       </button>
 

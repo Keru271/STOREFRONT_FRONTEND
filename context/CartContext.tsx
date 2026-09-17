@@ -93,18 +93,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
         setCart(response);
         setIsOpen(true);
-        toast.success(
-          `Added to shopping bag (Qty: ${input.quantity || 1})`,
-          'Bag Updated',
-          {
-            action: {
-              label: 'View Bag',
-              onClick: () => {
-                window.location.href = '/cart';
-              },
+        toast.success(`Added to shopping bag (Qty: ${input.quantity || 1})`, 'Bag Updated', {
+          action: {
+            label: 'View Bag',
+            onClick: () => {
+              window.location.href = '/cart';
             },
-          }
-        );
+          },
+        });
       } catch (err: any) {
         console.error('Error in addToCart context:', err);
         const msg = err?.message || 'Failed to add item to bag. Please try again.';
@@ -114,7 +110,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       }
     },
-    [cartToken, toast]
+    [cartToken, toast],
   );
 
   const deleteToCart = useCallback(
@@ -125,7 +121,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setCart((prev) => {
           if (!prev) return prev;
           const newItems = prev.items.filter(
-            (it) => !(it.productId === productId && (it.variantId || '') === (variantId || ''))
+            (it) => !(it.productId === productId && (it.variantId || '') === (variantId || '')),
           );
           const totalAmount = newItems.reduce((s, it) => s + it.price * it.quantity, 0);
           const itemCount = newItems.reduce((c, it) => c + it.quantity, 0);
@@ -146,7 +142,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         throw err;
       }
     },
-    [cartToken, toast, refreshCart]
+    [cartToken, toast, refreshCart],
   );
 
   const updateQuantity = useCallback(
@@ -159,11 +155,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           let newItems = [...prev.items];
           if (quantity <= 0) {
             newItems = newItems.filter(
-              (it) => !(it.productId === productId && (it.variantId || '') === (variantId || ''))
+              (it) => !(it.productId === productId && (it.variantId || '') === (variantId || '')),
             );
           } else {
             const idx = newItems.findIndex(
-              (it) => it.productId === productId && (it.variantId || '') === (variantId || '')
+              (it) => it.productId === productId && (it.variantId || '') === (variantId || ''),
             );
             if (idx > -1) {
               newItems[idx] = {
@@ -193,7 +189,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         throw err;
       }
     },
-    [cartToken, toast, refreshCart]
+    [cartToken, toast, refreshCart],
   );
 
   const clearCart = useCallback(async () => {
@@ -216,7 +212,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const items = cart?.items || [];
   const itemCount = cart?.itemCount ?? items.reduce((sum, it) => sum + it.quantity, 0);
-  const totalAmount = cart?.totalAmount ?? items.reduce((sum, it) => sum + it.price * it.quantity, 0);
+  const totalAmount =
+    cart?.totalAmount ?? items.reduce((sum, it) => sum + it.price * it.quantity, 0);
 
   return (
     <CartContext.Provider

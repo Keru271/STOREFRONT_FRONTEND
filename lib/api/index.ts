@@ -90,12 +90,7 @@ export {
 } from './checkout';
 
 // Shipping & Logistics APIs
-export {
-  checkShippingServiceability,
-  getShippingRateQuotes,
-  trackShipmentAwb,
-} from './shipping';
+export { checkShippingServiceability, getShippingRateQuotes, trackShipmentAwb } from './shipping';
 
 // All Type Definitions
 export * from './types';
-

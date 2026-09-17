@@ -44,7 +44,6 @@ export default function FunoSignupPage({ theme }: AuthPageProps) {
 
       <main className="flex-1 flex items-center justify-center py-16 px-4 sm:px-6">
         <div className="w-full max-w-md bg-white border border-[#eaeaea] rounded-3xl p-8 sm:p-10 shadow-xl text-center">
-          
           <div className="flex justify-center mb-6">
             <FunoLogo className="h-9" />
           </div>
@@ -53,7 +52,8 @@ export default function FunoSignupPage({ theme }: AuthPageProps) {
             Create Your Account
           </h1>
           <p className="text-xs text-slate-500 mb-8">
-            Join the {theme.storeName || 'Funie'} community for exclusive furniture previews and member benefits.
+            Join the {theme.storeName || 'Funie'} community for exclusive furniture previews and
+            member benefits.
           </p>
 
           {error && (
@@ -64,9 +64,7 @@ export default function FunoSignupPage({ theme }: AuthPageProps) {
 
           <form onSubmit={handleSubmit} className="space-y-4 text-left">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Full Name
-              </label>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">Full Name</label>
               <input
                 type="text"
                 required
@@ -78,9 +76,7 @@ export default function FunoSignupPage({ theme }: AuthPageProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Email Address
-              </label>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">Email Address</label>
               <input
                 type="email"
                 required
@@ -105,9 +101,7 @@ export default function FunoSignupPage({ theme }: AuthPageProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Password
-              </label>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">Password</label>
               <input
                 type="password"
                 required
@@ -128,7 +122,8 @@ export default function FunoSignupPage({ theme }: AuthPageProps) {
                 className="mt-0.5 rounded border-slate-300 text-orange-500 focus:ring-orange-400"
               />
               <span className="leading-relaxed">
-                Send me news about new design drops, furniture collections, and subscriber-only discounts.
+                Send me news about new design drops, furniture collections, and subscriber-only
+                discounts.
               </span>
             </label>
 

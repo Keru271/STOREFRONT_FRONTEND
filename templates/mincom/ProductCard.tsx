@@ -27,19 +27,26 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
   const variantPrices = hasVariants
     ? product.variants!.map((v) => Number(v.price)).filter((p) => !isNaN(p))
     : [];
-  const minVariantPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : Number(product.price);
-  const maxVariantPrice = variantPrices.length > 0 ? Math.max(...variantPrices) : Number(product.price);
+  const minVariantPrice =
+    variantPrices.length > 0 ? Math.min(...variantPrices) : Number(product.price);
+  const maxVariantPrice =
+    variantPrices.length > 0 ? Math.max(...variantPrices) : Number(product.price);
   const hasPriceRange = hasVariants && minVariantPrice !== maxVariantPrice;
 
   const isWishlisted = isInWishlist(product.id);
   const mainImage = product.image || (product.images && product.images[0]);
-  const discount = product.compareAtPrice && product.compareAtPrice > product.price
-    ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
-    : 0;
+  const discount =
+    product.compareAtPrice && product.compareAtPrice > product.price
+      ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
+      : 0;
 
   const stock = hasVariants
     ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
-    : (product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1);
+    : product.stockQuantity !== undefined
+      ? Number(product.stockQuantity)
+      : product.inventory !== undefined
+        ? Number(product.inventory)
+        : 1;
   const isOutOfStock = stock <= 0;
 
   const handleQuickAdd = async (e: React.MouseEvent) => {
@@ -85,15 +92,15 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
         color: 'var(--sf-text)',
       }}
     >
-      
       {/* Top Image Container */}
-      <div className="relative aspect-square overflow-hidden" style={{ backgroundColor: 'color-mix(in srgb, var(--sf-primary) 5%, var(--sf-bg))' }}>
+      <div
+        className="relative aspect-square overflow-hidden"
+        style={{ backgroundColor: 'color-mix(in srgb, var(--sf-primary) 5%, var(--sf-bg))' }}
+      >
         {/* Badges */}
         <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
           {hasVariants && (
-            <span
-              className="px-2.5 py-1 font-black text-[10px] uppercase tracking-wider rounded-full shadow text-white bg-indigo-600"
-            >
+            <span className="px-2.5 py-1 font-black text-[10px] uppercase tracking-wider rounded-full shadow text-white bg-indigo-600">
               {product.variants!.length} Options
             </span>
           )}
@@ -151,8 +158,18 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
               borderRadius: 'calc(var(--sf-radius) * 0.75)',
             }}
           >
-            <span>{added ? 'Added! ✓' : isAdding ? 'Adding...' : isOutOfStock ? '🔔 Notify Me' : hasVariants ? 'Select Options' : 'Add to Bag'}</span>
-            <span>{hasVariants && !isOutOfStock ? '⚡' : !isOutOfStock ? '🛍️' : ''}</span>
+            <span>
+              {added
+                ? 'Added! ✓'
+                : isAdding
+                  ? 'Adding...'
+                  : isOutOfStock
+                    ? 'Out of Stock'
+                    : hasVariants
+                      ? 'Select Options'
+                      : 'Add to Bag'}
+            </span>
+            <span>{hasVariants ? '⚡' : '🛍️'}</span>
           </button>
           <Link
             href={href}
@@ -190,7 +207,10 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
           </Link>
 
           {/* Star Rating */}
-          <div className="flex items-center gap-1 mt-1.5 text-xs" style={{ color: 'var(--sf-accent, var(--sf-primary))' }}>
+          <div
+            className="flex items-center gap-1 mt-1.5 text-xs"
+            style={{ color: 'var(--sf-accent, var(--sf-primary))' }}
+          >
             {'★★★★★'}
             <span className="text-[10px] opacity-60 ml-1 font-medium">(4.9)</span>
           </div>
@@ -200,7 +220,9 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
         <div className="mt-4 pt-3 border-t border-slate-100/20 flex items-baseline justify-between">
           <div className="flex items-baseline gap-2">
             <span className="text-lg font-black" style={{ color: 'var(--sf-text)' }}>
-              {hasPriceRange ? `From ${formatPrice(minVariantPrice)}` : formatPrice(minVariantPrice)}
+              {hasPriceRange
+                ? `From ${formatPrice(minVariantPrice)}`
+                : formatPrice(minVariantPrice)}
             </span>
             {product.compareAtPrice && product.compareAtPrice > product.price && (
               <span className="text-xs opacity-50 line-through">
@@ -215,13 +237,9 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
               backgroundColor: isOutOfStock
                 ? 'rgba(239, 68, 68, 0.15)'
                 : stock <= 5
-                ? 'rgba(245, 158, 11, 0.15)'
-                : 'color-mix(in srgb, var(--sf-primary) 15%, transparent)',
-              color: isOutOfStock
-                ? '#ef4444'
-                : stock <= 5
-                ? '#d97706'
-                : 'var(--sf-primary)',
+                  ? 'rgba(245, 158, 11, 0.15)'
+                  : 'color-mix(in srgb, var(--sf-primary) 15%, transparent)',
+              color: isOutOfStock ? '#ef4444' : stock <= 5 ? '#d97706' : 'var(--sf-primary)',
             }}
           >
             {isOutOfStock ? 'Out of Stock' : stock <= 5 ? `Only ${stock} left` : 'In Stock'}

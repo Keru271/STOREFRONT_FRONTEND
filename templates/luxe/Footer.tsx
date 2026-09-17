@@ -28,16 +28,31 @@ export default function LuxeFooter() {
   ].filter((s) => !!s.url);
 
   return (
-    <footer style={{ backgroundColor: 'var(--sf-bg)', borderTop: '1px solid color-mix(in srgb, var(--sf-primary) 20%, color-mix(in srgb, var(--sf-text) 8%, transparent))' }}>
+    <footer
+      style={{
+        backgroundColor: 'var(--sf-bg)',
+        borderTop:
+          '1px solid color-mix(in srgb, var(--sf-primary) 20%, color-mix(in srgb, var(--sf-text) 8%, transparent))',
+      }}
+    >
       {theme.footerShowNewsletter !== false && (
         <div className="max-w-7xl mx-auto px-6 py-16">
           <div className="text-center max-w-lg mx-auto">
-            <span className="text-xs tracking-[0.3em] uppercase mb-3 block" style={{ color: 'var(--sf-primary)' }}>
+            <span
+              className="text-xs tracking-[0.3em] uppercase mb-3 block"
+              style={{ color: 'var(--sf-primary)' }}
+            >
               Exclusive Access
             </span>
-            <h3 className="text-3xl font-light mb-2" style={{ color: 'var(--sf-text)' }}>Members Only</h3>
-            <p className="text-sm font-light mb-8" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
-              Be the first to discover new arrivals and receive exclusive offers from {theme.storeName}.
+            <h3 className="text-3xl font-light mb-2" style={{ color: 'var(--sf-text)' }}>
+              Members Only
+            </h3>
+            <p
+              className="text-sm font-light mb-8"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+            >
+              Be the first to discover new arrivals and receive exclusive offers from{' '}
+              {theme.storeName}.
             </p>
             <form className="flex gap-0" onSubmit={(e) => e.preventDefault()}>
               <input
@@ -82,33 +97,60 @@ export default function LuxeFooter() {
                   className="h-8 w-auto object-contain mb-3"
                 />
               ) : (
-                <span className="text-xl font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--sf-text)' }}>
+                <span
+                  className="text-xl font-bold tracking-[0.2em] uppercase"
+                  style={{ color: 'var(--sf-text)' }}
+                >
                   {theme.storeName}
                 </span>
               )}
             </Link>
-            
+
             {theme.description && (
-              <p className="text-sm font-light leading-relaxed max-w-sm" style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}>
+              <p
+                className="text-sm font-light leading-relaxed max-w-sm"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}
+              >
                 {theme.description}
               </p>
             )}
 
             {/* Support Concierge Details */}
-            <div className="space-y-1.5 text-xs font-light" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+            <div
+              className="space-y-1.5 text-xs font-light"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}
+            >
               {theme.contactPhone && (
                 <p>
-                  Concierge: <a href={`tel:${theme.contactPhone}`} className="hover:underline" style={{ color: 'var(--sf-primary)' }}>{theme.contactPhone}</a>
+                  Concierge:{' '}
+                  <a
+                    href={`tel:${theme.contactPhone}`}
+                    className="hover:underline"
+                    style={{ color: 'var(--sf-primary)' }}
+                  >
+                    {theme.contactPhone}
+                  </a>
                 </p>
               )}
               {theme.contactEmail && (
                 <p>
-                  Client Services: <a href={`mailto:${theme.contactEmail}`} className="hover:underline" style={{ color: 'var(--sf-primary)' }}>{theme.contactEmail}</a>
+                  Client Services:{' '}
+                  <a
+                    href={`mailto:${theme.contactEmail}`}
+                    className="hover:underline"
+                    style={{ color: 'var(--sf-primary)' }}
+                  >
+                    {theme.contactEmail}
+                  </a>
                 </p>
               )}
               {hasAddress && (
                 <p className="text-[11px]">
-                  Maison: {[theme.addressStreet, theme.addressCity, theme.addressState, theme.addressZip].filter(Boolean).join(', ')} {theme.addressCountry ? `(${theme.addressCountry})` : ''}
+                  Maison:{' '}
+                  {[theme.addressStreet, theme.addressCity, theme.addressState, theme.addressZip]
+                    .filter(Boolean)
+                    .join(', ')}{' '}
+                  {theme.addressCountry ? `(${theme.addressCountry})` : ''}
                 </p>
               )}
             </div>
@@ -150,7 +192,10 @@ export default function LuxeFooter() {
 
           {cmsFooterItems && cmsFooterItems.length > 0 ? (
             <div className="col-span-1 md:col-span-3">
-              <p className="text-xs tracking-[0.2em] uppercase mb-5" style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}>
+              <p
+                className="text-xs tracking-[0.2em] uppercase mb-5"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}
+              >
                 Directory
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -174,17 +219,46 @@ export default function LuxeFooter() {
             </div>
           ) : (
             [
-              { title: 'The Collection', links: [{ l: 'New Arrivals', h: '/products?sort=newest' }, { l: 'Best Sellers', h: '/products?sort=popular' }, { l: 'Collections', h: '/collections' }] },
-              { title: 'Client Services', links: [{ l: 'Contact', h: '/contact' }, { l: 'Shipping', h: '/shipping' }, { l: 'Returns', h: '/returns' }] },
-              { title: 'Legal', links: [{ l: 'Privacy', h: '/privacy' }, { l: 'Terms', h: '/terms' }, { l: 'Cookies', h: '/cookies' }] },
+              {
+                title: 'The Collection',
+                links: [
+                  { l: 'New Arrivals', h: '/products?sort=newest' },
+                  { l: 'Best Sellers', h: '/products?sort=popular' },
+                  { l: 'Collections', h: '/collections' },
+                ],
+              },
+              {
+                title: 'Client Services',
+                links: [
+                  { l: 'Contact', h: '/contact' },
+                  { l: 'Shipping', h: '/shipping' },
+                  { l: 'Returns', h: '/returns' },
+                ],
+              },
+              {
+                title: 'Legal',
+                links: [
+                  { l: 'Privacy', h: '/privacy' },
+                  { l: 'Terms', h: '/terms' },
+                  { l: 'Cookies', h: '/cookies' },
+                ],
+              },
             ].map(({ title, links }) => (
               <div key={title}>
-                <p className="text-xs tracking-[0.2em] uppercase mb-5" style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}>
+                <p
+                  className="text-xs tracking-[0.2em] uppercase mb-5"
+                  style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}
+                >
                   {title}
                 </p>
                 <div className="space-y-3">
                   {links.map(({ l, h }) => (
-                    <Link key={h} href={h} className="block text-sm font-light transition-opacity hover:opacity-50" style={{ color: 'var(--sf-text)' }}>
+                    <Link
+                      key={h}
+                      href={h}
+                      className="block text-sm font-light transition-opacity hover:opacity-50"
+                      style={{ color: 'var(--sf-text)' }}
+                    >
                       {l}
                     </Link>
                   ))}
@@ -201,11 +275,20 @@ export default function LuxeFooter() {
             color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)',
           }}
         >
-          <p>{theme.footerCopyright || `© ${new Date().getFullYear()} ${theme.storeName}. All rights reserved.`}</p>
+          <p>
+            {theme.footerCopyright ||
+              `© ${new Date().getFullYear()} ${theme.storeName}. All rights reserved.`}
+          </p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="hover:opacity-100 transition-opacity">Privacy</Link>
-            <Link href="/terms" className="hover:opacity-100 transition-opacity">Terms</Link>
-            <Link href="/cookies" className="hover:opacity-100 transition-opacity">Cookies</Link>
+            <Link href="/privacy" className="hover:opacity-100 transition-opacity">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:opacity-100 transition-opacity">
+              Terms
+            </Link>
+            <Link href="/cookies" className="hover:opacity-100 transition-opacity">
+              Cookies
+            </Link>
           </div>
         </div>
       </div>

@@ -24,18 +24,31 @@ export default function MincomPLPPage({
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // Active filter state from searchParams
-  const activeCategory = (searchParams.category as string) || (searchParams.categories as string) || '';
+  const activeCategory =
+    (searchParams.category as string) || (searchParams.categories as string) || '';
   const activeBrand = (searchParams.brand as string) || (searchParams.brands as string) || '';
   const activeGender = (searchParams.gender as string) || '';
-  const activeDiscount = searchParams.discount ? Number(searchParams.discount) : (searchParams.minDiscount ? Number(searchParams.minDiscount) : 0);
-  const activeMinPrice = searchParams.minPrice ? Number(searchParams.minPrice) : (filterFacets?.priceRange?.min ?? 0);
-  const activeMaxPrice = searchParams.maxPrice ? Number(searchParams.maxPrice) : (filterFacets?.priceRange?.max ?? 2000);
+  const activeDiscount = searchParams.discount
+    ? Number(searchParams.discount)
+    : searchParams.minDiscount
+      ? Number(searchParams.minDiscount)
+      : 0;
+  const activeMinPrice = searchParams.minPrice
+    ? Number(searchParams.minPrice)
+    : (filterFacets?.priceRange?.min ?? 0);
+  const activeMaxPrice = searchParams.maxPrice
+    ? Number(searchParams.maxPrice)
+    : (filterFacets?.priceRange?.max ?? 2000);
   const activeSort = (searchParams.sort as string) || 'featured';
   const searchQuery = (searchParams.q as string) || (searchParams.search as string) || '';
 
   // Local state for price inputs
-  const [minPriceInput, setMinPriceInput] = useState<string>(searchParams.minPrice?.toString() || '');
-  const [maxPriceInput, setMaxPriceInput] = useState<string>(searchParams.maxPrice?.toString() || '');
+  const [minPriceInput, setMinPriceInput] = useState<string>(
+    searchParams.minPrice?.toString() || '',
+  );
+  const [maxPriceInput, setMaxPriceInput] = useState<string>(
+    searchParams.maxPrice?.toString() || '',
+  );
 
   // Helper to push URL query updates
   const updateUrlFilters = (updates: Record<string, string | number | undefined | null>) => {
@@ -98,7 +111,7 @@ export default function MincomPLPPage({
     activeDiscount > 0 ||
     searchParams.minPrice ||
     searchParams.maxPrice ||
-    searchQuery
+    searchQuery,
   );
 
   // Fallback lists if filterFacets isn't present
@@ -158,7 +171,9 @@ export default function MincomPLPPage({
             </button>
 
             <div className="flex items-center gap-2">
-              <label className="text-xs text-slate-400 font-medium hidden sm:inline">Sort By:</label>
+              <label className="text-xs text-slate-400 font-medium hidden sm:inline">
+                Sort By:
+              </label>
               <select
                 value={activeSort}
                 onChange={(e) => updateUrlFilters({ sort: e.target.value })}
@@ -176,51 +191,86 @@ export default function MincomPLPPage({
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
-        
         {/* Active Filter Chips Row */}
         {hasActiveFilters && (
           <div className="mb-6 p-4 bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center gap-2">
             <span className="text-xs font-bold text-slate-500 mr-2">Active Filters:</span>
-            
+
             {searchQuery && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
                 Search: "{searchQuery}"
-                <button onClick={() => updateUrlFilters({ q: undefined, search: undefined })} className="hover:text-rose-600 font-black">×</button>
+                <button
+                  onClick={() => updateUrlFilters({ q: undefined, search: undefined })}
+                  className="hover:text-rose-600 font-black"
+                >
+                  ×
+                </button>
               </span>
             )}
 
             {activeCategory && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
                 Category: {activeCategory}
-                <button onClick={() => handleCategorySelect(activeCategory)} className="hover:text-rose-600 font-black">×</button>
+                <button
+                  onClick={() => handleCategorySelect(activeCategory)}
+                  className="hover:text-rose-600 font-black"
+                >
+                  ×
+                </button>
               </span>
             )}
 
             {activeBrand && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
                 Brand: {activeBrand}
-                <button onClick={() => handleBrandSelect(activeBrand)} className="hover:text-rose-600 font-black">×</button>
+                <button
+                  onClick={() => handleBrandSelect(activeBrand)}
+                  className="hover:text-rose-600 font-black"
+                >
+                  ×
+                </button>
               </span>
             )}
 
             {activeGender && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
                 Gender: {activeGender.toUpperCase()}
-                <button onClick={() => handleGenderSelect(activeGender)} className="hover:text-rose-600 font-black">×</button>
+                <button
+                  onClick={() => handleGenderSelect(activeGender)}
+                  className="hover:text-rose-600 font-black"
+                >
+                  ×
+                </button>
               </span>
             )}
 
             {activeDiscount > 0 && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
                 {activeDiscount}%+ Off
-                <button onClick={() => handleDiscountSelect(activeDiscount)} className="hover:text-rose-600 font-black">×</button>
+                <button
+                  onClick={() => handleDiscountSelect(activeDiscount)}
+                  className="hover:text-rose-600 font-black"
+                >
+                  ×
+                </button>
               </span>
             )}
 
             {(searchParams.minPrice || searchParams.maxPrice) && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
-                Price: {currencySymbol}{searchParams.minPrice || '0'} - {currencySymbol}{searchParams.maxPrice || '∞'}
-                <button onClick={() => { setMinPriceInput(''); setMaxPriceInput(''); updateUrlFilters({ minPrice: undefined, maxPrice: undefined }); }} className="hover:text-rose-600 font-black">×</button>
+                Price: {currencySymbol}
+                {searchParams.minPrice || '0'} - {currencySymbol}
+                {searchParams.maxPrice || '∞'}
+                <button
+                  onClick={() => {
+                    setMinPriceInput('');
+                    setMaxPriceInput('');
+                    updateUrlFilters({ minPrice: undefined, maxPrice: undefined });
+                  }}
+                  className="hover:text-rose-600 font-black"
+                >
+                  ×
+                </button>
               </span>
             )}
 
@@ -234,17 +284,18 @@ export default function MincomPLPPage({
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
           {/* Desktop Filter Sidebar */}
           <aside className="hidden lg:block lg:col-span-3 space-y-6 sticky top-24">
             <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-6">
-              
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 className="font-black text-sm uppercase tracking-wider text-slate-900 flex items-center gap-2">
                   <span>⚙️</span> Refine Selection
                 </h3>
                 {hasActiveFilters && (
-                  <button onClick={handleClearAll} className="text-xs font-bold text-amber-600 hover:underline">
+                  <button
+                    onClick={handleClearAll}
+                    className="text-xs font-bold text-amber-600 hover:underline"
+                  >
                     Reset
                   </button>
                 )}
@@ -252,12 +303,16 @@ export default function MincomPLPPage({
 
               {/* 1. Gender Filter */}
               <div>
-                <h4 className="font-bold text-xs uppercase tracking-wider mb-2.5 text-slate-700">Gender / Target</h4>
+                <h4 className="font-bold text-xs uppercase tracking-wider mb-2.5 text-slate-700">
+                  Gender / Target
+                </h4>
                 <div className="grid grid-cols-2 gap-1.5">
                   <button
                     onClick={() => updateUrlFilters({ gender: undefined })}
                     className={`py-1.5 px-3 rounded-xl text-xs font-bold transition text-center ${
-                      !activeGender ? 'bg-amber-400 text-slate-950 shadow-sm' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
+                      !activeGender
+                        ? 'bg-amber-400 text-slate-950 shadow-sm'
+                        : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
                     }`}
                   >
                     All
@@ -280,28 +335,37 @@ export default function MincomPLPPage({
 
               {/* 2. Categories / Departments Filter */}
               <div className="pt-4 border-t border-slate-100">
-                <h4 className="font-bold text-xs uppercase tracking-wider mb-3 text-slate-700">Categories</h4>
+                <h4 className="font-bold text-xs uppercase tracking-wider mb-3 text-slate-700">
+                  Categories
+                </h4>
                 <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1 text-xs scrollbar-thin">
                   <button
                     onClick={() => updateUrlFilters({ category: undefined, categories: undefined })}
                     className={`w-full text-left py-1.5 px-3 rounded-xl font-medium transition flex items-center justify-between ${
-                      !activeCategory ? 'bg-amber-400 text-slate-950 font-bold' : 'text-slate-600 hover:bg-slate-50'
+                      !activeCategory
+                        ? 'bg-amber-400 text-slate-950 font-bold'
+                        : 'text-slate-600 hover:bg-slate-50'
                     }`}
                   >
                     <span>All Categories</span>
                   </button>
                   {availableCategories.map((cat) => {
-                    const isSelected = activeCategory.toLowerCase() === (cat.slug || cat.name).toLowerCase();
+                    const isSelected =
+                      activeCategory.toLowerCase() === (cat.slug || cat.name).toLowerCase();
                     return (
                       <button
                         key={cat.id || cat.slug || cat.name}
                         onClick={() => handleCategorySelect(cat.slug || cat.name)}
                         className={`w-full text-left py-1.5 px-3 rounded-xl font-medium transition flex items-center justify-between ${
-                          isSelected ? 'bg-amber-400 text-slate-950 font-bold' : 'text-slate-600 hover:bg-slate-50'
+                          isSelected
+                            ? 'bg-amber-400 text-slate-950 font-bold'
+                            : 'text-slate-600 hover:bg-slate-50'
                         }`}
                       >
                         <span className="truncate">{cat.name}</span>
-                        {cat.count > 0 && <span className="text-[10px] opacity-60">({cat.count})</span>}
+                        {cat.count > 0 && (
+                          <span className="text-[10px] opacity-60">({cat.count})</span>
+                        )}
                       </button>
                     );
                   })}
@@ -311,10 +375,13 @@ export default function MincomPLPPage({
               {/* 3. Brands Filter */}
               {availableBrands.length > 0 && (
                 <div className="pt-4 border-t border-slate-100">
-                  <h4 className="font-bold text-xs uppercase tracking-wider mb-3 text-slate-700">Brands & Makers</h4>
+                  <h4 className="font-bold text-xs uppercase tracking-wider mb-3 text-slate-700">
+                    Brands & Makers
+                  </h4>
                   <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1 text-xs scrollbar-thin">
                     {availableBrands.map((b) => {
-                      const isSelected = activeBrand.toLowerCase() === (b.slug || b.name).toLowerCase();
+                      const isSelected =
+                        activeBrand.toLowerCase() === (b.slug || b.name).toLowerCase();
                       return (
                         <label
                           key={b.id || b.slug || b.name}
@@ -328,7 +395,9 @@ export default function MincomPLPPage({
                             className="w-4 h-4 rounded text-amber-500 focus:ring-amber-400"
                           />
                           <span className="flex-1 text-slate-700 truncate">{b.name}</span>
-                          {b.count > 0 && <span className="text-[10px] text-slate-400">({b.count})</span>}
+                          {b.count > 0 && (
+                            <span className="text-[10px] text-slate-400">({b.count})</span>
+                          )}
                         </label>
                       );
                     })}
@@ -338,11 +407,15 @@ export default function MincomPLPPage({
 
               {/* 4. Price Range Filter */}
               <div className="pt-4 border-t border-slate-100 space-y-3">
-                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700">Price Range</h4>
+                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700">
+                  Price Range
+                </h4>
                 <form onSubmit={handleApplyPriceFilter} className="space-y-2.5">
                   <div className="flex items-center gap-2">
                     <div className="relative flex-1">
-                      <span className="absolute left-3 top-2.5 text-xs text-slate-400">{currencySymbol}</span>
+                      <span className="absolute left-3 top-2.5 text-xs text-slate-400">
+                        {currencySymbol}
+                      </span>
                       <input
                         type="number"
                         placeholder="Min"
@@ -353,7 +426,9 @@ export default function MincomPLPPage({
                     </div>
                     <span className="text-slate-400 font-bold">-</span>
                     <div className="relative flex-1">
-                      <span className="absolute left-3 top-2.5 text-xs text-slate-400">{currencySymbol}</span>
+                      <span className="absolute left-3 top-2.5 text-xs text-slate-400">
+                        {currencySymbol}
+                      </span>
                       <input
                         type="number"
                         placeholder="Max"
@@ -374,7 +449,9 @@ export default function MincomPLPPage({
 
               {/* 5. Discount Filter */}
               <div className="pt-4 border-t border-slate-100">
-                <h4 className="font-bold text-xs uppercase tracking-wider mb-2.5 text-slate-700">Special Discounts</h4>
+                <h4 className="font-bold text-xs uppercase tracking-wider mb-2.5 text-slate-700">
+                  Special Discounts
+                </h4>
                 <div className="space-y-1.5 text-xs">
                   {discountOptions.map((d) => (
                     <button
@@ -392,7 +469,6 @@ export default function MincomPLPPage({
                   ))}
                 </div>
               </div>
-
             </div>
           </aside>
 
@@ -405,7 +481,8 @@ export default function MincomPLPPage({
                 </div>
                 <h3 className="text-xl font-bold text-slate-950 mb-2">No products found</h3>
                 <p className="text-xs text-slate-500 mb-6 max-w-sm mx-auto">
-                  No items matched your current filter criteria. Try clearing some filters or search terms.
+                  No items matched your current filter criteria. Try clearing some filters or search
+                  terms.
                 </p>
                 <button
                   onClick={handleClearAll}
@@ -422,7 +499,6 @@ export default function MincomPLPPage({
               </div>
             )}
           </div>
-
         </div>
       </main>
 
@@ -431,7 +507,9 @@ export default function MincomPLPPage({
         <div className="fixed inset-0 z-50 lg:hidden flex flex-col justify-end bg-black/60 backdrop-blur-sm">
           <div className="bg-white rounded-t-3xl p-6 max-h-[85vh] overflow-y-auto space-y-6 shadow-2xl">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="font-black text-base uppercase tracking-wider text-slate-900">Filters</h3>
+              <h3 className="font-black text-base uppercase tracking-wider text-slate-900">
+                Filters
+              </h3>
               <button
                 onClick={() => setMobileFiltersOpen(false)}
                 className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-black text-slate-700"
@@ -442,7 +520,9 @@ export default function MincomPLPPage({
 
             {/* Gender */}
             <div>
-              <h4 className="font-bold text-xs uppercase tracking-wider mb-2 text-slate-700">Gender</h4>
+              <h4 className="font-bold text-xs uppercase tracking-wider mb-2 text-slate-700">
+                Gender
+              </h4>
               <div className="grid grid-cols-2 gap-1.5">
                 <button
                   onClick={() => updateUrlFilters({ gender: undefined })}
@@ -464,14 +544,18 @@ export default function MincomPLPPage({
 
             {/* Categories */}
             <div>
-              <h4 className="font-bold text-xs uppercase tracking-wider mb-2 text-slate-700">Categories</h4>
+              <h4 className="font-bold text-xs uppercase tracking-wider mb-2 text-slate-700">
+                Categories
+              </h4>
               <div className="grid grid-cols-2 gap-1.5 max-h-40 overflow-y-auto">
                 {availableCategories.map((c) => (
                   <button
                     key={c.name}
                     onClick={() => handleCategorySelect(c.slug || c.name)}
                     className={`py-2 px-2.5 text-left rounded-xl text-xs font-bold truncate ${
-                      activeCategory.toLowerCase() === (c.slug || c.name).toLowerCase() ? 'bg-amber-400 text-slate-950' : 'bg-slate-100'
+                      activeCategory.toLowerCase() === (c.slug || c.name).toLowerCase()
+                        ? 'bg-amber-400 text-slate-950'
+                        : 'bg-slate-100'
                     }`}
                   >
                     {c.name}
@@ -482,7 +566,9 @@ export default function MincomPLPPage({
 
             {/* Discount */}
             <div>
-              <h4 className="font-bold text-xs uppercase tracking-wider mb-2 text-slate-700">Discounts</h4>
+              <h4 className="font-bold text-xs uppercase tracking-wider mb-2 text-slate-700">
+                Discounts
+              </h4>
               <div className="grid grid-cols-2 gap-1.5">
                 {discountOptions.map((d) => (
                   <button

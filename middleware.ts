@@ -14,10 +14,7 @@ import type { NextRequest } from 'next/server';
  * into downstream request headers for Server Components and the API client.
  */
 export function middleware(request: NextRequest) {
-  const host =
-    request.headers.get('x-forwarded-host') ||
-    request.headers.get('host') ||
-    '';
+  const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || '';
 
   // Clean host (strip port and protocol)
   let cleanHost = host.split(':')[0].toLowerCase().trim();

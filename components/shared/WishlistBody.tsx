@@ -57,10 +57,16 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
           style={{ borderColor: 'color-mix(in srgb, var(--sf-text) 10%, transparent)' }}
         >
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: 'var(--sf-text)' }}>
+            <h1
+              className="text-3xl font-extrabold tracking-tight"
+              style={{ color: 'var(--sf-text)' }}
+            >
               My Wishlist
             </h1>
-            <p className="text-sm mt-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}>
+            <p
+              className="text-sm mt-1"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}
+            >
               {wishlistCount} {wishlistCount === 1 ? 'item' : 'items'} saved for later
             </p>
           </div>
@@ -92,8 +98,13 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
             >
               ❤️
             </div>
-            <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--sf-text)' }}>Your wishlist is empty</h2>
-            <p className="text-sm mb-6 max-w-sm mx-auto" style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}>
+            <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--sf-text)' }}>
+              Your wishlist is empty
+            </h2>
+            <p
+              className="text-sm mb-6 max-w-sm mx-auto"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}
+            >
               Save items you love by tapping the heart icon on any product.
             </p>
             <Link
@@ -131,7 +142,12 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
                     aria-label="Remove item"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   </button>
 
@@ -139,7 +155,9 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
                     {/* Image */}
                     <div
                       className="aspect-square overflow-hidden relative"
-                      style={{ backgroundColor: 'color-mix(in srgb, var(--sf-text) 5%, var(--sf-bg))' }}
+                      style={{
+                        backgroundColor: 'color-mix(in srgb, var(--sf-text) 5%, var(--sf-bg))',
+                      }}
                     >
                       {image ? (
                         <Image
@@ -150,14 +168,19 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-4xl opacity-20">🛍️</div>
+                        <div className="w-full h-full flex items-center justify-center text-4xl opacity-20">
+                          🛍️
+                        </div>
                       )}
                     </div>
 
                     {/* Info */}
                     <div className="p-4">
                       {item.brandName && (
-                        <p className="text-xs uppercase tracking-wider font-semibold mb-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+                        <p
+                          className="text-xs uppercase tracking-wider font-semibold mb-1"
+                          style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+                        >
                           {item.brandName}
                         </p>
                       )}
@@ -168,11 +191,17 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
                         {item.name}
                       </h3>
                       <div className="flex items-baseline gap-2">
-                        <span className="text-base font-extrabold" style={{ color: 'var(--sf-primary)' }}>
+                        <span
+                          className="text-base font-extrabold"
+                          style={{ color: 'var(--sf-primary)' }}
+                        >
                           {formatPrice(item.price)}
                         </span>
                         {item.compareAtPrice && (
-                          <span className="text-xs line-through" style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}>
+                          <span
+                            className="text-xs line-through"
+                            style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}
+                          >
                             {formatPrice(item.compareAtPrice)}
                           </span>
                         )}
@@ -183,14 +212,21 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
                   {/* Move to cart */}
                   <div className="p-4 pt-0">
                     {(() => {
-                      const stock = item.stockQuantity !== undefined ? Number(item.stockQuantity) : (item as any).inventory !== undefined ? Number((item as any).inventory) : 1;
+                      const stock =
+                        item.stockQuantity !== undefined
+                          ? Number(item.stockQuantity)
+                          : (item as any).inventory !== undefined
+                            ? Number((item as any).inventory)
+                            : 1;
                       const isOutOfStock = stock <= 0;
                       return (
                         <button
                           onClick={() => handleMoveToCart(item.id)}
                           disabled={movingId === item.id || isOutOfStock}
                           className="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-white shadow transition flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                          style={{ backgroundColor: isOutOfStock ? '#64748b' : 'var(--sf-primary)' }}
+                          style={{
+                            backgroundColor: isOutOfStock ? '#64748b' : 'var(--sf-primary)',
+                          }}
                         >
                           {movingId === item.id ? (
                             'Moving…'
@@ -198,8 +234,18 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
                             'Out of Stock'
                           ) : (
                             <>
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                                />
                               </svg>
                               Move to Cart
                             </>

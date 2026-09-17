@@ -6,9 +6,15 @@ import DefaultFooter from './Footer';
 import DefaultProductCard from './ProductCard';
 import type { HomePageProps } from '@/templates';
 
-export default function DefaultHomePage({ theme, products, collections, categories }: HomePageProps) {
+export default function DefaultHomePage({
+  theme,
+  products,
+  collections,
+  categories,
+}: HomePageProps) {
   const featuredCollections = collections.filter((c) => c.featured).slice(0, 3);
-  const displayCollections = featuredCollections.length > 0 ? featuredCollections : collections.slice(0, 3);
+  const displayCollections =
+    featuredCollections.length > 0 ? featuredCollections : collections.slice(0, 3);
   const newArrivals = products;
 
   return (
@@ -46,7 +52,8 @@ export default function DefaultHomePage({ theme, products, collections, categori
                 New Season Arrivals
               </span>
               <h1 className="text-5xl lg:text-7xl font-bold text-white leading-none tracking-tight mb-6">
-                Shop the<br />
+                Shop the
+                <br />
                 <span
                   className="relative inline-block"
                   style={{ WebkitTextStroke: '2px rgba(255,255,255,0.5)', color: 'transparent' }}
@@ -56,7 +63,8 @@ export default function DefaultHomePage({ theme, products, collections, categori
                 Drops
               </h1>
               <p className="text-lg text-white/70 mb-10 max-w-xl leading-relaxed">
-                Discover thousands of products curated just for you. Free shipping on orders over $50.
+                Discover thousands of products curated just for you. Free shipping on orders over
+                $50.
               </p>
               <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
                 <Link
@@ -112,8 +120,15 @@ export default function DefaultHomePage({ theme, products, collections, categori
                 <div key={badge.title} className="flex items-center gap-3 py-2">
                   <span className="text-2xl flex-shrink-0">{badge.icon}</span>
                   <div>
-                    <p className="text-sm font-semibold" style={{ color: 'var(--sf-text)' }}>{badge.title}</p>
-                    <p className="text-xs" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>{badge.desc}</p>
+                    <p className="text-sm font-semibold" style={{ color: 'var(--sf-text)' }}>
+                      {badge.title}
+                    </p>
+                    <p
+                      className="text-xs"
+                      style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+                    >
+                      {badge.desc}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -132,7 +147,9 @@ export default function DefaultHomePage({ theme, products, collections, categori
                 >
                   Explore
                 </span>
-                <h2 className="text-3xl font-bold" style={{ color: 'var(--sf-text)' }}>Featured Collections</h2>
+                <h2 className="text-3xl font-bold" style={{ color: 'var(--sf-text)' }}>
+                  Featured Collections
+                </h2>
               </div>
               <Link
                 href="/collections"
@@ -152,7 +169,11 @@ export default function DefaultHomePage({ theme, products, collections, categori
                   style={{ minHeight: i === 0 ? '400px' : '190px' }}
                 >
                   {collection.image ? (
-                    <img src={collection.image} alt={collection.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img
+                      src={collection.image}
+                      alt={collection.name}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
                   ) : (
                     <div
                       className="absolute inset-0"
@@ -170,7 +191,10 @@ export default function DefaultHomePage({ theme, products, collections, categori
                       <p className="text-sm text-white/70 line-clamp-2">{collection.description}</p>
                     )}
                     <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-white/90 group-hover:text-white transition-colors">
-                      Shop Collection <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
+                      Shop Collection{' '}
+                      <span className="group-hover:translate-x-1 transition-transform inline-block">
+                        →
+                      </span>
                     </span>
                   </div>
                 </Link>
@@ -235,7 +259,9 @@ export default function DefaultHomePage({ theme, products, collections, categori
               >
                 Just In
               </span>
-              <h2 className="text-3xl font-bold" style={{ color: 'var(--sf-text)' }}>New Arrivals</h2>
+              <h2 className="text-3xl font-bold" style={{ color: 'var(--sf-text)' }}>
+                New Arrivals
+              </h2>
             </div>
             <Link
               href="/products?sort=newest"
@@ -248,7 +274,10 @@ export default function DefaultHomePage({ theme, products, collections, categori
 
           {newArrivals?.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-lg" style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}>
+              <p
+                className="text-lg"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 40%, transparent)' }}
+              >
                 Products coming soon…
               </p>
             </div>
@@ -274,7 +303,8 @@ export default function DefaultHomePage({ theme, products, collections, categori
               <div>
                 <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">Members get more</h2>
                 <p className="text-white/80 mb-8 max-w-md">
-                  Join thousands of shoppers and unlock exclusive deals, early access, and free shipping.
+                  Join thousands of shoppers and unlock exclusive deals, early access, and free
+                  shipping.
                 </p>
                 <Link
                   href="/auth/signup"

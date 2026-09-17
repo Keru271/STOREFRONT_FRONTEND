@@ -68,31 +68,37 @@ export function useAuth(): UseAuthReturn {
     fetchProfile().finally(() => setIsLoading(false));
   }, [fetchProfile]);
 
-  const login = useCallback(async (data: CustomerLoginInput) => {
-    setIsLoading(true);
-    try {
-      const res = await loginCustomer(data);
-      if (res?.accessToken && typeof window !== 'undefined') {
-        localStorage.setItem('customer_token', res.accessToken);
+  const login = useCallback(
+    async (data: CustomerLoginInput) => {
+      setIsLoading(true);
+      try {
+        const res = await loginCustomer(data);
+        if (res?.accessToken && typeof window !== 'undefined') {
+          localStorage.setItem('customer_token', res.accessToken);
+        }
+        await fetchProfile();
+      } finally {
+        setIsLoading(false);
       }
-      await fetchProfile();
-    } finally {
-      setIsLoading(false);
-    }
-  }, [fetchProfile]);
+    },
+    [fetchProfile],
+  );
 
-  const register = useCallback(async (data: CustomerRegisterInput) => {
-    setIsLoading(true);
-    try {
-      const res = await registerCustomer(data);
-      if (res?.accessToken && typeof window !== 'undefined') {
-        localStorage.setItem('customer_token', res.accessToken);
+  const register = useCallback(
+    async (data: CustomerRegisterInput) => {
+      setIsLoading(true);
+      try {
+        const res = await registerCustomer(data);
+        if (res?.accessToken && typeof window !== 'undefined') {
+          localStorage.setItem('customer_token', res.accessToken);
+        }
+        await fetchProfile();
+      } finally {
+        setIsLoading(false);
       }
-      await fetchProfile();
-    } finally {
-      setIsLoading(false);
-    }
-  }, [fetchProfile]);
+    },
+    [fetchProfile],
+  );
 
   const logout = useCallback(async () => {
     setIsLoading(true);
@@ -121,44 +127,60 @@ export function useAuth(): UseAuthReturn {
   const addAddress = useCallback(async (data: CustomerAddress) => {
     const res = await apiAddAddress(data);
     if (res.addresses) {
-      setCustomer((prev) => prev ? {
-        ...prev,
-        addresses: res.addresses,
-        address: res.addresses.find(a => a.isDefault) || res.addresses[0] || null,
-      } : null);
+      setCustomer((prev) =>
+        prev
+          ? {
+              ...prev,
+              addresses: res.addresses,
+              address: res.addresses.find((a) => a.isDefault) || res.addresses[0] || null,
+            }
+          : null,
+      );
     }
   }, []);
 
   const updateAddress = useCallback(async (id: string, data: Partial<CustomerAddress>) => {
     const res = await apiUpdateAddress(id, data);
     if (res.addresses) {
-      setCustomer((prev) => prev ? {
-        ...prev,
-        addresses: res.addresses,
-        address: res.addresses.find(a => a.isDefault) || res.addresses[0] || null,
-      } : null);
+      setCustomer((prev) =>
+        prev
+          ? {
+              ...prev,
+              addresses: res.addresses,
+              address: res.addresses.find((a) => a.isDefault) || res.addresses[0] || null,
+            }
+          : null,
+      );
     }
   }, []);
 
   const deleteAddress = useCallback(async (id: string) => {
     const res = await apiDeleteAddress(id);
     if (res.addresses) {
-      setCustomer((prev) => prev ? {
-        ...prev,
-        addresses: res.addresses,
-        address: res.addresses.find(a => a.isDefault) || res.addresses[0] || null,
-      } : null);
+      setCustomer((prev) =>
+        prev
+          ? {
+              ...prev,
+              addresses: res.addresses,
+              address: res.addresses.find((a) => a.isDefault) || res.addresses[0] || null,
+            }
+          : null,
+      );
     }
   }, []);
 
   const setDefaultAddress = useCallback(async (id: string) => {
     const res = await apiSetDefaultAddress(id);
     if (res.addresses) {
-      setCustomer((prev) => prev ? {
-        ...prev,
-        addresses: res.addresses,
-        address: res.addresses.find(a => a.isDefault) || res.addresses[0] || null,
-      } : null);
+      setCustomer((prev) =>
+        prev
+          ? {
+              ...prev,
+              addresses: res.addresses,
+              address: res.addresses.find((a) => a.isDefault) || res.addresses[0] || null,
+            }
+          : null,
+      );
     }
   }, []);
 
@@ -167,7 +189,8 @@ export function useAuth(): UseAuthReturn {
   }, [fetchProfile]);
 
   const addresses = customer?.addresses || (customer?.address ? [customer.address] : []);
-  const defaultAddress = customer?.address || addresses.find(a => a.isDefault) || addresses[0] || null;
+  const defaultAddress =
+    customer?.address || addresses.find((a) => a.isDefault) || addresses[0] || null;
 
   return {
     customer,
@@ -187,4 +210,3 @@ export function useAuth(): UseAuthReturn {
     refreshProfile,
   };
 }
-

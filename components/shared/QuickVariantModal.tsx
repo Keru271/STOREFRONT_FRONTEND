@@ -49,21 +49,32 @@ export default function QuickVariantModal({ isOpen, onClose, product }: QuickVar
   const selectedVariant: ProductVariant | undefined =
     variants.find((v) => v.id === selectedVariantId) || variants[0];
 
-  const activePrice = selectedVariant?.price != null ? Number(selectedVariant.price) : Number(product.price);
-  const activeCompareAtPrice = selectedVariant?.compareAtPrice != null
-    ? Number(selectedVariant.compareAtPrice)
-    : product.compareAtPrice ? Number(product.compareAtPrice) : null;
-  const stock = selectedVariant?.inventory != null
-    ? Number(selectedVariant.inventory)
-    : (product.stockQuantity !== undefined ? Number(product.stockQuantity) : product.inventory !== undefined ? Number(product.inventory) : 1);
+  const activePrice =
+    selectedVariant?.price != null ? Number(selectedVariant.price) : Number(product.price);
+  const activeCompareAtPrice =
+    selectedVariant?.compareAtPrice != null
+      ? Number(selectedVariant.compareAtPrice)
+      : product.compareAtPrice
+        ? Number(product.compareAtPrice)
+        : null;
+  const stock =
+    selectedVariant?.inventory != null
+      ? Number(selectedVariant.inventory)
+      : product.stockQuantity !== undefined
+        ? Number(product.stockQuantity)
+        : product.inventory !== undefined
+          ? Number(product.inventory)
+          : 1;
   const isOutOfStock = stock <= 0;
   const activeSku = selectedVariant?.sku || product.sku;
 
-  const discount = activeCompareAtPrice && activeCompareAtPrice > activePrice
-    ? Math.round(((activeCompareAtPrice - activePrice) / activeCompareAtPrice) * 100)
-    : 0;
+  const discount =
+    activeCompareAtPrice && activeCompareAtPrice > activePrice
+      ? Math.round(((activeCompareAtPrice - activePrice) / activeCompareAtPrice) * 100)
+      : 0;
 
-  const displayImage = selectedVariant?.image || product.image || (product.images && product.images[0]);
+  const displayImage =
+    selectedVariant?.image || product.image || (product.images && product.images[0]);
   const productHref = `/products/${product.urlSlug || product.id}`;
 
   const handleAdd = async () => {
@@ -80,7 +91,7 @@ export default function QuickVariantModal({ isOpen, onClose, product }: QuickVar
       });
       toast.success(
         `Added ${quantity}x "${selectedVariant?.name || product.name}" to your shopping bag.`,
-        'Option Added'
+        'Option Added',
       );
       onClose();
     } catch (err: any) {
@@ -162,7 +173,10 @@ export default function QuickVariantModal({ isOpen, onClose, product }: QuickVar
 
             <div className="space-y-1 min-w-0 flex-1">
               <div className="flex items-baseline gap-2">
-                <span className="text-xl font-extrabold font-mono" style={{ color: 'var(--sf-primary)' }}>
+                <span
+                  className="text-xl font-extrabold font-mono"
+                  style={{ color: 'var(--sf-primary)' }}
+                >
                   {formatPrice(activePrice)}
                 </span>
                 {activeCompareAtPrice && activeCompareAtPrice > activePrice && (
@@ -185,20 +199,22 @@ export default function QuickVariantModal({ isOpen, onClose, product }: QuickVar
 
               <div className="flex items-center gap-3 text-xs">
                 {activeSku && (
-                  <span className="font-mono opacity-60 text-[11px]">
-                    SKU: {activeSku}
-                  </span>
+                  <span className="font-mono opacity-60 text-[11px]">SKU: {activeSku}</span>
                 )}
                 <span
                   className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                     isOutOfStock
                       ? 'bg-rose-500/15 text-rose-600'
                       : stock <= 5
-                      ? 'bg-amber-500/15 text-amber-600'
-                      : 'bg-emerald-500/15 text-emerald-600'
+                        ? 'bg-amber-500/15 text-amber-600'
+                        : 'bg-emerald-500/15 text-emerald-600'
                   }`}
                 >
-                  {isOutOfStock ? 'Sold Out' : stock <= 5 ? `Only ${stock} left` : `✓ In Stock (${stock})`}
+                  {isOutOfStock
+                    ? 'Sold Out'
+                    : stock <= 5
+                      ? `Only ${stock} left`
+                      : `✓ In Stock (${stock})`}
                 </span>
               </div>
             </div>
@@ -230,9 +246,7 @@ export default function QuickVariantModal({ isOpen, onClose, product }: QuickVar
                         }
                       }}
                       className={`p-3 rounded-2xl border text-left transition flex items-center justify-between gap-2 cursor-pointer ${
-                        isSelected
-                          ? 'ring-2 shadow-sm'
-                          : 'hover:border-primary/40'
+                        isSelected ? 'ring-2 shadow-sm' : 'hover:border-primary/40'
                       } ${isVOut ? 'opacity-55' : ''}`}
                       style={{
                         backgroundColor: isSelected
@@ -245,7 +259,10 @@ export default function QuickVariantModal({ isOpen, onClose, product }: QuickVar
                       }}
                     >
                       <div className="min-w-0">
-                        <div className="text-xs font-bold truncate" style={{ color: 'var(--sf-text)' }}>
+                        <div
+                          className="text-xs font-bold truncate"
+                          style={{ color: 'var(--sf-text)' }}
+                        >
                           {v.name}
                         </div>
                         <div className="text-[11px] font-mono mt-0.5 opacity-70">
@@ -259,13 +276,14 @@ export default function QuickVariantModal({ isOpen, onClose, product }: QuickVar
                             Sold Out
                           </span>
                         ) : isSelected ? (
-                          <span className="text-sm font-black" style={{ color: 'var(--sf-primary)' }}>
+                          <span
+                            className="text-sm font-black"
+                            style={{ color: 'var(--sf-primary)' }}
+                          >
                             ✓
                           </span>
                         ) : (
-                          <span className="text-[10px] opacity-60">
-                            {vStock} in stock
-                          </span>
+                          <span className="text-[10px] opacity-60">{vStock} in stock</span>
                         )}
                       </div>
                     </button>
@@ -277,9 +295,7 @@ export default function QuickVariantModal({ isOpen, onClose, product }: QuickVar
 
           {/* Quantity Controls */}
           <div className="flex items-center justify-between pt-2">
-            <span className="text-xs font-bold uppercase tracking-wider opacity-70">
-              Quantity
-            </span>
+            <span className="text-xs font-bold uppercase tracking-wider opacity-70">Quantity</span>
 
             <div
               className="flex items-center rounded-2xl p-1 border"

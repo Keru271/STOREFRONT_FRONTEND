@@ -28,13 +28,13 @@ import {
 
 function OrderStatusBadge({ status }: { status?: string }) {
   const statusMap: Record<string, { label: string; color: string; bg: string }> = {
-    CONFIRMED:   { label: 'Confirmed',   color: '#0284c7', bg: '#e0f2fe' },
-    PENDING:     { label: 'Pending',     color: '#92400e', bg: '#fef3c7' },
-    PROCESSING:  { label: 'Processing',  color: '#1e40af', bg: '#dbeafe' },
-    SHIPPED:     { label: 'Shipped',     color: '#065f46', bg: '#d1fae5' },
-    DELIVERED:   { label: 'Delivered',   color: '#14532d', bg: '#bbf7d0' },
-    CANCELLED:   { label: 'Cancelled',   color: '#991b1b', bg: '#fee2e2' },
-    REFUNDED:    { label: 'Refunded',    color: '#6b21a8', bg: '#f3e8ff' },
+    CONFIRMED: { label: 'Confirmed', color: '#0284c7', bg: '#e0f2fe' },
+    PENDING: { label: 'Pending', color: '#92400e', bg: '#fef3c7' },
+    PROCESSING: { label: 'Processing', color: '#1e40af', bg: '#dbeafe' },
+    SHIPPED: { label: 'Shipped', color: '#065f46', bg: '#d1fae5' },
+    DELIVERED: { label: 'Delivered', color: '#14532d', bg: '#bbf7d0' },
+    CANCELLED: { label: 'Cancelled', color: '#991b1b', bg: '#fee2e2' },
+    REFUNDED: { label: 'Refunded', color: '#6b21a8', bg: '#f3e8ff' },
   };
   const key = (status || '').toUpperCase();
   const s = statusMap[key] || { label: status || 'Unknown', color: '#374151', bg: '#f3f4f6' };
@@ -208,7 +208,11 @@ export default function AccountOrderDetailPage() {
                       className="p-1 text-slate-400 hover:text-slate-600 transition"
                       title="Copy AWB Number"
                     >
-                      {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                      {isCopied ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -222,7 +226,8 @@ export default function AccountOrderDetailPage() {
                       : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-200 animate-pulse'
                   }`}
                 >
-                  {trackingData?.currentStatus || (order.fulfillmentStatus === 'DELIVERED' ? 'DELIVERED' : 'IN_TRANSIT')}
+                  {trackingData?.currentStatus ||
+                    (order.fulfillmentStatus === 'DELIVERED' ? 'DELIVERED' : 'IN_TRANSIT')}
                 </span>
                 <a
                   href={`https://shiprocket.co/tracking/${order.trackingNumber}`}
@@ -238,7 +243,11 @@ export default function AccountOrderDetailPage() {
             {/* 5-Step Milestone Progress Stepper */}
             <div>
               {(() => {
-                const currentStatus = (trackingData?.currentStatus || order.fulfillmentStatus || 'IN_TRANSIT').toUpperCase();
+                const currentStatus = (
+                  trackingData?.currentStatus ||
+                  order.fulfillmentStatus ||
+                  'IN_TRANSIT'
+                ).toUpperCase();
                 const steps = [
                   { key: 'MANIFESTED', label: 'Order Manifested' },
                   { key: 'PICKED_UP', label: 'Picked Up' },
@@ -246,7 +255,13 @@ export default function AccountOrderDetailPage() {
                   { key: 'OUT_FOR_DELIVERY', label: 'Out for Delivery' },
                   { key: 'DELIVERED', label: 'Delivered' },
                 ];
-                const statusOrder = ['MANIFESTED', 'PICKED_UP', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'DELIVERED'];
+                const statusOrder = [
+                  'MANIFESTED',
+                  'PICKED_UP',
+                  'IN_TRANSIT',
+                  'OUT_FOR_DELIVERY',
+                  'DELIVERED',
+                ];
                 const currentIndex = Math.max(0, statusOrder.indexOf(currentStatus));
 
                 return (
@@ -255,7 +270,10 @@ export default function AccountOrderDetailPage() {
                       const isComplete = idx <= currentIndex;
                       const isCurrent = idx === currentIndex;
                       return (
-                        <div key={step.key} className="flex flex-col items-center text-center space-y-2">
+                        <div
+                          key={step.key}
+                          className="flex flex-col items-center text-center space-y-2"
+                        >
                           <div
                             className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                               isComplete
@@ -297,7 +315,14 @@ export default function AccountOrderDetailPage() {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs">
                         <span className="font-bold text-slate-900 dark:text-white">{ev.title}</span>
                         <span className="text-[10px] text-slate-400">
-                          {ev.timestamp ? new Date(ev.timestamp).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
+                          {ev.timestamp
+                            ? new Date(ev.timestamp).toLocaleDateString([], {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })
+                            : ''}
                         </span>
                       </div>
                       <span className="text-[11px] text-slate-500 block">{ev.location}</span>
@@ -362,12 +387,18 @@ export default function AccountOrderDetailPage() {
           <div className="p-6 bg-slate-50/70 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 space-y-2.5">
             <div className="flex justify-between text-xs text-slate-500">
               <span>Subtotal</span>
-              <span>{formatCurrency(order.subtotalAmount || order.totalAmount, order.currency)}</span>
+              <span>
+                {formatCurrency(order.subtotalAmount || order.totalAmount, order.currency)}
+              </span>
             </div>
             {order.shippingAmount !== undefined && order.shippingAmount !== null && (
               <div className="flex justify-between text-xs text-slate-500">
                 <span>Shipping</span>
-                <span>{order.shippingAmount === 0 ? 'Free' : formatCurrency(order.shippingAmount, order.currency)}</span>
+                <span>
+                  {order.shippingAmount === 0
+                    ? 'Free'
+                    : formatCurrency(order.shippingAmount, order.currency)}
+                </span>
               </div>
             )}
             {order.taxAmount !== undefined && order.taxAmount !== null && (
@@ -400,7 +431,9 @@ export default function AccountOrderDetailPage() {
                 {address.street || address.address1 || ''}
               </p>
               <p className="text-xs text-slate-600 dark:text-slate-400">
-                {[address.city, address.state, address.zip, address.country].filter(Boolean).join(', ')}
+                {[address.city, address.state, address.zip, address.country]
+                  .filter(Boolean)
+                  .join(', ')}
               </p>
               {address.phone && (
                 <p className="text-xs text-slate-500 mt-2">Phone: {address.phone}</p>
@@ -415,9 +448,7 @@ export default function AccountOrderDetailPage() {
               <p className="text-sm font-bold text-slate-900 dark:text-white">
                 {order.paymentStatus === 'PAID' ? 'Online Payment Verified' : order.paymentStatus}
               </p>
-              <p className="text-xs text-slate-500">
-                Customer Email: {order.customerEmail}
-              </p>
+              <p className="text-xs text-slate-500">Customer Email: {order.customerEmail}</p>
               <div className="pt-2">
                 <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                   <CheckCircle2 className="w-3.5 h-3.5" /> Transaction Processed

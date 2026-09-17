@@ -27,7 +27,6 @@ export default function FunoForgotPasswordPage({ theme }: AuthPageProps) {
 
       <main className="flex-1 flex items-center justify-center py-16 px-4 sm:px-6">
         <div className="w-full max-w-md bg-white border border-[#eaeaea] rounded-3xl p-8 sm:p-10 shadow-xl text-center">
-          
           <div className="flex justify-center mb-6">
             <FunoLogo className="h-9" />
           </div>
@@ -42,7 +41,8 @@ export default function FunoForgotPasswordPage({ theme }: AuthPageProps) {
           {submitted ? (
             <div className="space-y-6">
               <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold rounded-2xl">
-                ✓ If an account exists for <strong className="text-slate-900">{email}</strong>, a password reset link has been dispatched.
+                ✓ If an account exists for <strong className="text-slate-900">{email}</strong>, a
+                password reset link has been dispatched.
               </div>
               <Link
                 href="/auth/login"

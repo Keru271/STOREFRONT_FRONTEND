@@ -210,7 +210,8 @@ export function ForgotPasswordBody({
     }
   };
 
-  const primaryBtnClass = buttonClassName || 'btn-primary font-bold text-xs shadow-md hover:shadow-lg';
+  const primaryBtnClass =
+    buttonClassName || 'btn-primary font-bold text-xs shadow-md hover:shadow-lg';
 
   return (
     <div className="w-full max-w-md mx-auto my-auto py-10 px-4">
@@ -218,7 +219,9 @@ export function ForgotPasswordBody({
         className={`rounded-3xl p-6 sm:p-8 shadow-xl border ${cardClassName}`}
         style={{
           backgroundColor: cardClassName ? undefined : 'var(--sf-bg)',
-          borderColor: cardClassName ? undefined : 'color-mix(in srgb, var(--sf-text) 12%, transparent)',
+          borderColor: cardClassName
+            ? undefined
+            : 'color-mix(in srgb, var(--sf-text) 12%, transparent)',
           borderRadius: 'var(--sf-radius)',
         }}
       >
@@ -237,8 +240,8 @@ export function ForgotPasswordBody({
                     step === num
                       ? 'var(--sf-primary)'
                       : step > num
-                      ? '#10b981'
-                      : 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
+                        ? '#10b981'
+                        : 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
                   color: step === num || step > num ? '#ffffff' : 'var(--sf-text)',
                 }}
               >
@@ -279,17 +282,27 @@ export function ForgotPasswordBody({
               >
                 🔒
               </div>
-              <h2 className="text-xl font-bold tracking-tight font-heading" style={{ color: 'var(--sf-text)' }}>
+              <h2
+                className="text-xl font-bold tracking-tight font-heading"
+                style={{ color: 'var(--sf-text)' }}
+              >
                 Forgot Password?
               </h2>
-              <p className="text-xs mt-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 55%, transparent)' }}>
-                Enter your registered email address and we&apos;ll send you a 6-digit verification code.
+              <p
+                className="text-xs mt-1"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 55%, transparent)' }}
+              >
+                Enter your registered email address and we&apos;ll send you a 6-digit verification
+                code.
               </p>
             </div>
 
             <form onSubmit={handleSendOtp} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--sf-text)' }}>
+                <label
+                  className="block text-xs font-bold mb-1.5 uppercase tracking-wider"
+                  style={{ color: 'var(--sf-text)' }}
+                >
                   Email Address
                 </label>
                 <input
@@ -312,9 +325,16 @@ export function ForgotPasswordBody({
               </button>
             </form>
 
-            <div className="mt-6 text-center text-xs" style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}>
+            <div
+              className="mt-6 text-center text-xs"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 50%, transparent)' }}
+            >
               Remember your password?{' '}
-              <Link href="/auth/login" className="font-bold hover:underline" style={{ color: 'var(--sf-primary)' }}>
+              <Link
+                href="/auth/login"
+                className="font-bold hover:underline"
+                style={{ color: 'var(--sf-primary)' }}
+              >
                 Sign In
               </Link>
             </div>
@@ -335,10 +355,16 @@ export function ForgotPasswordBody({
               >
                 ✉️
               </div>
-              <h2 className="text-xl font-bold tracking-tight font-heading" style={{ color: 'var(--sf-text)' }}>
+              <h2
+                className="text-xl font-bold tracking-tight font-heading"
+                style={{ color: 'var(--sf-text)' }}
+              >
                 Verify OTP Code
               </h2>
-              <p className="text-xs mt-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 55%, transparent)' }}>
+              <p
+                className="text-xs mt-1"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 55%, transparent)' }}
+              >
                 We sent a 6-digit code to{' '}
                 <strong style={{ color: 'var(--sf-text)' }}>{email}</strong>
               </p>
@@ -371,7 +397,9 @@ export function ForgotPasswordBody({
                 {otpDigits.map((digit, idx) => (
                   <input
                     key={idx}
-                    ref={(el) => { digitInputRefs.current[idx] = el; }}
+                    ref={(el) => {
+                      digitInputRefs.current[idx] = el;
+                    }}
                     type="text"
                     inputMode="numeric"
                     maxLength={6}
@@ -412,9 +440,7 @@ export function ForgotPasswordBody({
                   Resend Code
                 </button>
               ) : (
-                <span className="font-mono opacity-60">
-                  Resend in {countdown}s
-                </span>
+                <span className="font-mono opacity-60">Resend in {countdown}s</span>
               )}
             </div>
           </div>
@@ -434,17 +460,26 @@ export function ForgotPasswordBody({
               >
                 🔑
               </div>
-              <h2 className="text-xl font-bold tracking-tight font-heading" style={{ color: 'var(--sf-text)' }}>
+              <h2
+                className="text-xl font-bold tracking-tight font-heading"
+                style={{ color: 'var(--sf-text)' }}
+              >
                 Create New Password
               </h2>
-              <p className="text-xs mt-1" style={{ color: 'color-mix(in srgb, var(--sf-text) 55%, transparent)' }}>
+              <p
+                className="text-xs mt-1"
+                style={{ color: 'color-mix(in srgb, var(--sf-text) 55%, transparent)' }}
+              >
                 Choose a strong password with at least 6 characters.
               </p>
             </div>
 
             <form onSubmit={handleResetPassword} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--sf-text)' }}>
+                <label
+                  className="block text-xs font-bold mb-1.5 uppercase tracking-wider"
+                  style={{ color: 'var(--sf-text)' }}
+                >
                   New Password
                 </label>
                 <div className="relative">
@@ -468,7 +503,10 @@ export function ForgotPasswordBody({
               </div>
 
               <div>
-                <label className="block text-xs font-bold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--sf-text)' }}>
+                <label
+                  className="block text-xs font-bold mb-1.5 uppercase tracking-wider"
+                  style={{ color: 'var(--sf-text)' }}
+                >
                   Confirm New Password
                 </label>
                 <input
@@ -498,11 +536,18 @@ export function ForgotPasswordBody({
             <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-black shadow-md animate-bounce">
               ✓
             </div>
-            <h2 className="text-2xl font-bold tracking-tight font-heading" style={{ color: 'var(--sf-text)' }}>
+            <h2
+              className="text-2xl font-bold tracking-tight font-heading"
+              style={{ color: 'var(--sf-text)' }}
+            >
               Password Reset!
             </h2>
-            <p className="text-xs max-w-xs mx-auto leading-relaxed" style={{ color: 'color-mix(in srgb, var(--sf-text) 55%, transparent)' }}>
-              Your password has been successfully updated. You can now log into your account with your new credentials.
+            <p
+              className="text-xs max-w-xs mx-auto leading-relaxed"
+              style={{ color: 'color-mix(in srgb, var(--sf-text) 55%, transparent)' }}
+            >
+              Your password has been successfully updated. You can now log into your account with
+              your new credentials.
             </p>
             <button
               onClick={() => router.push('/auth/login')}
@@ -512,7 +557,6 @@ export function ForgotPasswordBody({
             </button>
           </div>
         )}
-
       </div>
     </div>
   );

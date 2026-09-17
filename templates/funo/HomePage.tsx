@@ -9,10 +9,34 @@ import FunoProductCard from './ProductCard';
 import type { HomePageProps } from '@/templates';
 
 const CATEGORY_TILES = [
-  { name: 'Living Room', desc: 'Sofas, Lounges & Coffee Tables', query: 'living-room', image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Bedroom Suites', desc: 'Minimalist Bed Frames & Nightstands', query: 'bedroom', image: 'https://images.unsplash.com/photo-1540518614846-7ede433c4550?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Dining & Kitchen', desc: 'Solid Oak Tables & Dining Chairs', query: 'dining', image: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Designer Lighting', desc: 'Pendants, Lamps & Ambient Fixtures', query: 'lighting', image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=600&q=80' },
+  {
+    name: 'Living Room',
+    desc: 'Sofas, Lounges & Coffee Tables',
+    query: 'living-room',
+    image:
+      'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    name: 'Bedroom Suites',
+    desc: 'Minimalist Bed Frames & Nightstands',
+    query: 'bedroom',
+    image:
+      'https://images.unsplash.com/photo-1540518614846-7ede433c4550?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    name: 'Dining & Kitchen',
+    desc: 'Solid Oak Tables & Dining Chairs',
+    query: 'dining',
+    image:
+      'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    name: 'Designer Lighting',
+    desc: 'Pendants, Lamps & Ambient Fixtures',
+    query: 'lighting',
+    image:
+      'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=600&q=80',
+  },
 ];
 
 export default function FunoHomePage({ theme, products, collections, categories }: HomePageProps) {
@@ -20,7 +44,8 @@ export default function FunoHomePage({ theme, products, collections, categories 
 
   const filteredProducts = products.filter((p) => {
     if (selectedFilter === 'new') return true;
-    if (selectedFilter === 'featured') return Boolean(p.compareAtPrice && p.compareAtPrice > p.price);
+    if (selectedFilter === 'featured')
+      return Boolean(p.compareAtPrice && p.compareAtPrice > p.price);
     return true;
   });
 
@@ -29,11 +54,9 @@ export default function FunoHomePage({ theme, products, collections, categories 
       <FunoHeader />
 
       <main className="flex-1">
-        
         {/* ── 1. Hero Showcase Banner ──────────────────────────────────── */}
         <section className="relative overflow-hidden bg-[#f4f2ee] min-h-[580px] sm:min-h-[660px] flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
             {/* Left Hero Content */}
             <div className="lg:col-span-6 space-y-6 z-10">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#e0ded8] shadow-xs text-xs font-bold text-slate-800">
@@ -46,7 +69,8 @@ export default function FunoHomePage({ theme, products, collections, categories 
               </h1>
 
               <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-lg">
-                Thoughtfully engineered silhouettes crafted from solid European oak, natural bouclé, and artisanal ceramics.
+                Thoughtfully engineered silhouettes crafted from solid European oak, natural bouclé,
+                and artisanal ceramics.
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-4">
@@ -102,13 +126,16 @@ export default function FunoHomePage({ theme, products, collections, categories 
                   />
                 </div>
                 <div>
-                  <div className="text-[10px] font-black uppercase text-orange-500">Editor's Pick</div>
-                  <div className="text-xs font-bold text-slate-900 truncate">Oslo Lounge Armchair</div>
+                  <div className="text-[10px] font-black uppercase text-orange-500">
+                    Editor's Pick
+                  </div>
+                  <div className="text-xs font-bold text-slate-900 truncate">
+                    Oslo Lounge Armchair
+                  </div>
                   <div className="text-xs font-black text-slate-900">$480.00</div>
                 </div>
               </div>
             </div>
-
           </div>
         </section>
 
@@ -155,7 +182,6 @@ export default function FunoHomePage({ theme, products, collections, categories 
         {/* ── 3. Featured & Trending Products ──────────────────────────── */}
         <section className="py-16 bg-[#fafafa] border-y border-slate-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-            
             {/* Header & Filter Tabs */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
               <div className="space-y-1">
@@ -207,14 +233,12 @@ export default function FunoHomePage({ theme, products, collections, categories 
                 <span>→</span>
               </Link>
             </div>
-
           </div>
         </section>
 
         {/* ── 4. Split Lookbook Promotional Banner ─────────────────────── */}
         <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl bg-[#1c1c1c] text-white overflow-hidden shadow-2xl grid grid-cols-1 lg:grid-cols-12 items-center">
-            
             <div className="lg:col-span-6 p-8 sm:p-14 space-y-6">
               <span className="px-3 py-1 rounded-full bg-orange-500 text-white font-black text-[10px] uppercase tracking-wider inline-block">
                 Artisan Collaboration
@@ -223,7 +247,9 @@ export default function FunoHomePage({ theme, products, collections, categories 
                 Crafted by Master Joiners in Småland, Sweden.
               </h2>
               <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                Every dining surface and armchair is shaped by hand using traditional mortise-and-tenon joints, protected with organic beeswax, and inspected individually.
+                Every dining surface and armchair is shaped by hand using traditional
+                mortise-and-tenon joints, protected with organic beeswax, and inspected
+                individually.
               </p>
               <div className="pt-2">
                 <Link
@@ -242,7 +268,6 @@ export default function FunoHomePage({ theme, products, collections, categories 
                 className="w-full h-full object-cover min-h-[380px]"
               />
             </div>
-
           </div>
         </section>
 
@@ -250,22 +275,44 @@ export default function FunoHomePage({ theme, products, collections, categories 
         <section className="py-14 border-t border-slate-100 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { icon: '🚚', title: 'White-Glove Shipping', desc: 'Room-of-choice placement and packaging removal included.' },
-              { icon: '🌿', title: 'Certified Sustainable', desc: '100% FSC-certified timber and non-toxic plant-based finishes.' },
-              { icon: '🛡️', title: '5-Year Frame Guarantee', desc: 'Engineered with solid joinery built to last generations.' },
-              { icon: '↩️', title: '30-Day In-Home Trial', desc: 'Live with your pieces risk-free with straightforward returns.' },
+              {
+                icon: '🚚',
+                title: 'White-Glove Shipping',
+                desc: 'Room-of-choice placement and packaging removal included.',
+              },
+              {
+                icon: '🌿',
+                title: 'Certified Sustainable',
+                desc: '100% FSC-certified timber and non-toxic plant-based finishes.',
+              },
+              {
+                icon: '🛡️',
+                title: '5-Year Frame Guarantee',
+                desc: 'Engineered with solid joinery built to last generations.',
+              },
+              {
+                icon: '↩️',
+                title: '30-Day In-Home Trial',
+                desc: 'Live with your pieces risk-free with straightforward returns.',
+              },
             ].map((prop, idx) => (
-              <div key={idx} className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                <span className="text-3xl p-2 rounded-xl bg-white shadow-2xs shrink-0">{prop.icon}</span>
+              <div
+                key={idx}
+                className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100"
+              >
+                <span className="text-3xl p-2 rounded-xl bg-white shadow-2xs shrink-0">
+                  {prop.icon}
+                </span>
                 <div>
-                  <h4 className="font-bold text-xs text-slate-900 uppercase tracking-wide">{prop.title}</h4>
+                  <h4 className="font-bold text-xs text-slate-900 uppercase tracking-wide">
+                    {prop.title}
+                  </h4>
                   <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">{prop.desc}</p>
                 </div>
               </div>
             ))}
           </div>
         </section>
-
       </main>
 
       <FunoFooter />

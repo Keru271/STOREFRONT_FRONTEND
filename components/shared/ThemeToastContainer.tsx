@@ -87,15 +87,17 @@ export function ThemeToastContainer() {
                 t.type === 'success'
                   ? 'bg-[#30d158] shadow-[0_0_8px_#30d158]'
                   : t.type === 'error'
-                  ? 'bg-[#ff453a] shadow-[0_0_8px_#ff453a]'
-                  : t.type === 'warning'
-                  ? 'bg-[#ffd60a] shadow-[0_0_8px_#ffd60a]'
-                  : 'bg-[#0a84ff] shadow-[0_0_8px_#0a84ff]'
+                    ? 'bg-[#ff453a] shadow-[0_0_8px_#ff453a]'
+                    : t.type === 'warning'
+                      ? 'bg-[#ffd60a] shadow-[0_0_8px_#ffd60a]'
+                      : 'bg-[#0a84ff] shadow-[0_0_8px_#0a84ff]'
               }`}
             />
             <div className="flex-1 min-w-0 text-left">
               <span className="text-[13px] font-normal text-slate-100 truncate block">
-                {t.title ? <strong className="font-semibold text-white mr-1.5">{t.title}:</strong> : null}
+                {t.title ? (
+                  <strong className="font-semibold text-white mr-1.5">{t.title}:</strong>
+                ) : null}
                 {t.message}
               </span>
             </div>
@@ -227,10 +229,10 @@ export function ThemeToastContainer() {
                   t.type === 'success'
                     ? '#10b981'
                     : t.type === 'error'
-                    ? '#ef4444'
-                    : t.type === 'warning'
-                    ? '#f59e0b'
-                    : 'var(--sf-primary)',
+                      ? '#ef4444'
+                      : t.type === 'warning'
+                        ? '#f59e0b'
+                        : 'var(--sf-primary)',
               }}
             >
               {t.type === 'success' && '✓'}

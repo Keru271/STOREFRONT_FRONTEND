@@ -9,7 +9,17 @@ import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useLoader } from '@/hooks/useLoader';
 import { validateCoupon } from '@/lib/api';
-import { Plus, Minus, Trash2, ArrowRight, ShoppingBag, ArrowLeft, Tag, ShieldCheck, Check } from 'lucide-react';
+import {
+  Plus,
+  Minus,
+  Trash2,
+  ArrowRight,
+  ShoppingBag,
+  ArrowLeft,
+  Tag,
+  ShieldCheck,
+  Check,
+} from 'lucide-react';
 
 export interface CommonCartPageProps {
   theme: ThemeConfig;
@@ -17,7 +27,8 @@ export interface CommonCartPageProps {
 
 export function CommonCartPage({ theme }: CommonCartPageProps) {
   const router = useRouter();
-  const { items, itemCount, totalAmount, updateQuantity, deleteToCart, clearCart, isLoading } = useCart();
+  const { items, itemCount, totalAmount, updateQuantity, deleteToCart, clearCart, isLoading } =
+    useCart();
   const { formatPrice } = useCurrency();
   const { startLoading, stopLoading } = useLoader();
 
@@ -246,7 +257,11 @@ export function CommonCartPage({ theme }: CommonCartPageProps) {
                       </span>
                     ) : (
                       <span>
-                        Add <strong className="text-black dark:text-white">{formatPrice(freeThreshold - discountedSubtotal)}</strong> more for <strong>FREE Delivery</strong>
+                        Add{' '}
+                        <strong className="text-black dark:text-white">
+                          {formatPrice(freeThreshold - discountedSubtotal)}
+                        </strong>{' '}
+                        more for <strong>FREE Delivery</strong>
                       </span>
                     )}
                     <span className="text-neutral-400 font-bold">
@@ -256,7 +271,9 @@ export function CommonCartPage({ theme }: CommonCartPageProps) {
                   <div className="w-full h-2 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-black dark:bg-white rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min(100, Math.round((discountedSubtotal / freeThreshold) * 100))}%` }}
+                      style={{
+                        width: `${Math.min(100, Math.round((discountedSubtotal / freeThreshold) * 100))}%`,
+                      }}
                     />
                   </div>
                 </div>
@@ -282,11 +299,19 @@ export function CommonCartPage({ theme }: CommonCartPageProps) {
                         className="text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white transition p-0.5 cursor-pointer"
                         aria-label="Decrease quantity"
                       >
-                        {item.quantity <= 1 ? <Trash2 className="w-3.5 h-3.5 text-rose-500" /> : <Minus className="w-3.5 h-3.5" />}
+                        {item.quantity <= 1 ? (
+                          <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                        ) : (
+                          <Minus className="w-3.5 h-3.5" />
+                        )}
                       </button>
-                      <span className="w-5 text-center text-sm font-extrabold">{item.quantity}</span>
+                      <span className="w-5 text-center text-sm font-extrabold">
+                        {item.quantity}
+                      </span>
                       <button
-                        onClick={() => updateQuantity(item.productId, item.quantity + 1, item.variantId)}
+                        onClick={() =>
+                          updateQuantity(item.productId, item.quantity + 1, item.variantId)
+                        }
                         className="text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white transition p-0.5 cursor-pointer"
                         aria-label="Increase quantity"
                       >
@@ -408,7 +433,9 @@ export function CommonCartPage({ theme }: CommonCartPageProps) {
                       </div>
                       {couponError && <p className="text-xs text-rose-500 mt-1">{couponError}</p>}
                       {couponSuccessMessage && !appliedDiscount?.isAutomatic && (
-                        <p className="text-xs text-emerald-600 mt-1 font-medium">{couponSuccessMessage}</p>
+                        <p className="text-xs text-emerald-600 mt-1 font-medium">
+                          {couponSuccessMessage}
+                        </p>
                       )}
                     </form>
                   )}
@@ -418,7 +445,9 @@ export function CommonCartPage({ theme }: CommonCartPageProps) {
                 <div className="space-y-3 text-sm divide-y divide-neutral-100 dark:divide-neutral-800">
                   <div className="flex items-center justify-between pt-2 text-neutral-600 dark:text-neutral-400">
                     <span>Subtotal</span>
-                    <span className="font-semibold text-neutral-900 dark:text-white">{formatPrice(totalAmount)}</span>
+                    <span className="font-semibold text-neutral-900 dark:text-white">
+                      {formatPrice(totalAmount)}
+                    </span>
                   </div>
 
                   {appliedDiscount && appliedDiscount.savings > 0 && (
@@ -431,7 +460,11 @@ export function CommonCartPage({ theme }: CommonCartPageProps) {
                   <div className="flex items-center justify-between pt-2 text-neutral-600 dark:text-neutral-400">
                     <span>Estimated Delivery</span>
                     <span className="font-semibold text-neutral-900 dark:text-white">
-                      {shipping === 0 ? <span className="text-emerald-600">FREE</span> : formatPrice(shipping)}
+                      {shipping === 0 ? (
+                        <span className="text-emerald-600">FREE</span>
+                      ) : (
+                        formatPrice(shipping)
+                      )}
                     </span>
                   </div>
 
@@ -444,7 +477,9 @@ export function CommonCartPage({ theme }: CommonCartPageProps) {
 
                   <div className="flex items-center justify-between pt-4 text-base font-bold">
                     <span>Total</span>
-                    <span className="text-2xl font-black text-black dark:text-white">{formatPrice(finalTotal)}</span>
+                    <span className="text-2xl font-black text-black dark:text-white">
+                      {formatPrice(finalTotal)}
+                    </span>
                   </div>
                 </div>
 

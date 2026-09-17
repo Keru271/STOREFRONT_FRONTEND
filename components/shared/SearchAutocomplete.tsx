@@ -104,7 +104,10 @@ export function SearchAutocomplete({
     }
 
     if (query.trim()) {
-      const catParam = selectedCategory && selectedCategory !== 'all' ? `&category=${encodeURIComponent(selectedCategory)}` : '';
+      const catParam =
+        selectedCategory && selectedCategory !== 'all'
+          ? `&category=${encodeURIComponent(selectedCategory)}`
+          : '';
       router.push(`/products?search=${encodeURIComponent(query.trim())}${catParam}`);
     }
   };
@@ -154,21 +157,21 @@ export function SearchAutocomplete({
             className="bg-transparent text-slate-700 text-xs font-semibold px-3 sm:px-4 py-2 outline-none border-r border-slate-200 cursor-pointer max-w-[130px] sm:max-w-none truncate"
           >
             <option value="all">All Categories</option>
-            {categories.length > 0
-              ? categories.map((c) => (
+            {categories.length > 0 ? (
+              categories.map((c) => (
                 <option key={c.slug || c.name} value={c.slug || c.name}>
                   {c.name}
                 </option>
               ))
-              : (
-                <>
-                  <option value="living-room">Living Room</option>
-                  <option value="bedroom">Bedroom</option>
-                  <option value="dining">Dining & Kitchen</option>
-                  <option value="office">Office & Study</option>
-                  <option value="decor">Decor & Lamps</option>
-                </>
-              )}
+            ) : (
+              <>
+                <option value="living-room">Living Room</option>
+                <option value="bedroom">Bedroom</option>
+                <option value="dining">Dining & Kitchen</option>
+                <option value="office">Office & Study</option>
+                <option value="decor">Decor & Lamps</option>
+              </>
+            )}
           </select>
         )}
 
@@ -204,8 +207,18 @@ export function SearchAutocomplete({
           {isLoading ? (
             <div className="w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
           ) : (
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
           )}
           <span className="hidden sm:inline">Search</span>
@@ -215,7 +228,6 @@ export function SearchAutocomplete({
       {/* ── Auto-Complete Suggestions Dropdown Menu ─────────────────────────── */}
       {isOpen && (
         <div className="absolute left-0 right-0 top-full mt-2 bg-white text-slate-900 rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-[100] text-xs divide-y divide-slate-100 max-h-[80vh] overflow-y-auto">
-
           {/* 1. Popular / Trending Suggestions (when query is empty) */}
           {!query && popularSearches.length > 0 && (
             <div className="p-4 bg-slate-50/70">
@@ -280,7 +292,9 @@ export function SearchAutocomplete({
               <div className="py-6 px-4 text-center text-slate-500">
                 <span className="text-2xl block mb-1">🔍</span>
                 No direct products matched &quot;{query}&quot;
-                <p className="text-[11px] text-slate-400 mt-1">Press Enter to search full catalog.</p>
+                <p className="text-[11px] text-slate-400 mt-1">
+                  Press Enter to search full catalog.
+                </p>
               </div>
             ) : (
               products.map((item, idx) => {
@@ -296,8 +310,11 @@ export function SearchAutocomplete({
                     href={`/products/${item.urlSlug || item.id}`}
                     onClick={() => setIsOpen(false)}
                     onMouseEnter={() => setSelectedIndex(idx)}
-                    className={`flex items-center gap-3 p-2.5 rounded-xl transition ${isSelected ? 'bg-amber-50/80 text-slate-950' : 'hover:bg-slate-50 text-slate-800'
-                      }`}
+                    className={`flex items-center gap-3 p-2.5 rounded-xl transition ${
+                      isSelected
+                        ? 'bg-amber-50/80 text-slate-950'
+                        : 'hover:bg-slate-50 text-slate-800'
+                    }`}
                   >
                     {/* Thumbnail */}
                     <div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-100 relative">
@@ -310,7 +327,9 @@ export function SearchAutocomplete({
                           className="object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-300 text-xs">🛍️</div>
+                        <div className="w-full h-full flex items-center justify-center text-slate-300 text-xs">
+                          🛍️
+                        </div>
                       )}
                     </div>
 
@@ -358,7 +377,11 @@ export function SearchAutocomplete({
           {query && (
             <div className="p-3 bg-slate-50 flex items-center justify-between text-xs">
               <span className="text-slate-500">
-                Press <kbd className="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-mono">↵ Enter</kbd> to search
+                Press{' '}
+                <kbd className="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-mono">
+                  ↵ Enter
+                </kbd>{' '}
+                to search
               </span>
               <button
                 type="button"
@@ -369,7 +392,6 @@ export function SearchAutocomplete({
               </button>
             </div>
           )}
-
         </div>
       )}
     </div>
