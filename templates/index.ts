@@ -47,16 +47,16 @@ const LuxeWishlistPage       = dynamic(() => import('./luxe/WishlistPage'));
 const LuxeCartPage           = dynamic(() => import('./luxe/CartPage'));
 const LuxeAccountPage        = dynamic(() => import('./luxe/AccountPage'));
 
-// Nova template (Apple Design System - dynamic chunks)
-const NovaHomePage           = dynamic(() => import('./nova/HomePage'));
-const NovaPLPPage            = dynamic(() => import('./nova/PLPPage'));
-const NovaLoginPage          = dynamic(() => import('./nova/LoginPage'));
-const NovaSignupPage         = dynamic(() => import('./nova/SignupPage'));
-const NovaForgotPasswordPage = dynamic(() => import('./nova/ForgotPasswordPage'));
-const NovaPDPPage            = dynamic(() => import('./nova/PDPPage'));
-const NovaWishlistPage       = dynamic(() => import('./nova/WishlistPage'));
-const NovaCartPage           = dynamic(() => import('./nova/CartPage'));
-const NovaAccountPage        = dynamic(() => import('./nova/AccountPage'));
+// Nova template (Apple Design System - dynamic chunks, aliases to minimal)
+const NovaHomePage           = MinimalHomePage;
+const NovaPLPPage            = MinimalPLPPage;
+const NovaLoginPage          = MinimalLoginPage;
+const NovaSignupPage         = MinimalSignupPage;
+const NovaForgotPasswordPage = MinimalForgotPasswordPage;
+const NovaPDPPage            = MinimalPDPPage;
+const NovaWishlistPage       = MinimalWishlistPage;
+const NovaCartPage           = MinimalCartPage;
+const NovaAccountPage        = MinimalAccountPage;
 
 // Mincom template (Modern Furniture & Living - dynamic chunks)
 const MincomHomePage           = dynamic(() => import('./mincom/HomePage'));

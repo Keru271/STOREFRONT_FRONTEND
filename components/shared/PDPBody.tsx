@@ -23,6 +23,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { getProductReviews, postProductReview, editProductReview, deleteProductReview, upvoteProductReview, getProductEligibleCoupons } from '@/lib/api';
 
 const ReviewModal = dynamic(() => import('./ReviewModal'), { ssr: false });
+const NotifyMeModal = dynamic(() => import('./NotifyMeModal'), { ssr: false });
 
 export interface PDPBodyProps {
   theme: ThemeConfig;
@@ -60,6 +61,7 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
     product.variants && product.variants.length > 0 ? product.variants[0].id : ''
   );
   const [isAdding, setIsAdding] = useState(false);
+  const [isNotifyMeOpen, setIsNotifyMeOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'description' | 'specs' | 'reviews'>('description');
 
@@ -703,89 +705,128 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
               </div>
             )}
 
-            {/* ── Quantity & Add to Cart Action Area ───────────────────── */}
+            {/* ── Quantity & Add to Cart / Notify Me Action Area ───────────────────── */}
             <div className="space-y-4 pt-2">
-              <div className="flex items-center gap-4">
-                {/* Stepper */}
-                <div
-                  className={`flex items-center p-1 ${
-                    isMinimal ? 'rounded-none border border-black dark:border-white' : isLuxe ? 'rounded-none border border-stone-300 dark:border-stone-700' : 'rounded-2xl border'
-                  }`}
-                  style={{
-                    backgroundColor: 'color-mix(in srgb, var(--sf-text) 4%, var(--sf-bg))',
-                    borderColor: isMinimal || isLuxe ? undefined : 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
-                  }}
-                >
+              {isOutOfStock ? (
+                /* Out of Stock: Prominent Notify Me CTA */
+                <div className="space-y-3">
+                  <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-3">
+                    <span className="text-xl">🔔</span>
+                    <div className="text-xs">
+                      <span className="font-bold text-amber-700 dark:text-amber-300 block">
+                        Currently Sold Out
+                      </span>
+                      <span className="text-slate-500 dark:text-slate-400">
+                        Join {selectedVariant?.name ? `${selectedVariant.name} waitlist` : 'the restock waitlist'} to receive an instant alert when inventory arrives.
+                      </span>
+                    </div>
+                  </div>
+
                   <button
                     type="button"
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    disabled={isOutOfStock || quantity <= 1}
-                    className="w-9 h-9 flex items-center justify-center font-bold text-sm transition hover:opacity-70 disabled:opacity-30 disabled:cursor-not-allowed"
-                    style={{ color: 'var(--sf-text)' }}
+                    onClick={() => setIsNotifyMeOpen(true)}
+                    className={`w-full py-4 font-bold text-sm shadow-xl transition active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer ${
+                      isLuxe
+                        ? 'rounded-none uppercase tracking-[0.25em] text-xs py-4.5 bg-stone-950 hover:bg-stone-800 text-white'
+                        : isMinimal
+                        ? 'rounded-none uppercase tracking-widest text-xs py-4 bg-black dark:bg-white text-white dark:text-black hover:opacity-85'
+                        : isNova
+                        ? 'rounded-full py-4 text-sm bg-gradient-to-r from-amber-500 to-rose-500 hover:opacity-95 text-white'
+                        : isFuno
+                        ? 'rounded-full py-4 text-sm bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/20'
+                        : isMincom
+                        ? 'rounded-xl py-3.5 text-sm bg-amber-600 hover:bg-amber-700 text-white'
+                        : 'rounded-2xl py-4 text-sm bg-slate-900 hover:bg-black text-white dark:bg-white dark:text-slate-900'
+                    }`}
                   >
-                    -
-                  </button>
-                  <span className="w-10 text-center font-bold text-sm" style={{ color: 'var(--sf-text)' }}>
-                    {isOutOfStock ? 0 : quantity}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => Math.min(stock, q + 1))}
-                    disabled={isOutOfStock || quantity >= stock}
-                    className="w-9 h-9 flex items-center justify-center font-bold text-sm transition hover:opacity-70 disabled:opacity-30 disabled:cursor-not-allowed"
-                    style={{ color: 'var(--sf-text)' }}
-                  >
-                    +
+                    <span>🔔</span>
+                    <span>Notify Me When Available</span>
                   </button>
                 </div>
+              ) : (
+                /* In Stock: Standard Stepper & Add to Bag */
+                <>
+                  <div className="flex items-center gap-4">
+                    {/* Stepper */}
+                    <div
+                      className={`flex items-center p-1 ${
+                        isMinimal ? 'rounded-none border border-black dark:border-white' : isLuxe ? 'rounded-none border border-stone-300 dark:border-stone-700' : 'rounded-2xl border'
+                      }`}
+                      style={{
+                        backgroundColor: 'color-mix(in srgb, var(--sf-text) 4%, var(--sf-bg))',
+                        borderColor: isMinimal || isLuxe ? undefined : 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        disabled={quantity <= 1}
+                        className="w-9 h-9 flex items-center justify-center font-bold text-sm transition hover:opacity-70 disabled:opacity-30 disabled:cursor-not-allowed"
+                        style={{ color: 'var(--sf-text)' }}
+                      >
+                        -
+                      </button>
+                      <span className="w-10 text-center font-bold text-sm" style={{ color: 'var(--sf-text)' }}>
+                        {quantity}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => Math.min(stock, q + 1))}
+                        disabled={quantity >= stock}
+                        className="w-9 h-9 flex items-center justify-center font-bold text-sm transition hover:opacity-70 disabled:opacity-30 disabled:cursor-not-allowed"
+                        style={{ color: 'var(--sf-text)' }}
+                      >
+                        +
+                      </button>
+                    </div>
 
-                {/* Primary Add to Cart Button */}
-                <button
-                  type="button"
-                  onClick={handleAddToCart}
-                  disabled={isAdding || isOutOfStock}
-                  className={`flex-1 py-4 font-bold text-sm text-white shadow-xl transition active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
-                    isLuxe
-                      ? 'rounded-none uppercase tracking-[0.25em] text-xs py-4.5 bg-stone-950 hover:bg-stone-800'
-                      : isMinimal
-                      ? 'rounded-none uppercase tracking-widest text-xs py-4 bg-black dark:bg-white dark:text-black'
-                      : isNova
-                      ? 'rounded-full py-4 text-sm bg-[#0071e3] hover:bg-[#0077ed]'
-                      : isFuno
-                      ? 'rounded-full py-4 text-sm bg-slate-950 hover:bg-orange-600'
-                      : isMincom
-                      ? 'rounded-xl py-3.5 text-sm'
-                      : 'rounded-2xl py-4 text-sm'
-                  }`}
-                  style={
-                    isLuxe || isMinimal || isNova || isFuno
-                      ? undefined
-                      : { backgroundColor: isOutOfStock ? '#64748b' : 'var(--sf-primary)' }
-                  }
-                >
-                  {isAdding ? 'Adding to Bag…' : isOutOfStock ? 'Out of Stock' : isLuxe ? 'Add to Atelier Bag' : isNova ? 'Add to Bag' : 'Add to Bag'} 🛍️
-                </button>
-              </div>
+                    {/* Primary Add to Cart Button */}
+                    <button
+                      type="button"
+                      onClick={handleAddToCart}
+                      disabled={isAdding}
+                      className={`flex-1 py-4 font-bold text-sm text-white shadow-xl transition active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+                        isLuxe
+                          ? 'rounded-none uppercase tracking-[0.25em] text-xs py-4.5 bg-stone-950 hover:bg-stone-800'
+                          : isMinimal
+                          ? 'rounded-none uppercase tracking-widest text-xs py-4 bg-black dark:bg-white dark:text-black'
+                          : isNova
+                          ? 'rounded-full py-4 text-sm bg-[#0071e3] hover:bg-[#0077ed]'
+                          : isFuno
+                          ? 'rounded-full py-4 text-sm bg-slate-950 hover:bg-orange-600'
+                          : isMincom
+                          ? 'rounded-xl py-3.5 text-sm'
+                          : 'rounded-2xl py-4 text-sm'
+                      }`}
+                      style={
+                        isLuxe || isMinimal || isNova || isFuno
+                          ? undefined
+                          : { backgroundColor: 'var(--sf-primary)' }
+                      }
+                    >
+                      {isAdding ? 'Adding to Bag…' : isLuxe ? 'Add to Atelier Bag' : isNova ? 'Add to Bag' : 'Add to Bag'} 🛍️
+                    </button>
+                  </div>
 
-              {!isOutOfStock && (
-                <Link
-                  href="/checkout"
-                  onClick={handleAddToCart}
-                  className={`w-full text-center border-2 transition block hover:opacity-90 cursor-pointer ${
-                    isLuxe
-                      ? 'rounded-none py-3.5 uppercase tracking-[0.2em] text-xs font-semibold'
-                      : isMinimal
-                      ? 'rounded-none py-3 uppercase tracking-widest text-xs font-bold'
-                      : isNova
-                      ? 'rounded-full py-3.5 text-sm font-semibold'
-                      : isFuno
-                      ? 'rounded-full py-3.5 text-xs font-extrabold'
-                      : 'rounded-2xl py-3 text-sm font-bold'
-                  }`}
-                  style={{ borderColor: 'var(--sf-primary)', color: 'var(--sf-primary)' }}
-                >
-                  {isLuxe ? 'Proceed to Bespoke Checkout →' : 'Express Checkout →'}
-                </Link>
+                  <Link
+                    href="/checkout"
+                    onClick={handleAddToCart}
+                    className={`w-full text-center border-2 transition block hover:opacity-90 cursor-pointer ${
+                      isLuxe
+                        ? 'rounded-none py-3.5 uppercase tracking-[0.2em] text-xs font-semibold'
+                        : isMinimal
+                        ? 'rounded-none py-3 uppercase tracking-widest text-xs font-bold'
+                        : isNova
+                        ? 'rounded-full py-3.5 text-sm font-semibold'
+                        : isFuno
+                        ? 'rounded-full py-3.5 text-xs font-extrabold'
+                        : 'rounded-2xl py-3 text-sm font-bold'
+                    }`}
+                    style={{ borderColor: 'var(--sf-primary)', color: 'var(--sf-primary)' }}
+                  >
+                    {isLuxe ? 'Proceed to Bespoke Checkout →' : 'Express Checkout →'}
+                  </Link>
+                </>
               )}
             </div>
 
@@ -1268,6 +1309,28 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
           initialForm={reviewForm}
           onSubmit={handleSubmitReview}
           isSubmitting={isSubmittingReview}
+        />
+      )}
+
+      {/* Back-in-Stock Notify Me Modal */}
+      {isNotifyMeOpen && (
+        <NotifyMeModal
+          isOpen={isNotifyMeOpen}
+          onClose={() => setIsNotifyMeOpen(false)}
+          product={{
+            id: product.id,
+            name: product.name,
+            image: selectedImage || (product.images && product.images[0]) || product.image,
+            sku: product.sku,
+            price: activePrice,
+          }}
+          variant={selectedVariant ? {
+            id: selectedVariant.id,
+            name: selectedVariant.name,
+            sku: selectedVariant.sku,
+            price: selectedVariant.price,
+          } : null}
+          activeTemplate={activeTemplate}
         />
       )}
     </>

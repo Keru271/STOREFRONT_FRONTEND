@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
+import NotifyMeModal from '@/components/shared/NotifyMeModal';
 
 export interface MincomProductCardProps {
   product: Product;
@@ -20,6 +21,7 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [added, setAdded] = useState(false);
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+  const [isNotifyMeOpen, setIsNotifyMeOpen] = useState(false);
 
   const hasVariants = Boolean(product.variants && product.variants.length > 0);
   const variantPrices = hasVariants
@@ -43,7 +45,10 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
   const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isOutOfStock) return;
+    if (isOutOfStock) {
+      setIsNotifyMeOpen(true);
+      return;
+    }
 
     if (hasVariants) {
       setIsVariantModalOpen(true);
@@ -137,15 +142,17 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
         <div className="absolute inset-x-3 bottom-3 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 flex gap-2">
           <button
             onClick={handleQuickAdd}
-            disabled={isAdding || isOutOfStock}
-            className="flex-1 py-2.5 px-3 font-bold text-xs shadow-lg transition flex items-center justify-center gap-1.5 active:scale-95 text-white disabled:opacity-80 disabled:cursor-not-allowed cursor-pointer"
+            disabled={isAdding}
+            className={`flex-1 py-2.5 px-3 font-bold text-xs shadow-lg transition flex items-center justify-center gap-1.5 active:scale-95 text-white cursor-pointer ${
+              isOutOfStock ? 'bg-amber-600 hover:bg-amber-700' : ''
+            }`}
             style={{
-              backgroundColor: isOutOfStock ? '#64748b' : 'var(--sf-primary)',
+              backgroundColor: isOutOfStock ? undefined : 'var(--sf-primary)',
               borderRadius: 'calc(var(--sf-radius) * 0.75)',
             }}
           >
-            <span>{added ? 'Added! ✓' : isAdding ? 'Adding...' : isOutOfStock ? 'Out of Stock' : hasVariants ? 'Select Options' : 'Add to Bag'}</span>
-            <span>{hasVariants ? '⚡' : '🛍️'}</span>
+            <span>{added ? 'Added! ✓' : isAdding ? 'Adding...' : isOutOfStock ? '🔔 Notify Me' : hasVariants ? 'Select Options' : 'Add to Bag'}</span>
+            <span>{hasVariants && !isOutOfStock ? '⚡' : !isOutOfStock ? '🛍️' : ''}</span>
           </button>
           <Link
             href={href}
@@ -228,6 +235,16 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
           isOpen={isVariantModalOpen}
           onClose={() => setIsVariantModalOpen(false)}
           product={product}
+        />
+      )}
+
+      {/* Notify Me Modal */}
+      {isNotifyMeOpen && (
+        <NotifyMeModal
+          isOpen={isNotifyMeOpen}
+          onClose={() => setIsNotifyMeOpen(false)}
+          product={product}
+          activeTemplate="mincom"
         />
       )}
     </div>

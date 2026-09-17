@@ -653,11 +653,27 @@ export interface CheckoutSummaryResponse {
   taxAmount: number;
   shippingFee: number;
   grandTotal: number;
+  giftCardDeduction?: number;
+  appliedGiftCard?: string | null;
+  finalPayable?: number;
   currency: string;
   isTaxInclusive?: boolean;
   stockValid?: boolean;
   stockMessage?: string;
   outOfStockItem?: any;
+}
+
+export interface GiftCardBalanceResponse {
+  valid: boolean;
+  id?: string;
+  code?: string;
+  maskedCode?: string;
+  balance?: number;
+  initialValue?: number;
+  currency?: string;
+  expiresAt?: string | null;
+  recipientName?: string | null;
+  message?: string;
 }
 
 export interface ValidateCouponResponse {
