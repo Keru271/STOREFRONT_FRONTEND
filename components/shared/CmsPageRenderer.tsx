@@ -989,8 +989,6 @@ export function CmsPageRenderer({ page, theme }: CmsPageRendererProps) {
                               value={newsletterEmail}
                               onChange={(e) => setNewsletterEmail(e.target.value)}
                               placeholder={block.data?.placeholder || 'Enter your email...'}
-                              value={newsletterEmail}
-                              onChange={(e) => setNewsletterEmail(e.target.value)}
                               className="flex-1 px-5 py-3.5 rounded-xl border border-slate-700 bg-white/10 text-white placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                             />
                             <button
