@@ -759,7 +759,11 @@ export default function ProductDetailClient({
               {/* Express Buy Now */}
               {!isOutOfStock && (
                 <Link
-                  href="/checkout"
+                  href={
+                    isAuthenticated
+                      ? '/checkout'
+                      : `/auth/login?redirect=${encodeURIComponent('/checkout')}`
+                  }
                   onClick={async () => {
                     await handleAddToCart();
                   }}

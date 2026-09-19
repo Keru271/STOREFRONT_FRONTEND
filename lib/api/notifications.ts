@@ -22,7 +22,8 @@ export interface ProductNotificationResponse {
   message?: string;
 }
 
-const CMS_API_URL = process.env.NEXT_PUBLIC_CMS_API_URL || 'http://localhost:5000';
+const rawCmsUrl = (process.env.NEXT_PUBLIC_CMS_API_URL || 'http://localhost:5000/api').replace(/\/+$/, '');
+const CMS_API_URL = rawCmsUrl.endsWith('/api') ? rawCmsUrl : `${rawCmsUrl}/api`;
 
 function getStoreId(): string {
   if (typeof window === 'undefined') return process.env.NEXT_PUBLIC_STORE_ID || '';
@@ -47,7 +48,7 @@ export async function submitProductNotification(
 ): Promise<ProductNotificationResponse> {
   const storeId = data.storeId || getStoreId();
 
-  const res = await fetch(`${CMS_API_URL}/api/product-notifications`, {
+  const res = await fetch(`${CMS_API_URL}/product-notifications`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

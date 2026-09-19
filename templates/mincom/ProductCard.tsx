@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
+import QuickViewModal from '@/components/shared/QuickViewModal';
 import NotifyMeModal from '@/components/shared/NotifyMeModal';
 
 export interface MincomProductCardProps {
@@ -21,6 +22,7 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [added, setAdded] = useState(false);
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [isNotifyMeOpen, setIsNotifyMeOpen] = useState(false);
 
   const hasVariants = Boolean(product.variants && product.variants.length > 0);
@@ -171,17 +173,22 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
             </span>
             <span>{hasVariants ? '⚡' : '🛍️'}</span>
           </button>
-          <Link
-            href={href}
-            className="w-10 h-10 text-white flex items-center justify-center text-xs shadow-lg transition"
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsQuickViewOpen(true);
+            }}
+            className="w-10 h-10 text-white flex items-center justify-center text-xs shadow-lg transition hover:scale-105 active:scale-95 cursor-pointer"
             style={{
               backgroundColor: 'var(--sf-secondary)',
               borderRadius: 'calc(var(--sf-radius) * 0.75)',
             }}
-            title="View Details"
+            title="Quick View"
           >
             👁️
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -253,6 +260,16 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
           isOpen={isVariantModalOpen}
           onClose={() => setIsVariantModalOpen(false)}
           product={product}
+        />
+      )}
+
+      {/* Quick View Modal */}
+      {isQuickViewOpen && (
+        <QuickViewModal
+          isOpen={isQuickViewOpen}
+          onClose={() => setIsQuickViewOpen(false)}
+          product={product}
+          activeTemplate="mincom"
         />
       )}
 

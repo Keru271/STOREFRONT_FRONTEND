@@ -90,6 +90,30 @@ export interface NewsletterSectionConfig {
   };
 }
 
+export interface LookbookSectionConfig {
+  type: 'lookbook';
+  config: {
+    lookbookTitle?: string;
+    lookbookDesc?: string;
+    lookbookImage?: string;
+    ctaLabel?: string;
+    ctaHref?: string;
+  };
+}
+
+export interface CustomFormSectionConfig {
+  type: 'custom_form';
+  config: {
+    formId?: string;
+    formSlug?: string;
+    formTitle?: string;
+    heading?: string;
+    subtitle?: string;
+    containerWidth?: 'full' | 'container';
+    containerMaxWidth?: string;
+  };
+}
+
 export interface SpacerSectionConfig {
   type: 'spacer';
   config: { height?: number };
@@ -104,6 +128,8 @@ export type SectionConfig =
   | TestimonialsSectionConfig
   | TrustBadgesSectionConfig
   | NewsletterSectionConfig
+  | LookbookSectionConfig
+  | CustomFormSectionConfig
   | SpacerSectionConfig;
 
 // ── Page Layout ───────────────────────────────────────────────────────────────

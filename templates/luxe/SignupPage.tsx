@@ -2,13 +2,16 @@
 
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { ApiError } from '@/lib/api/client';
 import type { AuthPageProps } from '@/templates';
 
 export default function LuxeSignupPage({ theme }: AuthPageProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get('redirect');
+  const redirectUrl = redirectParam || '/';
   const { register } = useAuth();
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '' });
   const [acceptsMarketing, setAcceptsMarketing] = useState(true);
@@ -31,7 +34,7 @@ export default function LuxeSignupPage({ theme }: AuthPageProps) {
         phone: formData.phone || undefined,
         acceptsMarketing,
       });
-      router.push('/');
+      router.push(redirectUrl);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Registration failed.');
     } finally {
@@ -296,7 +299,11 @@ export default function LuxeSignupPage({ theme }: AuthPageProps) {
           >
             Already a member?{' '}
             <Link
-              href="/auth/login"
+              href={
+                redirectParam
+                  ? `/auth/login?redirect=${encodeURIComponent(redirectParam)}`
+                  : '/auth/login'
+              }
               className="transition-colors"
               style={{ color: 'var(--sf-primary)' }}
             >

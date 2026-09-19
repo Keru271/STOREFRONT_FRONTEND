@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import type { AuthPageProps } from '@/templates';
 import { ApiError } from '@/lib/api/client';
@@ -11,6 +11,9 @@ import FunoFooter from './Footer';
 
 export default function FunoSignupPage({ theme }: AuthPageProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get('redirect');
+  const redirectUrl = redirectParam || '/';
   const { register } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -26,7 +29,7 @@ export default function FunoSignupPage({ theme }: AuthPageProps) {
     setIsLoading(true);
     try {
       await register({ name, email, password, phone: phone || undefined, acceptsMarketing });
-      router.push('/');
+      router.push(redirectUrl);
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);
@@ -138,7 +141,14 @@ export default function FunoSignupPage({ theme }: AuthPageProps) {
 
           <div className="mt-8 pt-6 border-t border-slate-100 text-xs text-slate-500">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-slate-950 font-bold hover:underline">
+            <Link
+              href={
+                redirectParam
+                  ? `/auth/login?redirect=${encodeURIComponent(redirectParam)}`
+                  : '/auth/login'
+              }
+              className="text-slate-950 font-bold hover:underline"
+            >
               Sign In
             </Link>
           </div>

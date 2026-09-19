@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import type { AuthPageProps } from '@/templates';
 import { ApiError } from '@/lib/api/client';
@@ -11,6 +11,9 @@ import FunoFooter from './Footer';
 
 export default function FunoLoginPage({ theme }: AuthPageProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get('redirect');
+  const redirectUrl = redirectParam || '/';
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +26,7 @@ export default function FunoLoginPage({ theme }: AuthPageProps) {
     setIsLoading(true);
     try {
       await login({ email, password });
-      router.push('/');
+      router.push(redirectUrl);
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);
@@ -102,7 +105,14 @@ export default function FunoLoginPage({ theme }: AuthPageProps) {
 
           <div className="mt-8 pt-6 border-t border-slate-100 text-xs text-slate-500">
             Don't have an account yet?{' '}
-            <Link href="/auth/signup" className="text-slate-950 font-bold hover:underline">
+            <Link
+              href={
+                redirectParam
+                  ? `/auth/signup?redirect=${encodeURIComponent(redirectParam)}`
+                  : '/auth/signup'
+              }
+              className="text-slate-950 font-bold hover:underline"
+            >
               Create an account
             </Link>
           </div>

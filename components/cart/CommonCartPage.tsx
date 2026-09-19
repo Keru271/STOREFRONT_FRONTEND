@@ -8,6 +8,7 @@ import type { ThemeConfig } from '@/lib/api/types';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useLoader } from '@/hooks/useLoader';
+import { useAuth } from '@/hooks/useAuth';
 import { validateCoupon } from '@/lib/api';
 import {
   Plus,
@@ -27,6 +28,7 @@ export interface CommonCartPageProps {
 
 export function CommonCartPage({ theme }: CommonCartPageProps) {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const { items, itemCount, totalAmount, updateQuantity, deleteToCart, clearCart, isLoading } =
     useCart();
   const { formatPrice } = useCurrency();
@@ -489,11 +491,15 @@ export function CommonCartPage({ theme }: CommonCartPageProps) {
                     const checkoutUrl = appliedDiscount
                       ? `/checkout?coupon=${encodeURIComponent(appliedDiscount.code)}`
                       : '/checkout';
-                    router.push(checkoutUrl);
+                    if (!isAuthenticated) {
+                      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutUrl)}`);
+                    } else {
+                      router.push(checkoutUrl);
+                    }
                   }}
                   className="w-full py-4 px-6 rounded-2xl font-bold text-sm bg-black text-white dark:bg-white dark:text-black hover:opacity-90 active:scale-[0.99] transition shadow-lg flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Go to checkout</span>
+                  <span>{isAuthenticated ? 'Go to checkout' : 'Sign in to checkout'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
 

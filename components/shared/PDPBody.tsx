@@ -940,7 +940,11 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
 
                   {!isOutOfStock && (
                     <Link
-                      href="/checkout"
+                      href={
+                        isAuthenticated
+                          ? '/checkout'
+                          : `/auth/login?redirect=${encodeURIComponent('/checkout')}`
+                      }
                       onClick={handleAddToCart}
                       className={`w-full text-center border-2 transition block hover:opacity-90 cursor-pointer ${
                         isLuxe
@@ -1170,9 +1174,32 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                 {/* Overview / Description */}
                 {activeTab === 'description' && (
                   <div className="space-y-4">
-                    <p className="leading-relaxed" style={{ color: 'var(--sf-text)' }}>
-                      {product.description || 'No detailed description provided for this product.'}
-                    </p>
+                    {product.description ? (
+                      <div
+                        className="leading-relaxed prose prose-sm max-w-none
+                          [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-3 [&_h1]:mt-4
+                          [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-2 [&_h2]:mt-4
+                          [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-3
+                          [&_p]:mb-3 [&_p]:leading-relaxed
+                          [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-3 [&_ul]:space-y-1
+                          [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-3 [&_ol]:space-y-1
+                          [&_li]:leading-relaxed
+                          [&_strong]:font-semibold
+                          [&_em]:italic
+                          [&_a]:underline [&_a]:underline-offset-2
+                          [&_blockquote]:border-l-4 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-3
+                          [&_hr]:my-4 [&_hr]:border-t
+                          [&_table]:w-full [&_table]:border-collapse [&_table]:my-3
+                          [&_th]:border [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-semibold
+                          [&_td]:border [&_td]:px-3 [&_td]:py-2"
+                        style={{ color: 'var(--sf-text)' }}
+                        dangerouslySetInnerHTML={{ __html: product.description }}
+                      />
+                    ) : (
+                      <p className="leading-relaxed" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+                        No detailed description provided for this product.
+                      </p>
+                    )}
                     {product.tags && product.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2 pt-4">
                         {product.tags.map((tag) => (
@@ -1617,6 +1644,7 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
               image: selectedImage || (product.images && product.images[0]) || product.image,
               sku: product.sku,
               price: activePrice,
+              storeId: (product as any).storeId || undefined,
             }}
             variant={
               selectedVariant

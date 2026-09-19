@@ -6,6 +6,7 @@ import { useState } from 'react';
 import type { Product } from '@/lib/api/types';
 import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
+import QuickViewModal from '@/components/shared/QuickViewModal';
 import NotifyMeModal from '@/components/shared/NotifyMeModal';
 
 interface MinimalProductCardProps {
@@ -15,6 +16,7 @@ interface MinimalProductCardProps {
 export default function MinimalProductCard({ product }: MinimalProductCardProps) {
   const { formatPrice } = useCurrency();
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [isNotifyMeOpen, setIsNotifyMeOpen] = useState(false);
 
   const hasVariants = Boolean(product.variants && product.variants.length > 0);
@@ -85,6 +87,20 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
             </div>
           )}
 
+          {/* Quick View Button Top Left */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsQuickViewOpen(true);
+            }}
+            className="absolute top-3 left-3 z-20 px-2.5 py-1 text-[10px] font-mono uppercase tracking-widest bg-black/85 hover:bg-black text-white dark:bg-white/85 dark:hover:bg-white dark:text-black opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer shadow-md"
+            title="Quick View"
+          >
+            [ QUICK_VIEW ]
+          </button>
+
           {/* Badges */}
           <div className="absolute top-3 right-3 flex flex-col gap-1 z-10">
             {hasVariants && (
@@ -139,12 +155,18 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
                 Select Options ⚡
               </button>
             ) : (
-              <span
-                className="text-xs tracking-widest uppercase font-medium px-5 py-2.5"
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsQuickViewOpen(true);
+                }}
+                className="text-xs tracking-widest uppercase font-bold px-5 py-2.5 shadow-md cursor-pointer transition hover:scale-105"
                 style={{ backgroundColor: 'var(--sf-bg)', color: 'var(--sf-text)' }}
               >
-                View Product
-              </span>
+                Quick View
+              </button>
             )}
           </div>
         </div>
@@ -192,6 +214,16 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
           isOpen={isVariantModalOpen}
           onClose={() => setIsVariantModalOpen(false)}
           product={product}
+        />
+      )}
+
+      {/* Quick View Modal */}
+      {isQuickViewOpen && (
+        <QuickViewModal
+          isOpen={isQuickViewOpen}
+          onClose={() => setIsQuickViewOpen(false)}
+          product={product}
+          activeTemplate="minimal"
         />
       )}
 

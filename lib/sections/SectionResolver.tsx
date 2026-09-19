@@ -14,9 +14,13 @@
 //     templateSlug={theme.activeTemplateSlug}
 //   />
 
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import type { ThemeConfig, Product, Collection, Category } from '@/lib/api/types';
 import type { SectionConfig } from '@/lib/sections/types';
+import { StorefrontFormRenderer } from '@/components/shared/StorefrontFormRenderer';
+import { getStorefrontForm } from '@/lib/api/forms';
+import { FileQuestion, Loader2 } from 'lucide-react';
 
 // ── Section Component Props ───────────────────────────────────────────────────
 
@@ -585,6 +589,109 @@ function NewsletterSection({
   );
 }
 
+// ── Lookbook Section ──────────────────────────────────────────────────────────
+
+function LookbookSection({
+  config,
+}: SectionProps & { config: Extract<SectionConfig, { type: 'lookbook' }>['config'] }) {
+  return (
+    <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div
+        className="rounded-3xl p-8 sm:p-12 bg-slate-900 text-white flex flex-col lg:flex-row items-center justify-between gap-10 shadow-xl overflow-hidden relative"
+      >
+        <div className="space-y-4 max-w-xl flex-1">
+          <span className="px-3.5 py-1 rounded-full bg-white/10 text-white text-xs font-black uppercase tracking-wider border border-white/20 inline-block">
+            Editorial Story
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white">
+            {config.lookbookTitle || 'Crafted with Precision & Passion'}
+          </h2>
+          <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+            {config.lookbookDesc ||
+              'Every element is engineered and curated with uncompromising standards.'}
+          </p>
+          {config.ctaLabel && (
+            <Link
+              href={config.ctaHref || '/products'}
+              className="inline-block px-6 py-3 text-xs sm:text-sm font-bold text-slate-900 bg-white hover:bg-slate-100 transition rounded-xl shadow-md"
+            >
+              {config.ctaLabel}
+            </Link>
+          )}
+        </div>
+        {config.lookbookImage && (
+          <div className="w-full lg:w-96 h-64 sm:h-80 rounded-2xl overflow-hidden shadow-2xl shrink-0">
+            <img
+              src={config.lookbookImage}
+              alt={config.lookbookTitle || 'Lookbook'}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ── Custom Form Section ───────────────────────────────────────────────────────
+
+function CustomFormSection({
+  config,
+}: SectionProps & { config: Extract<SectionConfig, { type: 'custom_form' }>['config'] }) {
+  const [formData, setFormData] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const slugOrId = config.formSlug || config.formId;
+    if (!slugOrId) {
+      setLoading(false);
+      return;
+    }
+    getStorefrontForm(slugOrId)
+      .then((data) => setFormData(data))
+      .catch((err) => console.error('Failed to load embedded form:', err))
+      .finally(() => setLoading(false));
+  }, [config.formSlug, config.formId]);
+
+  return (
+    <section className="py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {(config.heading || config.subtitle) && (
+          <div className="text-center space-y-2 mb-8">
+            {config.heading && (
+              <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--sf-text)' }}>
+                {config.heading}
+              </h2>
+            )}
+            {config.subtitle && (
+              <p className="text-sm max-w-xl mx-auto" style={{ color: 'color-mix(in srgb, var(--sf-text) 60%, transparent)' }}>
+                {config.subtitle}
+              </p>
+            )}
+          </div>
+        )}
+        {loading ? (
+          <div className="p-12 text-center flex flex-col items-center justify-center">
+            <Loader2 className="w-8 h-8 animate-spin text-indigo-600 mb-2" />
+            <p className="text-xs text-slate-400">Loading form...</p>
+          </div>
+        ) : formData ? (
+          <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-lg">
+            <StorefrontFormRenderer form={formData} />
+          </div>
+        ) : (
+          <div className="p-8 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+            <FileQuestion className="w-8 h-8 mx-auto text-slate-400 mb-2" />
+            <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">
+              {config.formTitle || 'Form Not Selected'}
+            </p>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
 // ── Spacer Section ────────────────────────────────────────────────────────────
 
 function SpacerSection({
@@ -642,6 +749,12 @@ export function SectionResolver({
 
           case 'testimonials':
             return <TestimonialsSection key={key} {...commonProps} config={section.config} />;
+
+          case 'lookbook':
+            return <LookbookSection key={key} {...commonProps} config={section.config} />;
+
+          case 'custom_form':
+            return <CustomFormSection key={key} {...commonProps} config={section.config} />;
 
           case 'newsletter':
             return <NewsletterSection key={key} {...commonProps} config={section.config} />;

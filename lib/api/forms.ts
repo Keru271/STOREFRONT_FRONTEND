@@ -54,14 +54,15 @@ export interface StorefrontForm {
   createdAt: string;
 }
 
-const CMS_API_URL = process.env.NEXT_PUBLIC_CMS_API_URL || 'http://localhost:5000';
+const rawCmsUrl = (process.env.NEXT_PUBLIC_CMS_API_URL || 'http://localhost:5000/api').replace(/\/+$/, '');
+const CMS_API_URL = rawCmsUrl.endsWith('/api') ? rawCmsUrl : `${rawCmsUrl}/api`;
 
 /**
  * Fetch a form by its slug or ID
  */
 export async function getStorefrontForm(slugOrId: string): Promise<StorefrontForm | null> {
   try {
-    const res = await fetch(`${CMS_API_URL}/api/forms/${slugOrId}`, {
+    const res = await fetch(`${CMS_API_URL}/forms/${slugOrId}`, {
       next: { revalidate: 60, tags: [`form-${slugOrId}`] },
     });
     if (!res.ok) return null;
@@ -79,7 +80,7 @@ export async function submitStorefrontForm(
   slugOrId: string,
   payload: { data: Record<string, any>; submitterName?: string; submitterEmail?: string }
 ): Promise<{ message: string; submissionId?: string; successType?: string; redirectUrl?: string }> {
-  const res = await fetch(`${CMS_API_URL}/api/forms/${slugOrId}/submit`, {
+  const res = await fetch(`${CMS_API_URL}/forms/${slugOrId}/submit`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),

@@ -1,5 +1,6 @@
 // ─── Login Page — /auth/login ─────────────────────────────────────────────────
 
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { getTheme } from '@/lib/api/theme';
 import { resolveTemplate } from '@/templates';
@@ -17,5 +18,9 @@ export default async function LoginPage() {
 
   console.log({ theme });
   const { LoginPage } = resolveTemplate(theme.activeTemplateSlug);
-  return <LoginPage theme={theme} />;
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <LoginPage theme={theme} />
+    </Suspense>
+  );
 }

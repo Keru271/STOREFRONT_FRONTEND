@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import type { CmsPage, ThemeConfig } from '@/lib/api/types';
 import { TemplateLayout } from './TemplateLayout';
+import { StorefrontFormRenderer } from './StorefrontFormRenderer';
+import { StorefrontForm, getStorefrontForm } from '@/lib/api/forms';
 
 // Inline Icons
 function ChevronDownIcon({ className = 'w-4 h-4' }: { className?: string }) {
@@ -244,6 +246,71 @@ function StorefrontCountdown({ block }: { block: any }) {
   );
 }
 
+// ─── Embedded Form Component ────────────────────────────────────────────────
+function StorefrontEmbeddedForm({ block }: { block: any }) {
+  const [form, setForm] = useState<StorefrontForm | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const formIdOrSlug = block.data?.formSlug || block.data?.formId;
+
+  useEffect(() => {
+    if (!formIdOrSlug) {
+      setLoading(false);
+      return;
+    }
+    let isMounted = true;
+    getStorefrontForm(formIdOrSlug)
+      .then((res) => {
+        if (isMounted) {
+          setForm(res);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [formIdOrSlug]);
+
+  if (!formIdOrSlug) return null;
+
+  if (loading) {
+    return (
+      <div className="py-10 flex flex-col items-center justify-center gap-2">
+        <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+        <span className="text-xs opacity-60">Loading form...</span>
+      </div>
+    );
+  }
+
+  if (!form) return null;
+
+  return (
+    <div className="py-4">
+      {(block.data?.heading || block.data?.subtitle) && (
+        <div className="mb-6 text-center space-y-1">
+          {block.data.heading && (
+            <h3
+              className="text-2xl sm:text-3xl font-black font-heading"
+              style={{ color: 'var(--sf-text)' }}
+            >
+              {block.data.heading}
+            </h3>
+          )}
+          {block.data.subtitle && (
+            <p className="text-sm opacity-70 max-w-md mx-auto">{block.data.subtitle}</p>
+          )}
+        </div>
+      )}
+      <StorefrontFormRenderer form={form} />
+    </div>
+  );
+}
+
 // ─── Main Renderer ──────────────────────────────────────────────────────────
 interface CmsPageRendererProps {
   page: CmsPage;
@@ -273,11 +340,12 @@ export function CmsPageRenderer({ page, theme }: CmsPageRendererProps) {
 
         if (Array.isArray(parsed)) {
           return (
-            <div className="space-y-12">
+            <div className="space-y-12 w-full">
               {parsed.map((block: any, idx: number) => {
                 if (block.isVisible === false) return null;
 
-                switch (block.type) {
+                const renderBlockContent = () => {
+                  switch (block.type) {
                   // ── 1. HEADING TAG (H1-H6) ──
                   case 'heading': {
                     const Tag = (
@@ -1290,13 +1358,37 @@ export function CmsPageRenderer({ page, theme }: CmsPageRendererProps) {
                       </div>
                     );
 
+                  case 'custom_form':
+                  case 'form':
+                    return <StorefrontEmbeddedForm key={block.id || idx} block={block} />;
+
                   default:
                     return null;
                 }
-              })}
-            </div>
-          );
-        }
+              };
+
+              const isFull = block.data?.containerWidth === 'full';
+              const maxWidth = block.data?.containerMaxWidth || 'max-w-7xl';
+              const padding = block.data?.containerPadding || 'normal';
+              const paddingClass =
+                padding === 'none'
+                  ? 'px-0'
+                  : padding === 'compact'
+                    ? 'px-3 sm:px-4'
+                    : 'px-4 sm:px-6 lg:px-8';
+
+              return (
+                <div
+                  key={block.id || idx}
+                  className={isFull ? 'w-full' : `w-full ${maxWidth} mx-auto ${paddingClass}`}
+                >
+                  {renderBlockContent()}
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
 
         // Case B: Hero object with sections
         if (parsed.hero) {
@@ -1358,6 +1450,30 @@ export function CmsPageRenderer({ page, theme }: CmsPageRendererProps) {
         year: 'numeric',
       })
     : null;
+
+  const isBlocksPage = (() => {
+    if (!page.content) return false;
+    const trimmed = page.content.trim();
+    if (trimmed.startsWith('[')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        return Array.isArray(parsed);
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  })();
+
+  if (isBlocksPage) {
+    return (
+      <TemplateLayout theme={theme}>
+        <div className="w-full pb-16 font-sans">
+          {renderContent()}
+        </div>
+      </TemplateLayout>
+    );
+  }
 
   return (
     <TemplateLayout theme={theme}>

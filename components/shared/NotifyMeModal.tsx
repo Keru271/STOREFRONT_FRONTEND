@@ -15,6 +15,7 @@ export interface NotifyMeModalProps {
     image?: string | null;
     sku?: string | null;
     price?: number | null;
+    storeId?: string | null;
   };
   variant?: {
     id?: string | null;
@@ -97,6 +98,7 @@ export default function NotifyMeModal({
         customerEmail: email.trim(),
         customerName: name.trim() || undefined,
         customerPhone: phone.trim() || undefined,
+        storeId: product.storeId || undefined,
       });
 
       setSubmitted(true);
@@ -207,6 +209,7 @@ export default function NotifyMeModal({
                     src={product.image}
                     alt={product.name}
                     fill
+                    unoptimized
                     className="object-cover"
                   />
                 </div>

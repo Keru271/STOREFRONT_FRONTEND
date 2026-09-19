@@ -58,6 +58,7 @@ export interface ThemeConfig {
   footerShowSocial?: boolean | null;
   footerShowNewsletter?: boolean | null;
   footerShowPaymentBadges?: boolean | null;
+  homeSectionsJson?: string | null;
 
   // Social Links
   socialFacebook?: string | null;

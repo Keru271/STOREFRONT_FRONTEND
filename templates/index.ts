@@ -23,6 +23,8 @@ import type {
 } from '@/lib/api/types';
 
 // Default template (dynamic chunks)
+const DefaultHeader = dynamic(() => import('./default/Header'));
+const DefaultFooter = dynamic(() => import('./default/Footer'));
 const DefaultHomePage = dynamic(() => import('./default/HomePage'));
 const DefaultPLPPage = dynamic(() => import('./default/PLPPage'));
 const DefaultLoginPage = dynamic(() => import('./default/LoginPage'));
@@ -32,8 +34,11 @@ const DefaultPDPPage = dynamic(() => import('./default/PDPPage'));
 const DefaultWishlistPage = dynamic(() => import('./default/WishlistPage'));
 const DefaultCartPage = dynamic(() => import('./default/CartPage'));
 const DefaultAccountPage = dynamic(() => import('./default/AccountPage'));
+const DefaultSupportPage = dynamic(() => import('./default/SupportPage'));
 
 // Minimal template (dynamic chunks)
+const MinimalHeader = dynamic(() => import('./minimal/Header'));
+const MinimalFooter = dynamic(() => import('./minimal/Footer'));
 const MinimalHomePage = dynamic(() => import('./minimal/HomePage'));
 const MinimalPLPPage = dynamic(() => import('./minimal/PLPPage'));
 const MinimalLoginPage = dynamic(() => import('./minimal/LoginPage'));
@@ -43,8 +48,11 @@ const MinimalPDPPage = dynamic(() => import('./minimal/PDPPage'));
 const MinimalWishlistPage = dynamic(() => import('./minimal/WishlistPage'));
 const MinimalCartPage = dynamic(() => import('./minimal/CartPage'));
 const MinimalAccountPage = dynamic(() => import('./minimal/AccountPage'));
+const MinimalSupportPage = dynamic(() => import('./minimal/SupportPage'));
 
 // Luxe template (dynamic chunks)
+const LuxeHeader = dynamic(() => import('./luxe/Header'));
+const LuxeFooter = dynamic(() => import('./luxe/Footer'));
 const LuxeHomePage = dynamic(() => import('./luxe/HomePage'));
 const LuxePLPPage = dynamic(() => import('./luxe/PLPPage'));
 const LuxeLoginPage = dynamic(() => import('./luxe/LoginPage'));
@@ -54,8 +62,11 @@ const LuxePDPPage = dynamic(() => import('./luxe/PDPPage'));
 const LuxeWishlistPage = dynamic(() => import('./luxe/WishlistPage'));
 const LuxeCartPage = dynamic(() => import('./luxe/CartPage'));
 const LuxeAccountPage = dynamic(() => import('./luxe/AccountPage'));
+const LuxeSupportPage = dynamic(() => import('./luxe/SupportPage'));
 
 // Nova template (Apple Design System - dynamic chunks, aliases to minimal)
+const NovaHeader = MinimalHeader;
+const NovaFooter = MinimalFooter;
 const NovaHomePage = MinimalHomePage;
 const NovaPLPPage = MinimalPLPPage;
 const NovaLoginPage = MinimalLoginPage;
@@ -65,8 +76,11 @@ const NovaPDPPage = MinimalPDPPage;
 const NovaWishlistPage = MinimalWishlistPage;
 const NovaCartPage = MinimalCartPage;
 const NovaAccountPage = MinimalAccountPage;
+const NovaSupportPage = MinimalSupportPage;
 
 // Mincom template (Modern Furniture & Living - dynamic chunks)
+const MincomHeader = dynamic(() => import('./mincom/Header'));
+const MincomFooter = dynamic(() => import('./mincom/Footer'));
 const MincomHomePage = dynamic(() => import('./mincom/HomePage'));
 const MincomPLPPage = dynamic(() => import('./mincom/PLPPage'));
 const MincomLoginPage = dynamic(() => import('./mincom/LoginPage'));
@@ -76,8 +90,11 @@ const MincomPDPPage = dynamic(() => import('./mincom/PDPPage'));
 const MincomWishlistPage = dynamic(() => import('./mincom/WishlistPage'));
 const MincomCartPage = dynamic(() => import('./mincom/CartPage'));
 const MincomAccountPage = dynamic(() => import('./mincom/AccountPage'));
+const MincomSupportPage = dynamic(() => import('./mincom/SupportPage'));
 
 // Funo template (Scandinavian Modern Furniture & Decor - dynamic chunks)
+const FunoHeader = dynamic(() => import('./funo/Header'));
+const FunoFooter = dynamic(() => import('./funo/Footer'));
 const FunoHomePage = dynamic(() => import('./funo/HomePage'));
 const FunoPLPPage = dynamic(() => import('./funo/PLPPage'));
 const FunoLoginPage = dynamic(() => import('./funo/LoginPage'));
@@ -87,6 +104,7 @@ const FunoPDPPage = dynamic(() => import('./funo/PDPPage'));
 const FunoWishlistPage = dynamic(() => import('./funo/WishlistPage'));
 const FunoCartPage = dynamic(() => import('./funo/CartPage'));
 const FunoAccountPage = dynamic(() => import('./funo/AccountPage'));
+const FunoSupportPage = dynamic(() => import('./funo/SupportPage'));
 
 // ── Shared Prop Interfaces ────────────────────────────────────────────────────
 // All page components in all templates must satisfy these contracts.
@@ -149,7 +167,16 @@ export interface CollectionsPageProps {
   collections: Collection[];
 }
 
+/**
+ * SupportPageProps — per-template customer support and help center page.
+ */
+export interface SupportPageProps {
+  theme: ThemeConfig;
+}
+
 export interface TemplateComponents {
+  Header?: React.ComponentType<any>;
+  Footer?: React.ComponentType<any>;
   HomePage: React.ComponentType<HomePageProps>;
   PLPPage: React.ComponentType<PLPPageProps>;
   LoginPage: React.ComponentType<AuthPageProps>;
@@ -163,6 +190,8 @@ export interface TemplateComponents {
   CartPage: React.ComponentType<CartPageProps>;
   /** Per-template customer account page (required). */
   AccountPage: React.ComponentType<AccountPageProps>;
+  /** Per-template customer support and help center page (required). */
+  SupportPage: React.ComponentType<SupportPageProps>;
   /** Optional: per-template collections index. Falls back to shared /collections if absent. */
   CollectionsPage?: React.ComponentType<CollectionsPageProps>;
 }
@@ -170,6 +199,8 @@ export interface TemplateComponents {
 // ── Registry ──────────────────────────────────────────────────────────────────
 
 const mincomComponents: TemplateComponents = {
+  Header: MincomHeader,
+  Footer: MincomFooter,
   HomePage: MincomHomePage,
   PLPPage: MincomPLPPage,
   LoginPage: MincomLoginPage,
@@ -179,9 +210,12 @@ const mincomComponents: TemplateComponents = {
   WishlistPage: MincomWishlistPage,
   CartPage: MincomCartPage,
   AccountPage: MincomAccountPage,
+  SupportPage: MincomSupportPage,
 };
 
 const novaComponents: TemplateComponents = {
+  Header: NovaHeader,
+  Footer: NovaFooter,
   HomePage: NovaHomePage,
   PLPPage: NovaPLPPage,
   LoginPage: NovaLoginPage,
@@ -191,9 +225,12 @@ const novaComponents: TemplateComponents = {
   WishlistPage: NovaWishlistPage,
   CartPage: NovaCartPage,
   AccountPage: NovaAccountPage,
+  SupportPage: NovaSupportPage,
 };
 
 const defaultComponents: TemplateComponents = {
+  Header: DefaultHeader,
+  Footer: DefaultFooter,
   HomePage: DefaultHomePage,
   PLPPage: DefaultPLPPage,
   LoginPage: DefaultLoginPage,
@@ -203,9 +240,12 @@ const defaultComponents: TemplateComponents = {
   WishlistPage: DefaultWishlistPage,
   CartPage: DefaultCartPage,
   AccountPage: DefaultAccountPage,
+  SupportPage: DefaultSupportPage,
 };
 
 const minimalComponents: TemplateComponents = {
+  Header: MinimalHeader,
+  Footer: MinimalFooter,
   HomePage: MinimalHomePage,
   PLPPage: MinimalPLPPage,
   LoginPage: MinimalLoginPage,
@@ -215,9 +255,12 @@ const minimalComponents: TemplateComponents = {
   WishlistPage: MinimalWishlistPage,
   CartPage: MinimalCartPage,
   AccountPage: MinimalAccountPage,
+  SupportPage: MinimalSupportPage,
 };
 
 const luxeComponents: TemplateComponents = {
+  Header: LuxeHeader,
+  Footer: LuxeFooter,
   HomePage: LuxeHomePage,
   PLPPage: LuxePLPPage,
   LoginPage: LuxeLoginPage,
@@ -227,9 +270,12 @@ const luxeComponents: TemplateComponents = {
   WishlistPage: LuxeWishlistPage,
   CartPage: LuxeCartPage,
   AccountPage: LuxeAccountPage,
+  SupportPage: LuxeSupportPage,
 };
 
 const funoComponents: TemplateComponents = {
+  Header: FunoHeader,
+  Footer: FunoFooter,
   HomePage: FunoHomePage,
   PLPPage: FunoPLPPage,
   LoginPage: FunoLoginPage,
@@ -239,6 +285,7 @@ const funoComponents: TemplateComponents = {
   WishlistPage: FunoWishlistPage,
   CartPage: FunoCartPage,
   AccountPage: FunoAccountPage,
+  SupportPage: FunoSupportPage,
 };
 
 const TEMPLATE_REGISTRY: Record<string, TemplateComponents> = {

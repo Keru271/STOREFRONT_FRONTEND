@@ -2,13 +2,16 @@
 
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { ApiError } from '@/lib/api/client';
 import type { AuthPageProps } from '@/templates';
 
 export default function MinimalSignupPage({ theme }: AuthPageProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get('redirect');
+  const redirectUrl = redirectParam || '/';
   const { register } = useAuth();
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [acceptsMarketing, setAcceptsMarketing] = useState(true);
@@ -25,7 +28,7 @@ export default function MinimalSignupPage({ theme }: AuthPageProps) {
     setIsLoading(true);
     try {
       await register({ ...formData, acceptsMarketing });
-      router.push('/');
+      router.push(redirectUrl);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Something went wrong.');
     } finally {
@@ -69,7 +72,11 @@ export default function MinimalSignupPage({ theme }: AuthPageProps) {
         >
           Already a member?{' '}
           <Link
-            href="/auth/login"
+            href={
+              redirectParam
+                ? `/auth/login?redirect=${encodeURIComponent(redirectParam)}`
+                : '/auth/login'
+            }
             className="transition-opacity hover:opacity-60"
             style={{ color: 'var(--sf-text)' }}
           >

@@ -12,6 +12,7 @@ import type { ThemeConfig } from '@/lib/api/types';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useLoader } from '@/hooks/useLoader';
+import { useAuth } from '@/hooks/useAuth';
 import { validateCoupon } from '@/lib/api';
 
 export interface CartBodyProps {
@@ -23,6 +24,7 @@ export function CartBody({ theme }: CartBodyProps) {
     useCart();
   const { formatPrice } = useCurrency();
   const { startLoading, stopLoading } = useLoader();
+  const { isAuthenticated } = useAuth();
   const [couponCode, setCouponCode] = useState('');
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
   const [appliedDiscount, setAppliedDiscount] = useState<{
@@ -694,15 +696,27 @@ export function CartBody({ theme }: CartBodyProps) {
               ) : (
                 <Link
                   href={
-                    appliedDiscount
-                      ? `/checkout?coupon=${encodeURIComponent(appliedDiscount.code)}`
-                      : '/checkout'
+                    isAuthenticated
+                      ? appliedDiscount
+                        ? `/checkout?coupon=${encodeURIComponent(appliedDiscount.code)}`
+                        : '/checkout'
+                      : `/auth/login?redirect=${encodeURIComponent(
+                          appliedDiscount
+                            ? `/checkout?coupon=${encodeURIComponent(appliedDiscount.code)}`
+                            : '/checkout',
+                        )}`
                   }
-                  onClick={() => startLoading('Navigating to secure checkout...')}
+                  onClick={() =>
+                    startLoading(
+                      isAuthenticated
+                        ? 'Navigating to secure checkout...'
+                        : 'Redirecting to sign in...',
+                    )
+                  }
                   className="w-full mt-6 py-4 rounded-2xl font-bold text-sm text-white shadow-xl transition-all duration-200 flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] cursor-pointer"
                   style={{ backgroundColor: 'var(--sf-primary)' }}
                 >
-                  <span>Proceed to Checkout</span>
+                  <span>{isAuthenticated ? 'Proceed to Checkout' : 'Sign In to Checkout'}</span>
                   <span>→</span>
                 </Link>
               )}

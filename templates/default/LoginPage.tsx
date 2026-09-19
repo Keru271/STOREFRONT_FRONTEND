@@ -2,13 +2,16 @@
 
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import type { AuthPageProps } from '@/templates';
 import { ApiError } from '@/lib/api/client';
 
 export default function DefaultLoginPage({ theme }: AuthPageProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get('redirect');
+  const redirectUrl = redirectParam || '/';
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,7 +25,7 @@ export default function DefaultLoginPage({ theme }: AuthPageProps) {
     setIsLoading(true);
     try {
       await login({ email, password });
-      router.push('/');
+      router.push(redirectUrl);
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);
@@ -130,7 +133,11 @@ export default function DefaultLoginPage({ theme }: AuthPageProps) {
           >
             Don't have an account?{' '}
             <Link
-              href="/auth/signup"
+              href={
+                redirectParam
+                  ? `/auth/signup?redirect=${encodeURIComponent(redirectParam)}`
+                  : '/auth/signup'
+              }
               className="font-semibold transition-colors"
               style={{ color: 'var(--sf-primary)' }}
             >

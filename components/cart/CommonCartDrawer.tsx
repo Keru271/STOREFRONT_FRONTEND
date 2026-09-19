@@ -6,10 +6,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/hooks/useCurrency';
+import { useAuth } from '@/hooks/useAuth';
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
 
 export default function CommonCartDrawer() {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const {
     items,
     itemCount,
@@ -50,7 +52,11 @@ export default function CommonCartDrawer() {
 
   const handleGoToCheckout = () => {
     closeCart();
-    router.push('/checkout');
+    if (!isAuthenticated) {
+      router.push('/auth/login?redirect=/checkout');
+    } else {
+      router.push('/checkout');
+    }
   };
 
   const handleAddItems = () => {
@@ -226,7 +232,7 @@ export default function CommonCartDrawer() {
                   onClick={handleGoToCheckout}
                   className="w-full py-4 px-6 rounded-xl font-bold text-sm bg-black text-white hover:bg-neutral-800 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
                 >
-                  <span>Go to checkout</span>
+                  <span>{isAuthenticated ? 'Go to checkout' : 'Sign in to checkout'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
 

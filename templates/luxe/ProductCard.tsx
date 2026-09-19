@@ -7,6 +7,7 @@ import type { Product, ProductDetail } from '@/lib/api/types';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
+import QuickViewModal from '@/components/shared/QuickViewModal';
 import NotifyMeModal from '@/components/shared/NotifyMeModal';
 
 type LuxeProduct = Product & Partial<Pick<ProductDetail, 'colorOptions'>>;
@@ -18,6 +19,7 @@ interface LuxeProductCardProps {
 export default function LuxeProductCard({ product }: LuxeProductCardProps) {
   const [hovered, setHovered] = useState(false);
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [isNotifyMeOpen, setIsNotifyMeOpen] = useState(false);
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { formatPrice } = useCurrency();
@@ -152,18 +154,44 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
               <span>Notify Me</span>
             </button>
           ) : hasVariants ? (
+            <div className="absolute inset-x-4 bottom-4 flex gap-2 opacity-0 group-hover:opacity-100 z-20 transition-all">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsVariantModalOpen(true);
+                }}
+                className="flex-1 py-2.5 px-3 text-xs tracking-widest uppercase font-medium bg-white/95 text-black hover:bg-black hover:text-white transition-all shadow-md backdrop-blur cursor-pointer text-center"
+              >
+                Editions ⚡
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsQuickViewOpen(true);
+                }}
+                className="w-10 h-10 flex items-center justify-center bg-black/90 text-white hover:bg-black transition-all shadow-md backdrop-blur cursor-pointer text-center"
+                title="Quick Preview"
+              >
+                👁️
+              </button>
+            </div>
+          ) : (
             <button
               type="button"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setIsVariantModalOpen(true);
+                setIsQuickViewOpen(true);
               }}
               className="absolute inset-x-4 bottom-4 py-2.5 px-4 text-xs tracking-widest uppercase font-medium bg-white/95 text-black hover:bg-black hover:text-white transition-all shadow-md backdrop-blur opacity-0 group-hover:opacity-100 z-20 cursor-pointer text-center"
             >
-              Select Edition ⚡
+              Quick View
             </button>
-          ) : null}
+          )}
         </div>
 
         {/* Product Info */}
@@ -253,6 +281,16 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
           isOpen={isVariantModalOpen}
           onClose={() => setIsVariantModalOpen(false)}
           product={product}
+        />
+      )}
+
+      {/* Quick View Modal */}
+      {isQuickViewOpen && (
+        <QuickViewModal
+          isOpen={isQuickViewOpen}
+          onClose={() => setIsQuickViewOpen(false)}
+          product={product}
+          activeTemplate="luxe"
         />
       )}
 

@@ -66,7 +66,36 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
   const { formatPrice, currency: storeCurrency } = useCurrency();
   const toast = useToast();
   const { startLoading, stopLoading } = useLoader();
-  const { customer, addresses, addAddress, isAuthenticated } = useAuth();
+  const { customer, addresses, addAddress, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+
+  // Redirect to login if user is not authenticated
+  useEffect(() => {
+    if (!isAuthLoading && !isAuthenticated) {
+      toast.error('Please sign in to complete your purchase');
+      router.replace('/auth/login?redirect=/checkout');
+    }
+  }, [isAuthLoading, isAuthenticated, router, toast]);
+
+  // Pre-fill contact & address when customer profile loads
+  useEffect(() => {
+    if (customer) {
+      setContactData((prev) => ({
+        name: customer.name || prev.name,
+        email: customer.email || prev.email,
+        phone: customer.phone || prev.phone,
+      }));
+      if (customer.address) {
+        setAddressData((prev) => ({
+          ...prev,
+          street: customer.address?.street || prev.street,
+          city: customer.address?.city || prev.city,
+          state: customer.address?.state || prev.state,
+          zip: customer.address?.zip || prev.zip,
+          country: customer.address?.country || prev.country,
+        }));
+      }
+    }
+  }, [customer]);
 
   // Store branding & configs
   const storeName = theme.storeName || 'Store';
@@ -287,6 +316,12 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
   // Order Placement Handler
   const handlePlaceOrder = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to complete your purchase');
+      router.push('/auth/login?redirect=/checkout');
+      return;
+    }
+
     if (items.length === 0) {
       toast.error('Your cart is empty. Add items to checkout.');
       router.push('/products');
@@ -492,6 +527,50 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
         return 'Credit or debit card';
     }
   };
+
+  if (isAuthLoading || !isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-white flex flex-col font-sans">
+        <header className="sticky top-0 z-30 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <Link
+              href="/cart"
+              className="inline-flex items-center gap-2 text-sm font-semibold hover:opacity-75 transition"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Cart</span>
+            </Link>
+            <div className="font-extrabold text-xl tracking-tight">
+              <span>{storeName}</span>
+            </div>
+            <div className="w-24 text-right" />
+          </div>
+        </header>
+
+        <main className="flex-1 flex items-center justify-center p-6">
+          <div className="p-8 max-w-md w-full rounded-3xl shadow-xl border text-center flex flex-col items-center gap-4 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
+            <div className="w-12 h-12 rounded-full border-4 border-neutral-300 dark:border-neutral-700 border-t-black dark:border-t-white animate-spin" />
+            <h2 className="text-xl font-bold text-neutral-900 dark:text-white">
+              {isAuthLoading ? 'Verifying Account...' : 'Sign In Required to Checkout'}
+            </h2>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+              {isAuthLoading
+                ? 'Please wait while we verify your login session...'
+                : 'You must be signed in to purchase products and complete payment. Redirecting to login...'}
+            </p>
+            {!isAuthLoading && !isAuthenticated && (
+              <Link
+                href="/auth/login?redirect=/checkout"
+                className="mt-3 w-full py-3.5 rounded-xl font-bold text-sm text-white bg-black dark:bg-white dark:text-black hover:opacity-90 transition block"
+              >
+                Sign In to Continue Purchase
+              </Link>
+            )}
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-white flex flex-col font-sans">

@@ -2,13 +2,16 @@
 
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import type { AuthPageProps } from '@/templates';
 import { ApiError } from '@/lib/api/client';
 
 export default function DefaultSignupPage({ theme }: AuthPageProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get('redirect');
+  const redirectUrl = redirectParam || '/';
   const { register } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
@@ -61,7 +64,7 @@ export default function DefaultSignupPage({ theme }: AuthPageProps) {
         phone: formData.phone || undefined,
         acceptsMarketing,
       });
-      router.push('/');
+      router.push(redirectUrl);
     } catch (err) {
       if (err instanceof ApiError) setError(err.message);
       else setError('Something went wrong. Please try again.');
@@ -160,7 +163,11 @@ export default function DefaultSignupPage({ theme }: AuthPageProps) {
           >
             Already have one?{' '}
             <Link
-              href="/auth/login"
+              href={
+                redirectParam
+                  ? `/auth/login?redirect=${encodeURIComponent(redirectParam)}`
+                  : '/auth/login'
+              }
               className="font-semibold"
               style={{ color: 'var(--sf-primary)' }}
             >

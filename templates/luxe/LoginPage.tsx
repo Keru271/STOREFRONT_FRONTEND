@@ -2,13 +2,16 @@
 
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { ApiError } from '@/lib/api/client';
 import type { AuthPageProps } from '@/templates';
 
 export default function LuxeLoginPage({ theme }: AuthPageProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get('redirect');
+  const redirectUrl = redirectParam || '/';
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,7 +24,7 @@ export default function LuxeLoginPage({ theme }: AuthPageProps) {
     setIsLoading(true);
     try {
       await login({ email, password });
-      router.push('/');
+      router.push(redirectUrl);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Authentication failed.');
     } finally {
@@ -255,7 +258,11 @@ export default function LuxeLoginPage({ theme }: AuthPageProps) {
           >
             Not yet a member?{' '}
             <Link
-              href="/auth/signup"
+              href={
+                redirectParam
+                  ? `/auth/signup?redirect=${encodeURIComponent(redirectParam)}`
+                  : '/auth/signup'
+              }
               className="transition-colors"
               style={{ color: 'var(--sf-primary)' }}
             >
