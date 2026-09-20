@@ -24,6 +24,7 @@ import { ThemeLoader } from '@/components/shared/ThemeLoader';
 import { MobileBottomNav } from '@/components/shared/MobileBottomNav';
 import CommonCartDrawer from '@/components/cart/CommonCartDrawer';
 import { StorefrontCookieConsent } from '@/components/shared/StorefrontCookieConsent';
+import { PixelTracker } from '@/components/analytics/PixelTracker';
 import { getTheme } from '@/lib/api/theme';
 import { getMenu } from '@/lib/api/catalog';
 import { generateDynamicFontStyles } from '@/lib/fonts';
@@ -180,6 +181,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         }}
       >
         <ThemeProvider theme={theme}>
+          <PixelTracker theme={theme} />
           <LoadingProvider>
             <ToastProvider>
               <CartProvider>

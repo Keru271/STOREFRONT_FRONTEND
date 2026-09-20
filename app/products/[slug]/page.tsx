@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation';
 import { getProductDetail, getProducts } from '@/lib/api/products';
 import { getTheme } from '@/lib/api/theme';
 import { resolveTemplate } from '@/templates';
+import { ProductViewTracker } from '@/components/analytics/ProductViewTracker';
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -74,5 +75,10 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
 
   const { PDPPage } = resolveTemplate(effectiveTheme.activeTemplateSlug);
 
-  return <PDPPage theme={effectiveTheme} product={product} relatedProducts={related} />;
+  return (
+    <>
+      <ProductViewTracker product={product} currency={effectiveTheme.currency} />
+      <PDPPage theme={effectiveTheme} product={product} relatedProducts={related} />
+    </>
+  );
 }

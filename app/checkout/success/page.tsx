@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { TemplateLayout } from '@/components/shared/TemplateLayout';
 import { getTheme } from '@/lib/api/theme';
 import { ThemeConfig } from '@/lib/api/types';
+import { trackPurchase } from '@/lib/analytics/events';
 
 function CheckoutSuccessContent({ theme }: { theme: ThemeConfig }) {
   const searchParams = useSearchParams();
@@ -15,6 +16,17 @@ function CheckoutSuccessContent({ theme }: { theme: ThemeConfig }) {
   const total = searchParams.get('total') || '0.00';
   const currency = searchParams.get('currency') || (gateway === 'RAZORPAY' ? 'INR' : 'USD');
   const symbol = currency === 'INR' ? '₹' : '$';
+
+  // Analytics: Track Purchase Event
+  useEffect(() => {
+    if (orderNumber) {
+      trackPurchase({
+        id: orderNumber,
+        total: parseFloat(total) || 0,
+        currency,
+      });
+    }
+  }, [orderNumber, total, currency]);
 
   return (
     <div

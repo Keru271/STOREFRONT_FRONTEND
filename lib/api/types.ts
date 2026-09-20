@@ -93,6 +93,16 @@ export interface ThemeConfig {
   paymentRazorpayActive?: boolean | null;
   paymentCodActive?: boolean | null;
   paymentTestMode?: boolean | null;
+
+  // Tracking Pixels & Analytics
+  ga4MeasurementId?: string | null;
+  metaPixelId?: string | null;
+  tikTokPixelId?: string | null;
+  pinterestTagId?: string | null;
+  adobeLaunchUrl?: string | null;
+  cleverTapAccountId?: string | null;
+  cleverTapToken?: string | null;
+  cleverTapRegion?: string | null;
 }
 
 export interface StoreInfo {
@@ -121,6 +131,16 @@ export interface StoreInfo {
   language: string;
   timezone?: string;
   activeTemplateSlug?: string | null;
+
+  // Tracking Pixels & Analytics
+  ga4MeasurementId?: string | null;
+  metaPixelId?: string | null;
+  tikTokPixelId?: string | null;
+  pinterestTagId?: string | null;
+  adobeLaunchUrl?: string | null;
+  cleverTapAccountId?: string | null;
+  cleverTapToken?: string | null;
+  cleverTapRegion?: string | null;
 }
 
 // ── Products ─────────────────────────────────────────────────────────────────
@@ -420,11 +440,29 @@ export interface Brand {
   website?: string | null;
 }
 
+export interface MegaMenuCardItem {
+  id?: string;
+  label?: string;
+  title?: string;
+  url?: string;
+  href?: string;
+  description?: string | null;
+  badge?: string | null;
+  target?: string;
+}
+
 export interface MegaMenuConfig {
   bannerImage?: string | null;
   headline?: string | null;
   buttonLabel?: string | null;
   buttonUrl?: string | null;
+  catalogTitle?: string | null;
+  viewAllLabel?: string | null;
+  viewAllUrl?: string | null;
+  promoBadge?: string | null;
+  footerLeft?: string | null;
+  footerRight?: string | null;
+  items?: MegaMenuCardItem[] | null;
 }
 
 export interface MenuItem {
@@ -435,6 +473,8 @@ export interface MenuItem {
   href?: string;
   target?: string;
   type?: string;
+  description?: string | null;
+  badge?: string | null;
   isMegaMenu?: boolean;
   megaMenuConfig?: MegaMenuConfig | null;
   children?: MenuItem[];

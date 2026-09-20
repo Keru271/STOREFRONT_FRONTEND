@@ -10,6 +10,7 @@ import {
 } from '@/lib/api/cart';
 import type { Cart, CartItem, AddToCartInput } from '@/lib/api/types';
 import { useToast } from '@/context/ToastContext';
+import { trackAddToCart } from '@/lib/analytics/events';
 
 interface CartContextValue {
   cart: Cart | null;
@@ -93,6 +94,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
         setCart(response);
         setIsOpen(true);
+
+        // Fire analytics tracking event
+        const addedItem = response.items?.find(
+          (it) => it.productId === input.productId && (it.variantId || '') === (input.variantId || ''),
+        );
+        if (addedItem) {
+          trackAddToCart({
+            id: addedItem.productId,
+            name: addedItem.name || 'Product',
+            price: addedItem.price,
+            quantity: input.quantity || 1,
+          });
+        }
+
         toast.success(`Added to shopping bag (Qty: ${input.quantity || 1})`, 'Bag Updated', {
           action: {
             label: 'View Bag',

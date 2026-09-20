@@ -147,6 +147,8 @@ export async function getMenu(handle: string = 'main-menu'): Promise<Menu | null
           href: item.href || item.url || '#',
           target: item.target || '_self',
           type: item.type || 'LINK',
+          description: item.description || null,
+          badge: item.badge || null,
           isMegaMenu: Boolean(item.isMegaMenu),
           megaMenuConfig:
             item.megaMenuConfig ||
@@ -156,6 +158,13 @@ export async function getMenu(handle: string = 'main-menu'): Promise<Menu | null
                   headline: item.headline,
                   buttonLabel: item.buttonLabel,
                   buttonUrl: item.buttonUrl,
+                  catalogTitle: item.catalogTitle,
+                  viewAllLabel: item.viewAllLabel,
+                  viewAllUrl: item.viewAllUrl,
+                  promoBadge: item.promoBadge,
+                  footerLeft: item.footerLeft,
+                  footerRight: item.footerRight,
+                  items: Array.isArray(item.items) ? item.items : null,
                 }
               : null),
           children: Array.isArray(item.children)
@@ -165,6 +174,8 @@ export async function getMenu(handle: string = 'main-menu'): Promise<Menu | null
                 title: c.title || c.label || 'Sublink',
                 url: c.url || c.href || '#',
                 href: c.href || c.url || '#',
+                description: c.description || null,
+                badge: c.badge || null,
                 target: c.target || '_self',
               }))
             : [],

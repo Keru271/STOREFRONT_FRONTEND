@@ -19,6 +19,7 @@ import { useCurrency } from '@/hooks/useCurrency';
 import { useToast } from '@/hooks/useToast';
 import { useLoader } from '@/hooks/useLoader';
 import { useAuth } from '@/hooks/useAuth';
+import { trackInitiateCheckout } from '@/lib/analytics/events';
 import {
   ArrowLeft,
   ChevronDown,
@@ -96,6 +97,18 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
       }
     }
   }, [customer]);
+
+  // Analytics: Track Initiate Checkout
+  useEffect(() => {
+    if (items && items.length > 0 && totalAmount > 0) {
+      trackInitiateCheckout({
+        items,
+        total: totalAmount,
+        currency: storeCurrency || theme.currency || 'USD',
+        itemCount,
+      });
+    }
+  }, [items?.length]);
 
   // Store branding & configs
   const storeName = theme.storeName || 'Store';
@@ -1696,7 +1709,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 <div>
                   <div className="font-bold text-neutral-900 dark:text-white text-sm">Taxes</div>
                   <div className="text-neutral-500 mt-1">
-                    Standard state and local sales tax ({taxRate}%).
+                    Standard GST ({taxRate}%).
                   </div>
                 </div>
                 <span className="font-bold text-sm ml-4">

@@ -26,12 +26,75 @@ export const MegaMenuDropdown: React.FC<MegaMenuDropdownProps> = ({
     config.bannerImage ||
     'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80';
   const headline = config.headline || `Featured in ${item.label || item.title || 'Store'}`;
+  const promoBadge = config.promoBadge || 'Featured Promotion';
   const buttonLabel = config.buttonLabel || 'Explore Now';
   const buttonUrl = config.buttonUrl || item.href || item.url || '/products';
-
-  const sublinks = item.children || [];
+  const catalogTitle = config.catalogTitle || `${item.label || item.title || 'Store'} Catalog & Collections`;
+  const viewAllLabel = config.viewAllLabel || 'View All →';
+  const viewAllUrl = config.viewAllUrl || item.href || item.url || '/products';
+  const footerLeft = config.footerLeft ?? 'Fast Worldwide Delivery & Free Returns';
+  const footerRight = config.footerRight ?? 'Official Store Guaranteed';
 
   const isDark = variant === 'dark';
+
+  // Determine cards to display: custom mega menu items -> sublinks -> default presets
+  const DEFAULT_PRESETS = [
+    { label: 'All Products', href: '/products', desc: 'Browse the full catalog', badge: '' },
+    { label: 'Featured Drops', href: '/collections', desc: 'Seasonal top picks', badge: 'HOT' },
+    {
+      label: 'Special Offers',
+      href: '/products?sale=true',
+      desc: 'Limited deals & bundles',
+      badge: 'SALE',
+    },
+    {
+      label: 'New Arrivals',
+      href: '/products?sort=newest',
+      desc: 'Fresh arrivals this week',
+      badge: 'NEW',
+    },
+  ];
+
+  const hasConfigCards = Array.isArray(config.items) && config.items.length > 0;
+  const hasSublinks = Array.isArray(item.children) && item.children.length > 0;
+
+  let displayCards: Array<{
+    id?: string;
+    label: string;
+    href: string;
+    desc?: string | null;
+    badge?: string | null;
+    target?: string;
+  }> = [];
+
+  if (hasConfigCards) {
+    displayCards = (config.items || []).map((c, i) => ({
+      id: c.id || `cfg-${i}`,
+      label: c.label || c.title || 'Feature',
+      href: c.url || c.href || '/products',
+      desc: c.description || null,
+      badge: c.badge || null,
+      target: c.target || '_self',
+    }));
+  } else if (hasSublinks) {
+    displayCards = (item.children || []).map((s, i) => ({
+      id: s.id || `sub-${i}`,
+      label: s.label || s.title || 'Link',
+      href: s.url || s.href || '#',
+      desc: s.description || null,
+      badge: s.badge || null,
+      target: s.target || '_self',
+    }));
+  } else {
+    displayCards = DEFAULT_PRESETS.map((p, i) => ({
+      id: `preset-${i}`,
+      label: p.label,
+      href: p.href,
+      desc: p.desc,
+      badge: p.badge,
+      target: '_self',
+    }));
+  }
 
   return (
     <div
@@ -52,6 +115,7 @@ export const MegaMenuDropdown: React.FC<MegaMenuDropdownProps> = ({
             className={`${bannerImage ? 'col-span-7' : 'col-span-12'} flex flex-col justify-between`}
           >
             <div>
+              {/* Header bar with Catalog Title and View All link */}
               <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200/60 dark:border-slate-800">
                 <div className="flex items-center gap-2">
                   <span
@@ -59,98 +123,75 @@ export const MegaMenuDropdown: React.FC<MegaMenuDropdownProps> = ({
                     style={{ backgroundColor: 'var(--sf-primary, #6366f1)' }}
                   />
                   <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">
-                    {item.label || item.title} Catalog & Collections
+                    {catalogTitle}
                   </h3>
                 </div>
                 <Link
-                  href={item.href || item.url || '/products'}
+                  href={viewAllUrl}
                   target={item.target || '_self'}
                   rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
                   onClick={onClose}
                   className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
                 >
-                  View All &rarr;
+                  {viewAllLabel}
                 </Link>
               </div>
 
-              {sublinks.length > 0 ? (
-                <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                  {sublinks.map((sub, idx) => {
-                    const subHref = sub.href || sub.url || '#';
-                    const subLabel = sub.label || sub.title || 'Link';
-                    const subTarget = sub.target || '_self';
-                    const subRel = subTarget === '_blank' ? 'noopener noreferrer' : undefined;
-                    return (
-                      <Link
-                        key={sub.id || idx}
-                        href={subHref}
-                        target={subTarget}
-                        rel={subRel}
-                        onClick={onClose}
-                        className={`group flex items-center justify-between p-2 rounded-xl transition-all ${
-                          isDark
-                            ? 'hover:bg-slate-800/70 text-slate-200 hover:text-white'
-                            : 'hover:bg-slate-50 text-slate-700 hover:text-indigo-600'
-                        }`}
-                      >
-                        <span className="text-xs font-semibold tracking-tight transition-transform group-hover:translate-x-1">
-                          {subLabel}
-                        </span>
-                        <svg
-                          className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </Link>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-3 py-2">
-                  {[
-                    { label: 'All Products', href: '/products', desc: 'Browse the full catalog' },
-                    { label: 'Featured Drops', href: '/collections', desc: 'Seasonal top picks' },
-                    {
-                      label: 'Special Offers',
-                      href: '/products?sale=true',
-                      desc: 'Limited deals & bundles',
-                    },
-                    {
-                      label: 'New Arrivals',
-                      href: '/products?sort=newest',
-                      desc: 'Fresh arrivals this week',
-                    },
-                  ].map((preset, idx) => (
+              {/* 2-Column Visual Cards Grid */}
+              <div className="grid grid-cols-2 gap-3 py-1">
+                {displayCards.map((card, idx) => {
+                  const cardRel = card.target === '_blank' ? 'noopener noreferrer' : undefined;
+                  return (
                     <Link
-                      key={idx}
-                      href={preset.href}
+                      key={card.id || idx}
+                      href={card.href}
+                      target={card.target}
+                      rel={cardRel}
                       onClick={onClose}
-                      className={`p-3 rounded-2xl border transition-all ${
+                      className={`group p-3 rounded-2xl border transition-all flex flex-col justify-between ${
                         isDark
-                          ? 'border-slate-800 hover:border-slate-700 hover:bg-slate-800/50'
-                          : 'border-slate-100 hover:border-indigo-100 hover:bg-slate-50'
+                          ? 'border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800/60 text-slate-200 hover:text-white'
+                          : 'border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/40 text-slate-800 hover:text-indigo-900'
                       }`}
                     >
-                      <span className="block text-xs font-bold">{preset.label}</span>
-                      <span className="block text-[10px] text-slate-400 mt-0.5">{preset.desc}</span>
+                      <div className="flex items-center justify-between gap-1.5">
+                        <span className="text-xs font-bold tracking-tight transition-transform group-hover:translate-x-0.5 truncate">
+                          {card.label}
+                        </span>
+                        {card.badge && (
+                          <span
+                            className="px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider shrink-0"
+                            style={{
+                              backgroundColor: isDark ? 'rgba(99, 102, 241, 0.2)' : 'rgba(99, 102, 241, 0.12)',
+                              color: 'var(--sf-primary, #6366f1)',
+                            }}
+                          >
+                            {card.badge}
+                          </span>
+                        )}
+                      </div>
+                      {card.desc && (
+                        <span className="block text-[10px] text-slate-400 mt-1 line-clamp-1 group-hover:text-slate-500 dark:group-hover:text-slate-300">
+                          {card.desc}
+                        </span>
+                      )}
                     </Link>
-                  ))}
-                </div>
-              )}
+                  );
+                })}
+              </div>
             </div>
 
-            <div className="pt-4 mt-4 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-              <span>Fast Worldwide Delivery & Free Returns</span>
-              <span className="font-semibold text-slate-500">Official Store Guaranteed</span>
-            </div>
+            {/* Bottom Footer Highlights */}
+            {(footerLeft || footerRight) && (
+              <div className="pt-4 mt-4 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+                {footerLeft ? <span>{footerLeft}</span> : <span />}
+                {footerRight ? (
+                  <span className="font-semibold text-slate-500 dark:text-slate-400">
+                    {footerRight}
+                  </span>
+                ) : null}
+              </div>
+            )}
           </div>
 
           {/* Right Column: Visual Promo Card */}
@@ -168,7 +209,7 @@ export const MegaMenuDropdown: React.FC<MegaMenuDropdownProps> = ({
               {/* Card Content */}
               <div className="relative z-10 space-y-3">
                 <span className="inline-block px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-wider">
-                  Featured Promotion
+                  {promoBadge}
                 </span>
 
                 <h4 className="text-base sm:text-lg font-black text-white leading-snug drop-shadow-sm">
