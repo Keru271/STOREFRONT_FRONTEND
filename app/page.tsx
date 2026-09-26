@@ -3,6 +3,7 @@ import { getProducts } from '@/lib/api/products';
 import { getCollections, getCategories } from '@/lib/api/catalog';
 import { resolveTemplate } from '@/templates';
 import { SectionResolver } from '@/lib/sections/SectionResolver';
+import { DEFAULT_TEMPLATE_SECTIONS } from '@/lib/sections/types';
 import type { SectionConfig } from '@/lib/sections/types';
 
 interface HomePageProps {
@@ -18,7 +19,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   const [theme, products, collections, categories] = await Promise.all([
     getTheme(),
-    getProducts({ limit: 12 }),
+    getProducts({ limit: 16 }),
     getCollections(),
     getCategories(),
   ]);
@@ -29,7 +30,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     : theme;
 
   const activeSlug = effectiveTheme.activeTemplateSlug || 'mincom';
-  const { Header, Footer, HomePage } = resolveTemplate(activeSlug);
+  const { Header, Footer, HomePage: FallbackHomePage } = resolveTemplate(activeSlug);
 
   // Check for custom homepage sections configured in CMS Theme Studio
   let customSections: SectionConfig[] | null = null;
@@ -42,8 +43,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       } else if (parsed && typeof parsed === 'object') {
         const lowerSlug = activeSlug.toLowerCase().trim();
         const ALIASES: Record<string, string[]> = {
-          funo: ['funo', 'funie', 'funo-furniture', 'nordic'],
-          funie: ['funie', 'funo', 'funo-furniture', 'nordic'],
+          pawzy: ['pawzy', 'pawzy-theme', 'pets', 'pet-store'],
+          'pawzy-theme': ['pawzy-theme', 'pawzy', 'pets', 'pet-store'],
+          demo: ['demo', 'demo-template', 'funie-demo', 'funo', 'funie'],
+          'demo-template': ['demo-template', 'demo', 'funie-demo', 'funo', 'funie'],
+          funo: ['funo', 'funie', 'funo-furniture', 'nordic', 'demo'],
+          funie: ['funie', 'funo', 'funo-furniture', 'nordic', 'demo'],
           mincom: ['mincom', 'mincom-furniture', 'furniture', 'artisan-craft', 'modern', 'mincom-theme'],
           'artisan-craft': ['artisan-craft', 'mincom', 'furniture', 'modern'],
           nova: ['nova', 'nova-tech', 'electronics', 'tech', 'gadgets'],
@@ -91,14 +96,20 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     }
   }
 
-  // If custom sections are configured, render them with the active template layout
-  if (customSections && customSections.length > 0) {
+  // Render via SectionResolver if custom sections are saved or if previewing a template in CMS
+  const sectionsToRender =
+    customSections ||
+    (previewTemplate && DEFAULT_TEMPLATE_SECTIONS[activeSlug]
+      ? DEFAULT_TEMPLATE_SECTIONS[activeSlug]
+      : null);
+
+  if (sectionsToRender && sectionsToRender.length > 0) {
     return (
       <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--sf-bg)' }}>
         {Header && <Header />}
         <main className="flex-1">
           <SectionResolver
-            sections={customSections}
+            sections={sectionsToRender}
             theme={effectiveTheme}
             products={products}
             collections={collections}
@@ -111,9 +122,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     );
   }
 
-  // Default fallback: Render template-specific HomePage component
+  // Otherwise, render the dedicated template-specific HomePage component (e.g. Pawzy, Mincom, Luxe)
   return (
-    <HomePage
+    <FallbackHomePage
       theme={effectiveTheme}
       products={products}
       collections={collections}

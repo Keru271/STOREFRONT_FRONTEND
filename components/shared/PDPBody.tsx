@@ -34,6 +34,8 @@ import {
   upvoteProductReview,
   getProductEligibleCoupons,
 } from '@/lib/api';
+import { StorefrontThreeDViewer } from '@/components/shared/StorefrontThreeDViewer';
+import { Box, Sparkles, Smartphone, Camera, Eye } from 'lucide-react';
 
 const ReviewModal = dynamic(() => import('./ReviewModal'), { ssr: false });
 const NotifyMeModal = dynamic(() => import('./NotifyMeModal'), { ssr: false });
@@ -58,12 +60,15 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
   const isNova = activeTemplate === 'nova';
   const isLuxe = activeTemplate === 'luxe';
   const isMinimal = activeTemplate === 'minimal';
-  const isFuno = activeTemplate === 'funo';
+  const isFuno = activeTemplate === 'funo' || activeTemplate === 'demo' || activeTemplate === 'funie';
+  const isPawzy = activeTemplate === 'pawzy' || activeTemplate === 'pets';
   const isMincom = activeTemplate === 'mincom';
 
   const allImages =
     product.images.length > 0 ? product.images : product.image ? [product.image] : [];
   const [selectedImage, setSelectedImage] = useState<string>(allImages[0] || '');
+  const [is3DViewActive, setIs3DViewActive] = useState<boolean>(false);
+  const has3DModel = Boolean(product.model3dUrl || (product as any).model3dConfigJson);
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedSize, setSelectedSize] = useState<string>(
     product.sizeOptions && product.sizeOptions.length > 0 ? product.sizeOptions[0] : '',
@@ -424,6 +429,38 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
           {/* ── 1. Media Gallery (Left Column) ─────────────────────────── */}
           <div className="lg:col-span-6 space-y-4">
+            {/* Gallery Media Switcher Tabs (2D Photos vs 3D Interactive & AR) */}
+            {has3DModel && (
+              <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-fit">
+                <button
+                  type="button"
+                  onClick={() => setIs3DViewActive(false)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                    !is3DViewActive
+                      ? 'bg-white dark:bg-card text-[var(--sf-text)] shadow-sm'
+                      : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                  }`}
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                  <span>Photos ({allImages.length})</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIs3DViewActive(true)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                    is3DViewActive
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
+                      : 'text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-extrabold'
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                  <span>3D & AR (360°)</span>
+                </button>
+              </div>
+            )}
+
+            {/* Main Media Showcase Stage */}
             <div
               className={`${galleryAspect} ${radiusBox} overflow-hidden relative shadow-inner border`}
               style={{
@@ -435,15 +472,39 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                   : 'color-mix(in srgb, var(--sf-text) 10%, transparent)',
               }}
             >
-              {selectedImage ? (
-                <Image
-                  src={selectedImage}
-                  alt={product.name}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover object-center transition duration-500 hover:scale-105"
+              {is3DViewActive ? (
+                /* Interactive 3D WebGL Canvas Viewer */
+                <StorefrontThreeDViewer
+                  modelUrl={product.model3dUrl}
+                  posterUrl={product.model3dPoster || selectedImage}
+                  productName={product.name}
+                  height="100%"
+                  onClose={() => setIs3DViewActive(false)}
                 />
+              ) : selectedImage ? (
+                /* Standard 2D Photo Stage */
+                <>
+                  <Image
+                    src={selectedImage}
+                    alt={product.name}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover object-center transition duration-500 hover:scale-105"
+                  />
+
+                  {/* Floating 3D / AR Quick-Launch Pill on Photo */}
+                  {has3DModel && (
+                    <button
+                      type="button"
+                      onClick={() => setIs3DViewActive(true)}
+                      className="absolute bottom-4 left-4 z-10 px-3.5 py-2 rounded-full bg-black/80 hover:bg-black backdrop-blur-md border border-white/20 text-white text-xs font-extrabold shadow-xl flex items-center gap-2 transition hover:scale-105 cursor-pointer group"
+                    >
+                      <Box className="w-4 h-4 text-indigo-400 group-hover:rotate-12 transition-transform" />
+                      <span>View in 3D / AR (360°)</span>
+                    </button>
+                  )}
+                </>
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-5xl opacity-20">
                   📦
@@ -451,14 +512,15 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
               )}
 
               {/* Discount Tag */}
-              {discount > 0 && (
+              {!is3DViewActive && discount > 0 && (
                 <span
-                  className={`absolute top-4 left-4 px-3 py-1.5 text-xs font-black text-white shadow-lg z-10 ${isMinimal
-                    ? 'rounded-none bg-black text-white font-mono'
-                    : isLuxe
-                      ? 'rounded-none bg-stone-900 uppercase tracking-[0.2em] text-[10px]'
-                      : 'rounded-full'
-                    }`}
+                  className={`absolute top-4 left-4 px-3 py-1.5 text-xs font-black text-white shadow-lg z-10 ${
+                    isMinimal
+                      ? 'rounded-none bg-black text-white font-mono'
+                      : isLuxe
+                        ? 'rounded-none bg-stone-900 uppercase tracking-[0.2em] text-[10px]'
+                        : 'rounded-full'
+                  }`}
                   style={isMinimal || isLuxe ? undefined : { backgroundColor: 'var(--sf-accent)' }}
                 >
                   -{discount}% OFF
@@ -466,38 +528,59 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
               )}
 
               {/* Wishlist Button */}
-              <button
-                onClick={() => toggleWishlist(product.id)}
-                className={`absolute top-4 right-4 w-10 h-10 backdrop-blur shadow-md flex items-center justify-center text-lg transition hover:scale-110 z-10 ${isMinimal
-                  ? 'rounded-none bg-white border border-black'
-                  : isLuxe
-                    ? 'rounded-none bg-white/90 border border-stone-300'
-                    : 'rounded-full bg-white/85'
+              {!is3DViewActive && (
+                <button
+                  onClick={() => toggleWishlist(product.id)}
+                  className={`absolute top-4 right-4 w-10 h-10 backdrop-blur shadow-md flex items-center justify-center text-lg transition hover:scale-110 z-10 ${
+                    isMinimal
+                      ? 'rounded-none bg-white border border-black'
+                      : isLuxe
+                        ? 'rounded-none bg-white/90 border border-stone-300'
+                        : 'rounded-full bg-white/85'
                   }`}
-                title={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
-              >
-                {isWishlisted ? '❤️' : '🤍'}
-              </button>
+                  title={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
+                >
+                  {isWishlisted ? '❤️' : '🤍'}
+                </button>
+              )}
             </div>
 
-            {/* Thumbnail Strip */}
-            {allImages.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            {/* Thumbnail Strip with 3D Media Tile */}
+            {(allImages.length > 1 || has3DModel) && (
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide items-center">
+                {/* 3D Model Tile */}
+                {has3DModel && (
+                  <button
+                    type="button"
+                    onClick={() => setIs3DViewActive(true)}
+                    className={`w-20 h-20 overflow-hidden border-2 flex-shrink-0 relative transition cursor-pointer flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-indigo-950/80 to-slate-900 text-white ${
+                      isMinimal ? 'rounded-none' : isLuxe ? 'rounded-none' : isMincom ? 'rounded-lg' : 'rounded-2xl'
+                    } ${is3DViewActive ? 'border-indigo-500 shadow-lg ring-2 ring-indigo-500/30' : 'border-indigo-900/40 opacity-80 hover:opacity-100'}`}
+                  >
+                    <Box className="w-5 h-5 text-indigo-400 animate-pulse" />
+                    <span className="text-[10px] font-mono font-bold text-indigo-300">3D • AR</span>
+                  </button>
+                )}
+
                 {allImages.map((img, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setSelectedImage(img)}
-                    className={`w-20 h-20 overflow-hidden border-2 flex-shrink-0 relative transition cursor-pointer ${isMinimal
-                      ? 'rounded-none'
-                      : isLuxe
+                    onClick={() => {
+                      setSelectedImage(img);
+                      setIs3DViewActive(false);
+                    }}
+                    className={`w-20 h-20 overflow-hidden border-2 flex-shrink-0 relative transition cursor-pointer ${
+                      isMinimal
                         ? 'rounded-none'
-                        : isMincom
-                          ? 'rounded-lg'
-                          : 'rounded-2xl'
-                      } ${selectedImage === img ? 'shadow-md opacity-100 scale-95' : 'opacity-60 hover:opacity-100'}`}
+                        : isLuxe
+                          ? 'rounded-none'
+                          : isMincom
+                            ? 'rounded-lg'
+                            : 'rounded-2xl'
+                    } ${!is3DViewActive && selectedImage === img ? 'shadow-md opacity-100 scale-95' : 'opacity-60 hover:opacity-100'}`}
                     style={{
                       borderColor:
-                        selectedImage === img
+                        !is3DViewActive && selectedImage === img
                           ? 'var(--sf-primary)'
                           : 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
                     }}
@@ -966,6 +1049,45 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
               )}
             </div>
 
+                {/* ── 3D & Augmented Reality Showcase Banner ─────────────── */}
+                {has3DModel && (
+                  <div
+                    className={`p-4 border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all ${radiusBox} ${
+                      is3DViewActive
+                        ? 'bg-indigo-950/40 border-indigo-500/50 text-indigo-200'
+                        : 'bg-gradient-to-r from-indigo-50/80 to-purple-50/80 dark:from-indigo-950/20 dark:to-purple-950/20 border-indigo-100 dark:border-indigo-900/40'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0 shadow-inner">
+                        <Box className="w-5 h-5" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-xs font-black text-slate-900 dark:text-slate-100">
+                            3D Model & Augmented Reality Ready
+                          </h4>
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[9px] font-mono font-bold">
+                            Live AR
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+                          Inspect in 360° WebGL or project onto your floor/table with Apple & Android AR.
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setIs3DViewActive(true)}
+                      className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black shrink-0 shadow-md shadow-indigo-600/20 transition cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                      <span>Launch 3D View</span>
+                    </button>
+                  </div>
+                )}
+
                 {/* ── Template Trust / Highlights Strip ────────────────────── */}
                 <div
                   className={`p-4 grid grid-cols-3 gap-2 text-center text-[11px] border ${radiusBox}`}
@@ -1109,7 +1231,7 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                         <span className="font-bold block" style={{ color: 'var(--sf-text)' }}>
                           Safe Payment
                         </span>
-                        <span className="opacity-60">Stripe & Razorpay</span>
+                        <span className="opacity-60">Razorpay & PayPal</span>
                       </div>
                     </>
                   )}

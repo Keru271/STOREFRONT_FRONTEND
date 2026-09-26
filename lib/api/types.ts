@@ -87,10 +87,9 @@ export interface ThemeConfig {
   taxRateStandard?: number | null;
   taxInclusive?: boolean | null;
   checkoutGuestAllowed?: boolean | null;
-  checkoutPhoneRequired?: boolean | null;
   checkoutOrderNotes?: boolean | null;
-  paymentStripeActive?: boolean | null;
   paymentRazorpayActive?: boolean | null;
+  paymentPaypalActive?: boolean | null;
   paymentCodActive?: boolean | null;
   paymentTestMode?: boolean | null;
 
@@ -167,6 +166,10 @@ export interface Product {
   status: string;
   urlSlug?: string | null;
   variants?: ProductVariant[];
+  model3dUrl?: string | null;
+  model3dFormat?: string | null;
+  model3dPoster?: string | null;
+  model3dConfigJson?: string | null;
   createdAt?: string;
 }
 
@@ -733,29 +736,31 @@ export interface AvailablePaymentMethodsResponse {
   country: string;
   currency: string;
   isDomesticIndia: boolean;
-  recommendedGateway: 'RAZORPAY' | 'STRIPE';
+  recommendedGateway: 'RAZORPAY' | 'PAYPAL';
   gateways: {
     razorpay: {
       enabled: boolean;
       keyId: string | null;
       testMode: boolean;
-      supportedMethods: string[];
-      ratesDescription: string;
-      popularIn: string[];
+      supportedMethods?: string[];
+      ratesDescription?: string;
+      popularIn?: string[];
     };
-    stripe: {
+    paypal?: {
       enabled: boolean;
-      publishableKey: string | null;
+      clientId: string | null;
+      mode?: 'sandbox' | 'live' | string;
       testMode: boolean;
-      supportedMethods: string[];
-      ratesDescription: string;
-      popularIn: string[];
+      supportedMethods?: string[];
+      supportedCurrencies?: string[];
     };
     cod: {
       enabled: boolean;
-      handlingFee: number;
-      minLimit: number;
-      maxLimit: number;
+      handlingFee?: number;
+      maxOrderAmount?: number;
+      minLimit?: number;
+      maxLimit?: number;
+      supportedCountries?: string[];
     };
   };
 }
@@ -778,14 +783,15 @@ export interface RazorpayOrderResponse {
   notes?: Record<string, string>;
 }
 
-export interface StripeIntentResponse {
+export interface PaypalOrderResponse {
   success: boolean;
-  gateway: 'STRIPE';
-  publishableKey: string;
-  clientSecret: string;
+  gateway: 'PAYPAL';
+  clientId: string | null;
+  mode?: 'sandbox' | 'live' | string;
+  paypalOrderId: string;
+  approvalUrl?: string | null;
   orderNumber: string;
   amount: number;
-  displayAmount: number;
   currency: string;
   pricing: CheckoutSummaryResponse;
   customer: {

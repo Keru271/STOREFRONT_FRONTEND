@@ -167,7 +167,7 @@ export default function MincomHomePage({
             </div>
             <div>
               <h4 className="font-extrabold text-xs text-slate-900">Secure Payments</h4>
-              <p className="text-[11px] text-slate-500">Encrypted Stripe & Razorpay</p>
+              <p className="text-[11px] text-slate-500">Encrypted Razorpay & PayPal</p>
             </div>
           </div>
         </div>

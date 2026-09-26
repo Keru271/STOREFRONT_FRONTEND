@@ -86,7 +86,7 @@ export function SupportBody({ theme }: SupportBodyProps) {
 
   const isLuxe = template === 'luxe' || template === 'velvet-luxury';
   const isMincom = template === 'mincom' || template === 'mincom-furniture' || template === 'artisan-craft';
-  const isFuno = template === 'funo';
+  const isFuno = template === 'funo' || template === 'demo' || template === 'funie';
   const isMinimal = template === 'minimal' || template === 'nova' || template === 'nova-tech';
 
   // Contact form state

@@ -285,7 +285,7 @@ export default function DefaultFooter() {
                 MASTERCARD
               </span>
               <span className="px-2 py-0.5 bg-white/10 rounded font-semibold text-white text-[10px]">
-                STRIPE
+                PAYPAL
               </span>
               <span className="px-2 py-0.5 bg-white/10 rounded font-semibold text-white text-[10px]">
                 RAZORPAY

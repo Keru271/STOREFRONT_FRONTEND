@@ -106,6 +106,34 @@ const FunoCartPage = dynamic(() => import('./funo/CartPage'));
 const FunoAccountPage = dynamic(() => import('./funo/AccountPage'));
 const FunoSupportPage = dynamic(() => import('./funo/SupportPage'));
 
+// Demo template (Funie Multipurpose Furniture & Decor - dynamic chunks)
+const DemoHeader = dynamic(() => import('./demo/Header'));
+const DemoFooter = dynamic(() => import('./demo/Footer'));
+const DemoHomePage = dynamic(() => import('./demo/HomePage'));
+const DemoPLPPage = dynamic(() => import('./demo/PLPPage'));
+const DemoLoginPage = dynamic(() => import('./demo/LoginPage'));
+const DemoSignupPage = dynamic(() => import('./demo/SignupPage'));
+const DemoForgotPasswordPage = dynamic(() => import('./demo/ForgotPasswordPage'));
+const DemoPDPPage = dynamic(() => import('./demo/PDPPage'));
+const DemoWishlistPage = dynamic(() => import('./demo/WishlistPage'));
+const DemoCartPage = dynamic(() => import('./demo/CartPage'));
+const DemoAccountPage = dynamic(() => import('./demo/AccountPage'));
+const DemoSupportPage = dynamic(() => import('./demo/SupportPage'));
+
+// Pawzy template (Multipurpose Pet Store & Supplies - dynamic chunks)
+const PawzyHeader = dynamic(() => import('./pawzy/Header'));
+const PawzyFooter = dynamic(() => import('./pawzy/Footer'));
+const PawzyHomePage = dynamic(() => import('./pawzy/HomePage'));
+const PawzyPLPPage = dynamic(() => import('./pawzy/PLPPage'));
+const PawzyLoginPage = dynamic(() => import('./pawzy/LoginPage'));
+const PawzySignupPage = dynamic(() => import('./pawzy/SignupPage'));
+const PawzyForgotPasswordPage = dynamic(() => import('./pawzy/ForgotPasswordPage'));
+const PawzyPDPPage = dynamic(() => import('./pawzy/PDPPage'));
+const PawzyWishlistPage = dynamic(() => import('./pawzy/WishlistPage'));
+const PawzyCartPage = dynamic(() => import('./pawzy/CartPage'));
+const PawzyAccountPage = dynamic(() => import('./pawzy/AccountPage'));
+const PawzySupportPage = dynamic(() => import('./pawzy/SupportPage'));
+
 // ── Shared Prop Interfaces ────────────────────────────────────────────────────
 // All page components in all templates must satisfy these contracts.
 
@@ -288,7 +316,48 @@ const funoComponents: TemplateComponents = {
   SupportPage: FunoSupportPage,
 };
 
+const demoComponents: TemplateComponents = {
+  Header: DemoHeader,
+  Footer: DemoFooter,
+  HomePage: DemoHomePage,
+  PLPPage: DemoPLPPage,
+  LoginPage: DemoLoginPage,
+  SignupPage: DemoSignupPage,
+  ForgotPasswordPage: DemoForgotPasswordPage,
+  PDPPage: DemoPDPPage,
+  WishlistPage: DemoWishlistPage,
+  CartPage: DemoCartPage,
+  AccountPage: DemoAccountPage,
+  SupportPage: DemoSupportPage,
+};
+
+const pawzyComponents: TemplateComponents = {
+  Header: PawzyHeader,
+  Footer: PawzyFooter,
+  HomePage: PawzyHomePage,
+  PLPPage: PawzyPLPPage,
+  LoginPage: PawzyLoginPage,
+  SignupPage: PawzySignupPage,
+  ForgotPasswordPage: PawzyForgotPasswordPage,
+  PDPPage: PawzyPDPPage,
+  WishlistPage: PawzyWishlistPage,
+  CartPage: PawzyCartPage,
+  AccountPage: PawzyAccountPage,
+  SupportPage: PawzySupportPage,
+};
+
 const TEMPLATE_REGISTRY: Record<string, TemplateComponents> = {
+  // Pawzy Template (Pet Care, Supplies & Food)
+  pawzy: pawzyComponents,
+  'pawzy-theme': pawzyComponents,
+  pets: pawzyComponents,
+  'pet-store': pawzyComponents,
+
+  // Demo Template (Funie Theme)
+  demo: demoComponents,
+  'demo-template': demoComponents,
+  'funie-demo': demoComponents,
+
   // Fashion & Luxury
   fashion: luxeComponents,
   luxury: luxeComponents,

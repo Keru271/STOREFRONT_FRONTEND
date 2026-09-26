@@ -1,6 +1,6 @@
 // ─── Express Checkout — /checkout ─────────────────────────────────────────────
 // Server Component shell. Fetches active theme from CMS and delegates rendering to
-// CheckoutClient with full CMS rules (Razorpay, Stripe, COD, Taxes, Free Shipping, Guest Checkout).
+// CheckoutClient with full CMS rules (Razorpay, PayPal, COD, Taxes, Free Shipping, Guest Checkout).
 
 import type { Metadata } from 'next';
 import { getTheme } from '@/lib/api/theme';

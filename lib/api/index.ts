@@ -6,7 +6,7 @@
 // 4. getInfo / editInfo
 // 5. searchProducts
 // 6. Catalog: categories, collections, brands, menus, pages
-// 7. Checkout: Razorpay, Stripe, COD
+// 7. Checkout: Razorpay, PayPal, COD
 
 export { apiClient, ApiError } from './client';
 
@@ -84,8 +84,8 @@ export {
   getCheckoutSummary,
   createRazorpayOrder,
   verifyRazorpayPayment,
-  createStripePaymentIntent,
-  verifyStripePayment,
+  createPaypalOrder,
+  capturePaypalOrder,
   processDirectCheckout,
 } from './checkout';
 

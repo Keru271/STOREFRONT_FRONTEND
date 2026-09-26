@@ -26,6 +26,8 @@ import {
   upvoteProductReview,
   getProductEligibleCoupons,
 } from '@/lib/api';
+import { StorefrontThreeDViewer } from '@/components/shared/StorefrontThreeDViewer';
+import { Box, Sparkles, Camera } from 'lucide-react';
 
 interface ProductDetailClientProps {
   theme: ThemeConfig;
@@ -46,6 +48,8 @@ export default function ProductDetailClient({
   const allImages =
     product.images.length > 0 ? product.images : product.image ? [product.image] : [];
   const [selectedImage, setSelectedImage] = useState<string>(allImages[0] || '');
+  const [is3DViewActive, setIs3DViewActive] = useState<boolean>(false);
+  const has3DModel = Boolean(product.model3dUrl || (product as any).model3dConfigJson);
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedSize, setSelectedSize] = useState<string>(
     product.sizeOptions && product.sizeOptions.length > 0 ? product.sizeOptions[0] : '',
@@ -413,45 +417,120 @@ export default function ProductDetailClient({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
           {/* Gallery Column */}
           <div className="space-y-4">
+            {/* Gallery Media Switcher Tabs (Photos vs 3D Interactive & AR) */}
+            {has3DModel && (
+              <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 w-fit">
+                <button
+                  type="button"
+                  onClick={() => setIs3DViewActive(false)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                    !is3DViewActive
+                      ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-100'
+                  }`}
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                  <span>Photos ({allImages.length})</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIs3DViewActive(true)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                    is3DViewActive
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
+                      : 'text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-extrabold'
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                  <span>3D & AR (360°)</span>
+                </button>
+              </div>
+            )}
+
+            {/* Media Stage */}
             <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-800 relative shadow-inner">
-              {selectedImage ? (
-                <Image
-                  src={selectedImage}
-                  alt={product.name}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover object-center"
+              {is3DViewActive ? (
+                <StorefrontThreeDViewer
+                  modelUrl={product.model3dUrl}
+                  posterUrl={product.model3dPoster || selectedImage}
+                  productName={product.name}
+                  height="100%"
+                  onClose={() => setIs3DViewActive(false)}
                 />
+              ) : selectedImage ? (
+                <>
+                  <Image
+                    src={selectedImage}
+                    alt={product.name}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover object-center"
+                  />
+
+                  {/* Floating 3D / AR Quick-Launch Pill on Photo */}
+                  {has3DModel && (
+                    <button
+                      type="button"
+                      onClick={() => setIs3DViewActive(true)}
+                      className="absolute bottom-4 left-4 z-10 px-3.5 py-2 rounded-full bg-black/80 hover:bg-black backdrop-blur-md border border-white/20 text-white text-xs font-extrabold shadow-xl flex items-center gap-2 transition hover:scale-105 cursor-pointer group"
+                    >
+                      <Box className="w-4 h-4 text-indigo-400 group-hover:rotate-12 transition-transform" />
+                      <span>View in 3D / AR (360°)</span>
+                    </button>
+                  )}
+                </>
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400">
                   No Image Available
                 </div>
               )}
 
-              {discount > 0 && (
+              {!is3DViewActive && discount > 0 && (
                 <span className="absolute top-4 left-4 px-3 py-1.5 rounded-full text-xs font-black bg-rose-500 text-white shadow-lg z-10">
                   -{discount}% OFF
                 </span>
               )}
 
-              <button
-                onClick={handleWishlistClick}
-                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/80 dark:bg-gray-900/80 backdrop-blur shadow-md flex items-center justify-center text-lg transition hover:scale-110 z-10"
-              >
-                {isWishlisted ? '❤️' : '🤍'}
-              </button>
+              {!is3DViewActive && (
+                <button
+                  onClick={handleWishlistClick}
+                  className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/80 dark:bg-gray-900/80 backdrop-blur shadow-md flex items-center justify-center text-lg transition hover:scale-110 z-10"
+                >
+                  {isWishlisted ? '❤️' : '🤍'}
+                </button>
+              )}
             </div>
 
-            {/* Thumbnail Row */}
-            {allImages.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto pb-2">
+            {/* Thumbnail Row with 3D Tile */}
+            {(allImages.length > 1 || has3DModel) && (
+              <div className="flex gap-3 overflow-x-auto pb-2 items-center">
+                {/* 3D Tile */}
+                {has3DModel && (
+                  <button
+                    type="button"
+                    onClick={() => setIs3DViewActive(true)}
+                    className={`w-20 h-20 rounded-2xl overflow-hidden border-2 flex-shrink-0 relative transition cursor-pointer flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-indigo-950 to-slate-900 text-white ${
+                      is3DViewActive
+                        ? 'border-indigo-500 shadow-lg ring-2 ring-indigo-500/30'
+                        : 'border-indigo-900/40 opacity-80 hover:opacity-100'
+                    }`}
+                  >
+                    <Box className="w-5 h-5 text-indigo-400 animate-pulse" />
+                    <span className="text-[10px] font-mono font-bold text-indigo-300">3D • AR</span>
+                  </button>
+                )}
+
                 {allImages.map((img, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setSelectedImage(img)}
+                    onClick={() => {
+                      setSelectedImage(img);
+                      setIs3DViewActive(false);
+                    }}
                     className={`w-20 h-20 rounded-2xl overflow-hidden border-2 flex-shrink-0 relative transition ${
-                      selectedImage === img
+                      !is3DViewActive && selectedImage === img
                         ? 'border-[var(--sf-primary)] shadow-md'
                         : 'border-transparent opacity-70 hover:opacity-100'
                     }`}
@@ -789,7 +868,7 @@ export default function ProductDetailClient({
               <div>
                 <span className="block text-base mb-0.5">🔒</span>
                 <span className="font-bold block">Safe Payment</span>
-                <span className="text-gray-400">Razorpay & Stripe</span>
+                <span className="text-gray-400">Razorpay & PayPal</span>
               </div>
             </div>
           </div>

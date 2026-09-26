@@ -308,10 +308,10 @@ export default function MincomFooter() {
                 AMEX
               </span>
               <span
-                title="Stripe"
+                title="PayPal"
                 className="px-2 py-1 bg-[#23272a] rounded text-[11px] font-bold text-white border border-[#373e45]"
               >
-                STRIPE
+                PAYPAL
               </span>
               <span
                 title="Razorpay"

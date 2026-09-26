@@ -46,7 +46,7 @@ export default function NotifyMeModal({
   const isLuxe = activeTemplate === 'luxe';
   const isMinimal = activeTemplate === 'minimal';
   const isNova = activeTemplate === 'nova';
-  const isFuno = activeTemplate === 'funo';
+  const isFuno = activeTemplate === 'funo' || activeTemplate === 'demo' || activeTemplate === 'funie';
   const isMincom = activeTemplate === 'mincom';
 
   useEffect(() => {

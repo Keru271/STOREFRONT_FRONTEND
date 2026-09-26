@@ -34,7 +34,12 @@ export default function QuickViewModal({
   const isNova = templateSlug === 'nova' || templateSlug === 'electronics' || templateSlug === 'tech';
   const isLuxe = templateSlug === 'luxe' || templateSlug === 'luxury' || templateSlug === 'fashion';
   const isMinimal = templateSlug === 'minimal' || templateSlug === 'minimalist' || templateSlug === 'clean';
-  const isFuno = templateSlug === 'funo' || templateSlug === 'funie' || templateSlug === 'nordic';
+  const isFuno =
+    templateSlug === 'funo' ||
+    templateSlug === 'demo' ||
+    templateSlug === 'funie' ||
+    templateSlug === 'nordic';
+  const isPawzy = templateSlug === 'pawzy' || templateSlug === 'pets';
   const isMincom = templateSlug === 'mincom' || templateSlug === 'furniture' || templateSlug === 'modern';
 
   const variants = product.variants || [];
