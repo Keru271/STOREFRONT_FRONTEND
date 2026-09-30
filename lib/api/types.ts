@@ -102,6 +102,12 @@ export interface ThemeConfig {
   cleverTapAccountId?: string | null;
   cleverTapToken?: string | null;
   cleverTapRegion?: string | null;
+
+  // Maintenance Mode
+  maintenanceMode?: boolean | null;
+  maintenanceTitle?: string | null;
+  maintenanceMessage?: string | null;
+  maintenanceExpectedReturn?: string | null;
 }
 
 export interface StoreInfo {
@@ -130,16 +136,10 @@ export interface StoreInfo {
   language: string;
   timezone?: string;
   activeTemplateSlug?: string | null;
-
-  // Tracking Pixels & Analytics
-  ga4MeasurementId?: string | null;
-  metaPixelId?: string | null;
-  tikTokPixelId?: string | null;
-  pinterestTagId?: string | null;
-  adobeLaunchUrl?: string | null;
-  cleverTapAccountId?: string | null;
-  cleverTapToken?: string | null;
-  cleverTapRegion?: string | null;
+  maintenanceMode?: boolean | null;
+  maintenanceTitle?: string | null;
+  maintenanceMessage?: string | null;
+  maintenanceExpectedReturn?: string | null;
 }
 
 // ── Products ─────────────────────────────────────────────────────────────────
@@ -163,6 +163,9 @@ export interface Product {
   categoryName?: string | null;
   category?: string;
   collectionName?: string | null;
+  tags?: string | string[] | null;
+  rating?: number;
+  reviewsCount?: number;
   status: string;
   urlSlug?: string | null;
   variants?: ProductVariant[];

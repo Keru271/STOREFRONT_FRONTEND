@@ -35,6 +35,7 @@ const DefaultWishlistPage = dynamic(() => import('./default/WishlistPage'));
 const DefaultCartPage = dynamic(() => import('./default/CartPage'));
 const DefaultAccountPage = dynamic(() => import('./default/AccountPage'));
 const DefaultSupportPage = dynamic(() => import('./default/SupportPage'));
+const DefaultMaintenancePage = dynamic(() => import('./default/MaintenancePage'));
 
 // Minimal template (dynamic chunks)
 const MinimalHeader = dynamic(() => import('./minimal/Header'));
@@ -49,6 +50,7 @@ const MinimalWishlistPage = dynamic(() => import('./minimal/WishlistPage'));
 const MinimalCartPage = dynamic(() => import('./minimal/CartPage'));
 const MinimalAccountPage = dynamic(() => import('./minimal/AccountPage'));
 const MinimalSupportPage = dynamic(() => import('./minimal/SupportPage'));
+const MinimalMaintenancePage = dynamic(() => import('./minimal/MaintenancePage'));
 
 // Luxe template (dynamic chunks)
 const LuxeHeader = dynamic(() => import('./luxe/Header'));
@@ -63,6 +65,7 @@ const LuxeWishlistPage = dynamic(() => import('./luxe/WishlistPage'));
 const LuxeCartPage = dynamic(() => import('./luxe/CartPage'));
 const LuxeAccountPage = dynamic(() => import('./luxe/AccountPage'));
 const LuxeSupportPage = dynamic(() => import('./luxe/SupportPage'));
+const LuxeMaintenancePage = dynamic(() => import('./luxe/MaintenancePage'));
 
 // Nova template (Apple Design System - dynamic chunks, aliases to minimal)
 const NovaHeader = MinimalHeader;
@@ -77,6 +80,7 @@ const NovaWishlistPage = MinimalWishlistPage;
 const NovaCartPage = MinimalCartPage;
 const NovaAccountPage = MinimalAccountPage;
 const NovaSupportPage = MinimalSupportPage;
+const NovaMaintenancePage = MinimalMaintenancePage;
 
 // Mincom template (Modern Furniture & Living - dynamic chunks)
 const MincomHeader = dynamic(() => import('./mincom/Header'));
@@ -91,6 +95,7 @@ const MincomWishlistPage = dynamic(() => import('./mincom/WishlistPage'));
 const MincomCartPage = dynamic(() => import('./mincom/CartPage'));
 const MincomAccountPage = dynamic(() => import('./mincom/AccountPage'));
 const MincomSupportPage = dynamic(() => import('./mincom/SupportPage'));
+const MincomMaintenancePage = dynamic(() => import('./mincom/MaintenancePage'));
 
 // Funo template (Scandinavian Modern Furniture & Decor - dynamic chunks)
 const FunoHeader = dynamic(() => import('./funo/Header'));
@@ -105,6 +110,7 @@ const FunoWishlistPage = dynamic(() => import('./funo/WishlistPage'));
 const FunoCartPage = dynamic(() => import('./funo/CartPage'));
 const FunoAccountPage = dynamic(() => import('./funo/AccountPage'));
 const FunoSupportPage = dynamic(() => import('./funo/SupportPage'));
+const FunoMaintenancePage = dynamic(() => import('./funo/MaintenancePage'));
 
 // Demo template (Funie Multipurpose Furniture & Decor - dynamic chunks)
 const DemoHeader = dynamic(() => import('./demo/Header'));
@@ -119,6 +125,7 @@ const DemoWishlistPage = dynamic(() => import('./demo/WishlistPage'));
 const DemoCartPage = dynamic(() => import('./demo/CartPage'));
 const DemoAccountPage = dynamic(() => import('./demo/AccountPage'));
 const DemoSupportPage = dynamic(() => import('./demo/SupportPage'));
+const DemoMaintenancePage = dynamic(() => import('./demo/MaintenancePage'));
 
 // Pawzy template (Multipurpose Pet Store & Supplies - dynamic chunks)
 const PawzyHeader = dynamic(() => import('./pawzy/Header'));
@@ -133,6 +140,7 @@ const PawzyWishlistPage = dynamic(() => import('./pawzy/WishlistPage'));
 const PawzyCartPage = dynamic(() => import('./pawzy/CartPage'));
 const PawzyAccountPage = dynamic(() => import('./pawzy/AccountPage'));
 const PawzySupportPage = dynamic(() => import('./pawzy/SupportPage'));
+const PawzyMaintenancePage = dynamic(() => import('./pawzy/MaintenancePage'));
 
 // ── Shared Prop Interfaces ────────────────────────────────────────────────────
 // All page components in all templates must satisfy these contracts.
@@ -202,6 +210,13 @@ export interface SupportPageProps {
   theme: ThemeConfig;
 }
 
+/**
+ * MaintenancePageProps — per-template store maintenance mode screen.
+ */
+export interface MaintenancePageProps {
+  theme: ThemeConfig;
+}
+
 export interface TemplateComponents {
   Header?: React.ComponentType<any>;
   Footer?: React.ComponentType<any>;
@@ -220,6 +235,8 @@ export interface TemplateComponents {
   AccountPage: React.ComponentType<AccountPageProps>;
   /** Per-template customer support and help center page (required). */
   SupportPage: React.ComponentType<SupportPageProps>;
+  /** Per-template store maintenance screen (required). */
+  MaintenancePage: React.ComponentType<MaintenancePageProps>;
   /** Optional: per-template collections index. Falls back to shared /collections if absent. */
   CollectionsPage?: React.ComponentType<CollectionsPageProps>;
 }
@@ -239,6 +256,7 @@ const mincomComponents: TemplateComponents = {
   CartPage: MincomCartPage,
   AccountPage: MincomAccountPage,
   SupportPage: MincomSupportPage,
+  MaintenancePage: MincomMaintenancePage,
 };
 
 const novaComponents: TemplateComponents = {
@@ -254,6 +272,7 @@ const novaComponents: TemplateComponents = {
   CartPage: NovaCartPage,
   AccountPage: NovaAccountPage,
   SupportPage: NovaSupportPage,
+  MaintenancePage: NovaMaintenancePage,
 };
 
 const defaultComponents: TemplateComponents = {
@@ -269,6 +288,7 @@ const defaultComponents: TemplateComponents = {
   CartPage: DefaultCartPage,
   AccountPage: DefaultAccountPage,
   SupportPage: DefaultSupportPage,
+  MaintenancePage: DefaultMaintenancePage,
 };
 
 const minimalComponents: TemplateComponents = {
@@ -284,6 +304,7 @@ const minimalComponents: TemplateComponents = {
   CartPage: MinimalCartPage,
   AccountPage: MinimalAccountPage,
   SupportPage: MinimalSupportPage,
+  MaintenancePage: MinimalMaintenancePage,
 };
 
 const luxeComponents: TemplateComponents = {
@@ -299,6 +320,7 @@ const luxeComponents: TemplateComponents = {
   CartPage: LuxeCartPage,
   AccountPage: LuxeAccountPage,
   SupportPage: LuxeSupportPage,
+  MaintenancePage: LuxeMaintenancePage,
 };
 
 const funoComponents: TemplateComponents = {
@@ -314,6 +336,7 @@ const funoComponents: TemplateComponents = {
   CartPage: FunoCartPage,
   AccountPage: FunoAccountPage,
   SupportPage: FunoSupportPage,
+  MaintenancePage: FunoMaintenancePage,
 };
 
 const demoComponents: TemplateComponents = {
@@ -329,6 +352,7 @@ const demoComponents: TemplateComponents = {
   CartPage: DemoCartPage,
   AccountPage: DemoAccountPage,
   SupportPage: DemoSupportPage,
+  MaintenancePage: DemoMaintenancePage,
 };
 
 const pawzyComponents: TemplateComponents = {
@@ -344,6 +368,7 @@ const pawzyComponents: TemplateComponents = {
   CartPage: PawzyCartPage,
   AccountPage: PawzyAccountPage,
   SupportPage: PawzySupportPage,
+  MaintenancePage: PawzyMaintenancePage,
 };
 
 const TEMPLATE_REGISTRY: Record<string, TemplateComponents> = {

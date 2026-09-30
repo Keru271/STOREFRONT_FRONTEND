@@ -2,8 +2,10 @@
 
 import { useEffect } from 'react';
 import type { ThemeConfig } from '@/lib/api/types';
-import { ThemeContext } from '@/context/ThemeContext';
+import { ThemeContext, useTheme } from '@/context/ThemeContext';
 import { parseFontName, NEXT_FONT_MAP } from '@/lib/fonts';
+
+export { useTheme };
 
 interface ThemeProviderProps {
   theme: ThemeConfig;

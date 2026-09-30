@@ -21,10 +21,11 @@ import { WishlistProvider } from '@/context/WishlistContext';
 import { MenuProvider } from '@/context/MenuContext';
 import { ThemeToastContainer } from '@/components/shared/ThemeToastContainer';
 import { ThemeLoader } from '@/components/shared/ThemeLoader';
-import { MobileBottomNav } from '@/components/shared/MobileBottomNav';
 import CommonCartDrawer from '@/components/cart/CommonCartDrawer';
 import { StorefrontCookieConsent } from '@/components/shared/StorefrontCookieConsent';
+import { AiShoppingAssistant } from '@/components/shared/AiShoppingAssistant';
 import { PixelTracker } from '@/components/analytics/PixelTracker';
+import { MaintenanceGuard } from '@/components/shared/MaintenanceGuard';
 import { getTheme } from '@/lib/api/theme';
 import { getMenu } from '@/lib/api/catalog';
 import { generateDynamicFontStyles } from '@/lib/fonts';
@@ -190,9 +191,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <MenuProvider headerMenu={headerMenu} footerMenu={footerMenu}>
                     <ThemeLoader />
                     <ThemeToastContainer />
-                    {children}
-                    <MobileBottomNav />
-                    <StorefrontCookieConsent theme={theme} />
+                    <MaintenanceGuard theme={theme}>
+                      {children}
+                    </MaintenanceGuard>
+                    {!theme.maintenanceMode && (
+                      <>
+                        <AiShoppingAssistant />
+                        <StorefrontCookieConsent theme={theme} />
+                      </>
+                    )}
                   </MenuProvider>
                 </WishlistProvider>
               </CartProvider>
