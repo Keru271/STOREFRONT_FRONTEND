@@ -47,7 +47,15 @@ export function MaintenanceGuard({ theme, children }: MaintenanceGuardProps) {
               <div className="flex items-center gap-2 max-w-7xl mx-auto w-full">
                 <ShieldAlert className="w-4 h-4 shrink-0" />
                 <span>
-                  <strong>MAINTENANCE MODE ACTIVE:</strong> Public visitors currently see the maintenance screen. You are viewing in Admin Preview Bypass mode.
+                  {(theme as any).isPending ? (
+                    <>
+                      <strong>STORE STAGE: PENDING (PRE-LAUNCH):</strong> Public visitors see the pre-launch Coming Soon screen. You are viewing in Store Owner Preview mode.
+                    </>
+                  ) : (
+                    <>
+                      <strong>MAINTENANCE MODE ACTIVE:</strong> Public visitors currently see the maintenance screen. You are viewing in Admin Preview Bypass mode.
+                    </>
+                  )}
                 </span>
               </div>
               <button

@@ -19,8 +19,6 @@ const ENV_STORE_SLUG = process.env.NEXT_PUBLIC_STORE_SLUG || '';
 
 // ── Custom API Error ──────────────────────────────────────────────────────────
 
-console.log({ ENV_STORE_ID, ENV_STORE_SLUG });
-
 export class ApiError extends Error {
   statusCode: number;
 
@@ -175,12 +173,19 @@ async function apiFetch<T>(
     browserHeaders['x-store-slug'] ||
     getClientStoreSlug();
 
+  const hasExplicitSlug = Boolean(
+    storeSlug ||
+    headers['x-store-slug'] ||
+    serverHeaders['x-store-slug'] ||
+    browserHeaders['x-store-slug']
+  );
+
   const resolvedStoreId =
     storeId ||
     headers['x-store-id'] ||
     serverHeaders['x-store-id'] ||
     browserHeaders['x-store-id'] ||
-    getClientStoreId();
+    (hasExplicitSlug ? '' : getClientStoreId());
 
   if (resolvedHost) {
     headers['x-store-host'] = resolvedHost;

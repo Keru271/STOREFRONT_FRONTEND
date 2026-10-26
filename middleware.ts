@@ -30,11 +30,18 @@ export function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-store-host', cleanHost);
 
-  if (storeIdParam) {
-    requestHeaders.set('x-store-id', storeIdParam);
+  // Read cookies if query params not provided
+  const cookieSlug = request.cookies.get('storeSlug')?.value;
+  const cookieStoreId = request.cookies.get('storeId')?.value;
+
+  const effectiveStoreId = storeIdParam || cookieStoreId;
+  const effectiveStoreSlug = storeSlugParam || cookieSlug;
+
+  if (effectiveStoreId) {
+    requestHeaders.set('x-store-id', effectiveStoreId);
   }
-  if (storeSlugParam) {
-    requestHeaders.set('x-store-slug', storeSlugParam);
+  if (effectiveStoreSlug) {
+    requestHeaders.set('x-store-slug', effectiveStoreSlug);
   }
   if (previewTemplateParam) {
     requestHeaders.set('x-preview-template', previewTemplateParam);
@@ -58,11 +65,21 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  return NextResponse.next({
+  const response = NextResponse.next({
     request: {
       headers: requestHeaders,
     },
   });
+
+  // Persist tenant identification in cookies when explicitly passed in URL query
+  if (storeIdParam) {
+    response.cookies.set('storeId', storeIdParam, { path: '/', maxAge: 60 * 60 * 24 * 7 });
+  }
+  if (storeSlugParam) {
+    response.cookies.set('storeSlug', storeSlugParam, { path: '/', maxAge: 60 * 60 * 24 * 7 });
+  }
+
+  return response;
 }
 
 export const config = {
