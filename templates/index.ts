@@ -142,6 +142,37 @@ const PawzyAccountPage = dynamic(() => import('./pawzy/AccountPage'));
 const PawzySupportPage = dynamic(() => import('./pawzy/SupportPage'));
 const PawzyMaintenancePage = dynamic(() => import('./pawzy/MaintenancePage'));
 
+// Techno / MarketNest template (Artisan, Handmade & Slow Craft - dynamic chunks)
+const TechnoHeader = dynamic(() => import('./techno/Header'));
+const TechnoFooter = dynamic(() => import('./techno/Footer'));
+const TechnoHomePage = dynamic(() => import('./techno/HomePage'));
+const TechnoPLPPage = dynamic(() => import('./techno/PLPPage'));
+const TechnoLoginPage = dynamic(() => import('./techno/LoginPage'));
+const TechnoSignupPage = dynamic(() => import('./techno/SignupPage'));
+const TechnoForgotPasswordPage = dynamic(() => import('./techno/ForgotPasswordPage'));
+const TechnoPDPPage = dynamic(() => import('./techno/PDPPage'));
+const TechnoWishlistPage = dynamic(() => import('./techno/WishlistPage'));
+const TechnoCartPage = dynamic(() => import('./techno/CartPage'));
+const TechnoAccountPage = dynamic(() => import('./techno/AccountPage'));
+const TechnoSupportPage = dynamic(() => import('./techno/SupportPage'));
+const TechnoMaintenancePage = dynamic(() => import('./techno/MaintenancePage'));
+
+const technoComponents: TemplateComponents = {
+  Header: TechnoHeader,
+  Footer: TechnoFooter,
+  HomePage: TechnoHomePage,
+  PLPPage: TechnoPLPPage,
+  LoginPage: TechnoLoginPage,
+  SignupPage: TechnoSignupPage,
+  ForgotPasswordPage: TechnoForgotPasswordPage,
+  PDPPage: TechnoPDPPage,
+  WishlistPage: TechnoWishlistPage,
+  CartPage: TechnoCartPage,
+  AccountPage: TechnoAccountPage,
+  SupportPage: TechnoSupportPage,
+  MaintenancePage: TechnoMaintenancePage,
+};
+
 // ── Shared Prop Interfaces ────────────────────────────────────────────────────
 // All page components in all templates must satisfy these contracts.
 
@@ -372,6 +403,16 @@ const pawzyComponents: TemplateComponents = {
 };
 
 const TEMPLATE_REGISTRY: Record<string, TemplateComponents> = {
+  // Techno / MarketNest Template (Artisan, Handmade, Slow Living & Studio Craft)
+  techno: technoComponents,
+  'techno-theme': technoComponents,
+  'techno-template': technoComponents,
+  marketnest: technoComponents,
+  'market-nest': technoComponents,
+  artisan: technoComponents,
+  handmade: technoComponents,
+  craft: technoComponents,
+
   // Pawzy Template (Pet Care, Supplies & Food)
   pawzy: pawzyComponents,
   'pawzy-theme': pawzyComponents,
