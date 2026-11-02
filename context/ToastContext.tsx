@@ -79,10 +79,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         return updated;
       });
 
+      // SwipeToast manages its animated countdown fuse and pause-on-hover.
+      // Safety fallback timer at duration + 20s in case tab was backgrounded indefinitely.
       if (duration > 0) {
         setTimeout(() => {
           hideToast(id);
-        }, duration);
+        }, duration + 20000);
       }
 
       return id;
