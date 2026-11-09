@@ -326,8 +326,7 @@ export default function TechnoProductCard({ product }: TechnoProductCardProps) {
         <NotifyMeModal
           isOpen={isNotifyMeOpen}
           onClose={() => setIsNotifyMeOpen(false)}
-          productId={product.id}
-          productName={product.name}
+          product={product}
         />
       )}
     </>

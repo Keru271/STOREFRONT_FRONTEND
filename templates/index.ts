@@ -173,6 +173,37 @@ const technoComponents: TemplateComponents = {
   MaintenancePage: TechnoMaintenancePage,
 };
 
+// Furniture / AURA Goods template (Curated Objects for Mindful Living - dynamic chunks)
+const FurnitureHeader = dynamic(() => import('./furniture/Header'));
+const FurnitureFooter = dynamic(() => import('./furniture/Footer'));
+const FurnitureHomePage = dynamic(() => import('./furniture/HomePage'));
+const FurniturePLPPage = dynamic(() => import('./furniture/PLPPage'));
+const FurnitureLoginPage = dynamic(() => import('./furniture/LoginPage'));
+const FurnitureSignupPage = dynamic(() => import('./furniture/SignupPage'));
+const FurnitureForgotPasswordPage = dynamic(() => import('./furniture/ForgotPasswordPage'));
+const FurniturePDPPage = dynamic(() => import('./furniture/PDPPage'));
+const FurnitureWishlistPage = dynamic(() => import('./furniture/WishlistPage'));
+const FurnitureCartPage = dynamic(() => import('./furniture/CartPage'));
+const FurnitureAccountPage = dynamic(() => import('./furniture/AccountPage'));
+const FurnitureSupportPage = dynamic(() => import('./furniture/SupportPage'));
+const FurnitureMaintenancePage = dynamic(() => import('./furniture/MaintenancePage'));
+
+const furnitureComponents: TemplateComponents = {
+  Header: FurnitureHeader,
+  Footer: FurnitureFooter,
+  HomePage: FurnitureHomePage,
+  PLPPage: FurniturePLPPage,
+  LoginPage: FurnitureLoginPage,
+  SignupPage: FurnitureSignupPage,
+  ForgotPasswordPage: FurnitureForgotPasswordPage,
+  PDPPage: FurniturePDPPage,
+  WishlistPage: FurnitureWishlistPage,
+  CartPage: FurnitureCartPage,
+  AccountPage: FurnitureAccountPage,
+  SupportPage: FurnitureSupportPage,
+  MaintenancePage: FurnitureMaintenancePage,
+};
+
 // ── Shared Prop Interfaces ────────────────────────────────────────────────────
 // All page components in all templates must satisfy these contracts.
 
@@ -444,8 +475,15 @@ const TEMPLATE_REGISTRY: Record<string, TemplateComponents> = {
   clean: minimalComponents,
   scandinavian: minimalComponents,
 
-  // Modern Living, Commercial & Furniture
-  furniture: mincomComponents,
+  // Furniture Template (AURA Goods - Curated Objects for Mindful Living)
+  furniture: furnitureComponents,
+  'furniture-theme': furnitureComponents,
+  'furniture-template': furnitureComponents,
+  aura: furnitureComponents,
+  'aura-goods': furnitureComponents,
+  'mindful-living': furnitureComponents,
+
+  // Modern Living, Commercial & Mincom
   mincom: mincomComponents,
   'mincom-furniture': mincomComponents,
   'mincom-theme': mincomComponents,

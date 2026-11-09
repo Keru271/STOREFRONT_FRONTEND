@@ -101,9 +101,7 @@ export default function TechnoPLPPage({
       if (!matchCat) return false;
     }
     if (activeBrand && activeBrand !== 'all') {
-      const matchBrand =
-        p.brand?.toLowerCase() === activeBrand.toLowerCase() ||
-        p.brandName?.toLowerCase() === activeBrand.toLowerCase();
+      const matchBrand = p.brandName?.toLowerCase() === activeBrand.toLowerCase();
       if (!matchBrand) return false;
     }
     if (activeMinPrice !== undefined && Number(p.price) < activeMinPrice) return false;

@@ -49,7 +49,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           'demo-template': ['demo-template', 'demo', 'funie-demo', 'funo', 'funie'],
           funo: ['funo', 'funie', 'funo-furniture', 'nordic', 'demo'],
           funie: ['funie', 'funo', 'funo-furniture', 'nordic', 'demo'],
-          mincom: ['mincom', 'mincom-furniture', 'furniture', 'artisan-craft', 'modern', 'mincom-theme'],
+          furniture: ['furniture', 'furniture-theme', 'furniture-template', 'aura', 'aura-goods', 'mindful-living'],
+          mincom: ['mincom', 'mincom-furniture', 'artisan-craft', 'modern', 'mincom-theme'],
           'artisan-craft': ['artisan-craft', 'mincom', 'furniture', 'modern'],
           nova: ['nova', 'nova-tech', 'electronics', 'tech', 'gadgets'],
           'nova-tech': ['nova-tech', 'nova', 'electronics', 'tech', 'gadgets'],
@@ -61,7 +62,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           'botanica-wellness': ['botanica-wellness', 'default', 'botanica', 'wellness'],
         };
 
-        const checkKeys = [activeSlug, lowerSlug, ...(ALIASES[lowerSlug] || []), 'all', 'default'];
+        const checkKeys = [activeSlug, lowerSlug, ...(ALIASES[lowerSlug] || [])];
+        if (lowerSlug === 'default' && !previewTemplate) {
+          checkKeys.push('all', 'default');
+        }
         for (const k of checkKeys) {
           if (Array.isArray(parsed[k]) && parsed[k].length > 0) {
             candidateList = parsed[k];
@@ -69,66 +73,66 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           }
         }
 
-        // If still not matched, check if there's only 1 template key in parsed
-        if (candidateList.length === 0) {
-          const keys = Object.keys(parsed);
-          if (keys.length === 1 && Array.isArray(parsed[keys[0]])) {
-            candidateList = parsed[keys[0]];
+          // If still not matched, only fall back to single key if not previewing a template
+          if (candidateList.length === 0 && !previewTemplate && lowerSlug === 'default') {
+            const keys = Object.keys(parsed);
+            if (keys.length === 1 && Array.isArray(parsed[keys[0]])) {
+              candidateList = parsed[keys[0]];
+            }
           }
         }
-      }
 
-      if (Array.isArray(candidateList) && candidateList.length > 0) {
-        // Filter out disabled sections and map to SectionConfig shape
-        const activeList = candidateList
-          .filter((s) => s && s.enabled !== false)
-          .map((s) => ({
-            type: s.type,
-            config: s.config || {},
-          })) as SectionConfig[];
+        if (Array.isArray(candidateList) && candidateList.length > 0) {
+          // Filter out disabled sections and map to SectionConfig shape
+          const activeList = candidateList
+            .filter((s) => s && s.enabled !== false)
+            .map((s) => ({
+              type: s.type,
+              config: s.config || {},
+            })) as SectionConfig[];
 
-        if (activeList.length > 0) {
-          customSections = activeList;
+          if (activeList.length > 0) {
+            customSections = activeList;
+          }
         }
+      } catch (err) {
+        console.warn('Failed to parse homeSectionsJson, falling back to default template:', err);
       }
-    } catch (err) {
-      console.warn('Failed to parse homeSectionsJson, falling back to default template:', err);
     }
-  }
 
   // Render via SectionResolver if custom sections are saved or if previewing a template in CMS
   const sectionsToRender =
-    customSections ||
-    (previewTemplate && DEFAULT_TEMPLATE_SECTIONS[activeSlug]
-      ? DEFAULT_TEMPLATE_SECTIONS[activeSlug]
-      : null);
+      customSections ||
+      (previewTemplate && DEFAULT_TEMPLATE_SECTIONS[activeSlug]
+        ? DEFAULT_TEMPLATE_SECTIONS[activeSlug]
+        : null);
 
-  if (sectionsToRender && sectionsToRender.length > 0) {
+    if (sectionsToRender && sectionsToRender.length > 0) {
+      return (
+        <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--sf-bg)' }}>
+          {Header && <Header />}
+          <main className="flex-1">
+            <SectionResolver
+              sections={sectionsToRender}
+              theme={effectiveTheme}
+              products={products}
+              collections={collections}
+              categories={categories}
+              templateSlug={activeSlug}
+            />
+          </main>
+          {Footer && <Footer />}
+        </div>
+      );
+    }
+
+    // Otherwise, render the dedicated template-specific HomePage component (e.g. Pawzy, Mincom, Luxe)
     return (
-      <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--sf-bg)' }}>
-        {Header && <Header />}
-        <main className="flex-1">
-          <SectionResolver
-            sections={sectionsToRender}
-            theme={effectiveTheme}
-            products={products}
-            collections={collections}
-            categories={categories}
-            templateSlug={activeSlug}
-          />
-        </main>
-        {Footer && <Footer />}
-      </div>
+      <FallbackHomePage
+        theme={effectiveTheme}
+        products={products}
+        collections={collections}
+        categories={categories}
+      />
     );
   }
-
-  // Otherwise, render the dedicated template-specific HomePage component (e.g. Pawzy, Mincom, Luxe)
-  return (
-    <FallbackHomePage
-      theme={effectiveTheme}
-      products={products}
-      collections={collections}
-      categories={categories}
-    />
-  );
-}

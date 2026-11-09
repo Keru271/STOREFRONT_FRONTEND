@@ -294,12 +294,12 @@ export default function TechnoHeader() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ul className="flex items-center gap-8 py-2.5 text-[14px] font-medium overflow-x-auto scrollbar-none">
               {(menuItems && menuItems.length > 0
-                ? menuItems
+                ? menuItems.map((m) => ({ label: m.title, href: m.url || '#' }))
                 : defaultCategories
               ).map((cat, idx) => (
                 <li key={idx} className="flex-shrink-0">
                   <Link
-                    href={cat.href}
+                    href={cat.href || '#'}
                     className="text-[#1C1917] hover:text-[#C2410C] transition-colors py-1 inline-block border-b-2 border-transparent hover:border-[#C2410C]"
                   >
                     {cat.label}
