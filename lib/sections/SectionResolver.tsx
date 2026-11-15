@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import type { ThemeConfig, Product, Collection, Category } from '@/lib/api/types';
 import type { SectionConfig } from '@/lib/sections/types';
+import { normalizeSection } from '@/lib/sections/types';
 import { StorefrontFormRenderer } from '@/components/shared/StorefrontFormRenderer';
 import { getStorefrontForm } from '@/lib/api/forms';
 import { useCurrency } from '@/hooks/useCurrency';
@@ -47,7 +48,16 @@ function HeroSection({
 }: SectionProps & { config: Extract<SectionConfig, { type: 'hero' }>['config'] }) {
   const bgImage =
     config.backgroundImage ||
+    config.image ||
+    config.heroImage ||
     'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=1920&auto=format&fit=crop';
+
+  const headline = config.headline || config.title || 'Elevate Your Living Space';
+  const subheadline = config.subheadline || config.subtitle;
+  const ctaLabel = config.ctaLabel || config.ctaPrimary || 'Shop Now';
+  const ctaHref = config.ctaHref || '/products';
+  const secondaryCtaLabel = config.secondaryCtaLabel || config.ctaSecondary;
+  const secondaryCtaHref = config.secondaryCtaHref || '/collections';
 
   return (
     <section
@@ -66,53 +76,67 @@ function HeroSection({
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
         <div className="max-w-2xl space-y-6 text-white">
-          {config.badge && (
+          {(config.badge || config.floatingBadge) && (
             <div
               className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow text-white"
               style={{ backgroundColor: 'var(--sf-accent, var(--sf-primary))' }}
             >
-              <span>{config.badge}</span>
+              <span>{config.badge || config.floatingBadge}</span>
             </div>
           )}
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] font-heading">
-            {config.headline || 'Elevate Your Living Space'}
+            {headline}
           </h1>
 
-          {config.subheadline && (
+          {subheadline && (
             <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-light max-w-xl">
-              {config.subheadline}
+              {subheadline}
             </p>
           )}
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <Link
-              href={config.ctaHref || '/products'}
+              href={ctaHref}
               className="px-8 py-4 text-white font-black text-xs uppercase tracking-wider shadow-xl transition transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2"
               style={{
                 backgroundColor: 'var(--sf-primary)',
                 borderRadius: 'var(--sf-radius, 1rem)',
               }}
             >
-              <span>{config.ctaLabel || 'Shop Now'}</span>
+              <span>{ctaLabel}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
-            {config.secondaryCtaLabel && (
+            {secondaryCtaLabel && (
               <Link
-                href={config.secondaryCtaHref || '/collections'}
+                href={secondaryCtaHref}
                 className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white backdrop-blur border border-white/20 font-bold text-xs uppercase tracking-wider transition inline-flex items-center gap-2"
                 style={{ borderRadius: 'var(--sf-radius, 1rem)' }}
               >
-                <span>{config.secondaryCtaLabel}</span>
+                <span>{secondaryCtaLabel}</span>
               </Link>
             )}
           </div>
 
+          {/* Optional Trust Badge Chips */}
+          {config.trustBadges && config.trustBadges.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 pt-2">
+              {config.trustBadges.map((badgeText: string, idx: number) => (
+                <span
+                  key={idx}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur border border-white/15 text-[11px] font-medium text-slate-200"
+                >
+                  <span className="text-emerald-400">✓</span> {badgeText}
+                </span>
+              ))}
+            </div>
+          )}
+
           {/* Optional Stats */}
           {config.stats && config.stats.length > 0 && (
             <div className="pt-6 border-t border-white/10 flex flex-wrap gap-8 items-center">
-              {config.stats.map((stat, i) => (
+              {config.stats.map((stat: { value: string; label: string }, i: number) => (
                 <div key={i} className="text-left">
                   <div className="text-2xl font-black text-white">{stat.value}</div>
                   <div className="text-xs text-white/70 font-medium">{stat.label}</div>
@@ -328,7 +352,7 @@ function RoomGridSection({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {items.map((room, i) => (
+        {items.map((room: any, i: number) => (
           <Link
             key={i}
             href={room.href || '/products'}
@@ -368,7 +392,33 @@ function FeaturedProductsSection({
   const [activeFilter, setActiveFilter] = useState('all');
 
   const limit = config.limit || 8;
-  let filtered = products;
+  const initialProducts: Product[] =
+    config.products && config.products.length > 0
+      ? config.products.map((p: any, idx: number) => ({
+          id: String(p.id || `custom-p-${idx}`),
+          name: p.name || 'Signature Item',
+          price:
+            typeof p.price === 'string'
+              ? parseFloat(p.price.replace(/[^0-9.]/g, '')) || 99
+              : Number(p.price) || 99,
+          compareAtPrice: p.comparePrice
+            ? Number(p.comparePrice)
+            : p.compareAtPrice
+            ? Number(p.compareAtPrice)
+            : undefined,
+          images: [
+            p.img ||
+              p.image ||
+              'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600',
+          ],
+          categoryName: p.category || p.categoryName || 'Curated',
+          status: 'ACTIVE' as const,
+          inventory: 10,
+          stockQuantity: 10,
+        }))
+      : products;
+
+  let filtered = initialProducts;
 
   if (config.category) {
     const filterKey = config.category.toLowerCase();
@@ -388,9 +438,12 @@ function FeaturedProductsSection({
   const display = filtered.slice(0, limit);
 
   // Extract unique categories for filter tabs
-  const categoriesList = Array.from(
-    new Set(products.map((p) => p.categoryName || p.category).filter(Boolean)),
-  ).slice(0, 5);
+  const categoriesList =
+    config.categories && config.categories.length > 0
+      ? config.categories.filter((c: string) => c !== 'All').slice(0, 5)
+      : Array.from(
+          new Set(initialProducts.map((p) => p.categoryName || p.category).filter(Boolean)),
+        ).slice(0, 5);
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
@@ -421,7 +474,7 @@ function FeaturedProductsSection({
             >
               All Items
             </button>
-            {categoriesList.map((cat) => (
+            {categoriesList.map((cat: any) => (
               <button
                 key={String(cat)}
                 onClick={() => setActiveFilter(String(cat))}
@@ -1130,7 +1183,7 @@ function TestimonialsSection({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {items.map((test, i) => (
+        {items.map((test: any, i: number) => (
           <div
             key={i}
             className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-card border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4 flex flex-col justify-between"
@@ -1556,6 +1609,260 @@ function FaqLocationsSection({
   );
 }
 
+// ── 17. Custom HTML Section ───────────────────────────────────────────────────
+
+function CustomSection({
+  config,
+}: {
+  config: Extract<SectionConfig, { type: 'custom' }>['config'];
+}) {
+  const markup = config.customHtml || config.html || '';
+  if (!markup) return null;
+
+  return (
+    <section className="w-full py-8 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {(config.title || config.subtitle) && (
+          <div className="mb-6 text-center space-y-1">
+            {config.title && (
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                {config.title}
+              </h2>
+            )}
+            {config.subtitle && (
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                {config.subtitle}
+              </p>
+            )}
+          </div>
+        )}
+        <div
+          className="w-full"
+          dangerouslySetInnerHTML={{ __html: markup }}
+        />
+      </div>
+    </section>
+  );
+}
+
+// ── 18. Announcement Section ──────────────────────────────────────────────────
+
+function AnnouncementSection({
+  config,
+}: {
+  config: Extract<SectionConfig, { type: 'announcement' }>['config'];
+}) {
+  const text =
+    config.text ||
+    config.title ||
+    '✨ Complimentary Worldwide Insured Shipping On Orders Over $50';
+
+  return (
+    <div
+      className="w-full py-2.5 px-4 text-center text-xs font-semibold flex items-center justify-center gap-3 border-b transition-colors"
+      style={{
+        backgroundColor: 'var(--sf-secondary, #F1ECE1)',
+        borderColor: 'var(--sf-border, #E2E8F0)',
+        color: 'var(--sf-text, #0F172A)',
+      }}
+    >
+      {config.badge && (
+        <span
+          className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider text-white shrink-0"
+          style={{ backgroundColor: 'var(--sf-primary, #C2410C)' }}
+        >
+          {config.badge}
+        </span>
+      )}
+      <span className="truncate max-w-2xl">{text}</span>
+      {config.linkHref && (
+        <Link
+          href={config.linkHref}
+          className="underline font-bold hover:opacity-80 transition inline-flex items-center gap-1 shrink-0"
+        >
+          {config.linkText || 'Learn More'} →
+        </Link>
+      )}
+    </div>
+  );
+}
+
+// ── 19. WhatsApp CTA Concierge Section ─────────────────────────────────────────
+
+function WhatsAppCtaSection({
+  config,
+}: {
+  config: Extract<SectionConfig, { type: 'whatsapp_cta' }>['config'];
+}) {
+  const phone = (config.phoneNumber || '').replace(/[^0-9]/g, '') || '15550192834';
+  const defaultMsg = encodeURIComponent(
+    config.message || 'Hi! I would like assistance with an order on your store.',
+  );
+  const waUrl = `https://wa.me/${phone}?text=${defaultMsg}`;
+
+  return (
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+      <div className="bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 rounded-3xl p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-sm">
+        <div className="space-y-3 max-w-xl text-center md:text-left">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 text-xs font-black uppercase tracking-wider">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Instant Concierge</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white tracking-tight">
+            {config.title || 'Need Personal Assistance or Quick Ordering?'}
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-light">
+            {config.subtitle ||
+              'Connect with our dedicated concierge on WhatsApp for instant product queries, bespoke customization, or priority dispatch.'}
+          </p>
+        </div>
+        <a
+          href={waUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg transition transform hover:-translate-y-0.5 inline-flex items-center gap-2 shrink-0"
+        >
+          <span>{config.buttonText || 'Chat on WhatsApp'}</span>
+          <ArrowRight className="w-4 h-4" />
+        </a>
+      </div>
+    </section>
+  );
+}
+
+// ── 20. Video Showcase Section ────────────────────────────────────────────────
+
+function VideoSection({
+  config,
+}: {
+  config: Extract<SectionConfig, { type: 'video' }>['config'];
+}) {
+  const videoUrl = config.videoUrl || '';
+  const isEmbed =
+    videoUrl.includes('youtube.com') ||
+    videoUrl.includes('youtu.be') ||
+    videoUrl.includes('vimeo.com');
+
+  return (
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+      {(config.title || config.subtitle) && (
+        <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+          {config.badge && (
+            <span className="text-xs font-black uppercase tracking-widest text-amber-600 block">
+              {config.badge}
+            </span>
+          )}
+          {config.title && (
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white tracking-tight">
+              {config.title}
+            </h2>
+          )}
+          {config.subtitle && (
+            <p className="text-xs text-slate-500 dark:text-slate-400">{config.subtitle}</p>
+          )}
+        </div>
+      )}
+
+      <div className="relative aspect-video rounded-3xl overflow-hidden shadow-xl border border-slate-200 dark:border-slate-800 bg-slate-950 max-w-5xl mx-auto">
+        {isEmbed ? (
+          <iframe
+            src={videoUrl.replace('watch?v=', 'embed/')}
+            title={config.title || 'Video Showcase'}
+            className="w-full h-full border-0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        ) : (
+          <video
+            src={videoUrl}
+            poster={config.poster}
+            controls
+            autoPlay={config.autoplay}
+            muted={config.autoplay}
+            className="w-full h-full object-cover"
+          />
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ── 21. Slider / Widgets Showcase Section ─────────────────────────────────────
+
+function SliderWidgetsSection({
+  config,
+}: {
+  config: Extract<SectionConfig, { type: 'slider' }>['config'];
+}) {
+  const items =
+    config.items && config.items.length > 0
+      ? config.items
+      : [
+          {
+            title: 'Artisan Crafted',
+            subtitle: 'Handmade with natural oak',
+            image:
+              'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&auto=format&fit=crop',
+          },
+          {
+            title: 'Sustainably Sourced',
+            subtitle: 'FSC-certified materials',
+            image:
+              'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&auto=format&fit=crop',
+          },
+          {
+            title: 'Lifetime Integrity',
+            subtitle: 'Free care and repairs',
+            image:
+              'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=600&auto=format&fit=crop',
+          },
+        ];
+
+  return (
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+      {(config.title || config.subtitle) && (
+        <div className="mb-8 space-y-1">
+          {config.title && (
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white tracking-tight">
+              {config.title}
+            </h2>
+          )}
+          {config.subtitle && (
+            <p className="text-xs text-slate-500 dark:text-slate-400">{config.subtitle}</p>
+          )}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {items.map((item: any, idx: number) => (
+          <div
+            key={idx}
+            className="group relative rounded-3xl overflow-hidden aspect-[4/3] flex flex-col justify-end p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-lg transition"
+          >
+            {item.image && (
+              <img
+                src={item.image}
+                alt={item.title}
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
+            <div className="relative text-white space-y-1">
+              {item.badge && (
+                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block">
+                  {item.badge}
+                </span>
+              )}
+              <h3 className="text-lg font-black">{item.title}</h3>
+              {item.subtitle && <p className="text-xs text-slate-300">{item.subtitle}</p>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 // ── Main Section Resolver Component ───────────────────────────────────────────
 
 interface SectionResolverProps extends SectionProps {
@@ -1594,11 +1901,8 @@ export function SectionResolver({
 
         if (data.type === 'CMS_SECTIONS_UPDATE' && Array.isArray(data.sections)) {
           const valid = data.sections
-            .filter((s: any) => s && s.enabled !== false)
-            .map((s: any) => ({
-              type: s.type,
-              config: s.config || {},
-            })) as SectionConfig[];
+            .map((s: any) => normalizeSection(s))
+            .filter((s: SectionConfig | null): s is SectionConfig => s !== null);
           setActiveSections(valid);
         }
 
@@ -1719,6 +2023,21 @@ export function SectionResolver({
 
             case 'faq-locations':
               return <FaqLocationsSection key={key} {...commonProps} config={section.config} />;
+
+            case 'custom':
+              return <CustomSection key={key} config={section.config} />;
+
+            case 'announcement':
+              return <AnnouncementSection key={key} config={section.config} />;
+
+            case 'whatsapp_cta':
+              return <WhatsAppCtaSection key={key} config={section.config} />;
+
+            case 'video':
+              return <VideoSection key={key} config={section.config} />;
+
+            case 'slider':
+              return <SliderWidgetsSection key={key} config={section.config} />;
 
             default:
               return null;

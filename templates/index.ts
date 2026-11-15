@@ -500,6 +500,13 @@ const TEMPLATE_REGISTRY: Record<string, TemplateComponents> = {
   default: defaultComponents,
   general: defaultComponents,
   'pulse-streetwear': defaultComponents,
+
+  // Northvale Technical Outdoor
+  northvale: defaultComponents,
+  'northvale-outdoor': defaultComponents,
+  outdoor: defaultComponents,
+  alpine: defaultComponents,
+  trail: defaultComponents,
 };
 
 /**

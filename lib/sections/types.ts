@@ -8,13 +8,21 @@ export interface HeroSectionConfig {
   config: {
     headline?: string;
     subheadline?: string;
+    title?: string;
+    subtitle?: string;
     badge?: string;
     ctaLabel?: string;
     ctaHref?: string;
+    ctaPrimary?: string;
     secondaryCtaLabel?: string;
     secondaryCtaHref?: string;
+    ctaSecondary?: string;
     backgroundImage?: string;
+    image?: string;
+    heroImage?: string;
     stats?: Array<{ value: string; label: string }>;
+    floatingBadge?: string;
+    trustBadges?: string[];
   };
 }
 
@@ -28,6 +36,8 @@ export interface FeaturedProductsSectionConfig {
     category?: string; // category slug to filter
     limit?: number;
     viewAllHref?: string;
+    products?: any[];
+    categories?: string[];
   };
 }
 
@@ -69,12 +79,25 @@ export interface TestimonialsSectionConfig {
   config: {
     title?: string;
     subtitle?: string;
+    summary?: string;
+    trustScore?: string;
     testimonials?: Array<{
       name: string;
       rating: number;
       text: string;
       avatar?: string;
       role?: string;
+      title?: string;
+      location?: string;
+    }>;
+    items?: Array<{
+      name: string;
+      rating: number;
+      text: string;
+      avatar?: string;
+      role?: string;
+      title?: string;
+      location?: string;
     }>;
   };
 }
@@ -185,10 +208,81 @@ export interface SplitFeaturesSectionConfig {
   type: 'split-features';
   config: {
     kicker?: string;
+    badge?: string;
     titlePrefix?: string;
     titleHighlight?: string;
+    title?: string;
+    description?: string;
     image?: string;
     tabs?: SplitFeatureTab[];
+    pillars?: Array<{
+      title: string;
+      desc?: string;
+      description?: string;
+      icon?: string;
+      iconType?: string;
+    }>;
+  };
+}
+
+export interface CustomHtmlSectionConfig {
+  type: 'custom';
+  config: {
+    title?: string;
+    subtitle?: string;
+    customHtml?: string;
+    html?: string;
+    padding?: string;
+  };
+}
+
+export interface AnnouncementSectionConfig {
+  type: 'announcement';
+  config: {
+    text?: string;
+    title?: string;
+    linkText?: string;
+    linkHref?: string;
+    badge?: string;
+    dismissible?: boolean;
+  };
+}
+
+export interface WhatsAppCtaSectionConfig {
+  type: 'whatsapp_cta';
+  config: {
+    title?: string;
+    subtitle?: string;
+    phoneNumber?: string;
+    message?: string;
+    buttonText?: string;
+  };
+}
+
+export interface VideoSectionConfig {
+  type: 'video';
+  config: {
+    title?: string;
+    subtitle?: string;
+    videoUrl?: string;
+    poster?: string;
+    badge?: string;
+    autoplay?: boolean;
+  };
+}
+
+export interface SliderWidgetsSectionConfig {
+  type: 'slider';
+  config: {
+    title?: string;
+    subtitle?: string;
+    items?: Array<{
+      title: string;
+      subtitle?: string;
+      image?: string;
+      href?: string;
+      badge?: string;
+    }>;
   };
 }
 
@@ -229,7 +323,12 @@ export type SectionConfig =
   | CustomFormSectionConfig
   | SplitFeaturesSectionConfig
   | FaqLocationsSectionConfig
-  | SpacerSectionConfig;
+  | SpacerSectionConfig
+  | CustomHtmlSectionConfig
+  | AnnouncementSectionConfig
+  | WhatsAppCtaSectionConfig
+  | VideoSectionConfig
+  | SliderWidgetsSectionConfig;
 
 // ── Page Layout ───────────────────────────────────────────────────────────────
 
@@ -648,6 +747,121 @@ export const DEFAULT_TEMPLATE_SECTIONS: Record<string, SectionConfig[]> = {
       },
     },
   ],
+  northvale: [
+    {
+      type: 'hero',
+      config: {
+        badge: 'FIELD NOTES • EDITION 04',
+        headline: 'Built for the quiet distance.',
+        subheadline:
+          'Technical outdoor apparel and equipment designed for hikers, climbers, and the long trail ahead. Field-tested in the Northern Dolomites.',
+        ctaLabel: 'Explore Gear',
+        ctaHref: '/products',
+        secondaryCtaLabel: 'Read Journal',
+        secondaryCtaHref: '/products',
+        backgroundImage:
+          'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&auto=format&fit=crop&q=80',
+        stats: [
+          { value: '260g', label: 'Trail Runner Lite' },
+          { value: '28,000mm', label: 'Hydrostatic Barrier' },
+          { value: '200km', label: 'Alta Via Tested' },
+        ],
+      },
+    },
+    {
+      type: 'trust-badges',
+      config: {
+        kicker: 'ALPINE CRAFT & INTEGRITY',
+        title: 'Performance engineered into every fiber.',
+        badges: [
+          {
+            icon: '🌧️',
+            title: 'Weather Protection',
+            desc: '28,000mm hydrostatic head waterproof barrier with fluorocarbon-free DWR.',
+          },
+          {
+            icon: '⚡',
+            title: 'Engineered Construction',
+            desc: 'Fully taped micro-seams and abrasion-resistant Cordura ripstop.',
+          },
+          {
+            icon: '🌬️',
+            title: 'Breathable Performance',
+            desc: 'Sub-300g ultralight matrix mesh venting active body heat on steep ascents.',
+          },
+          {
+            icon: '🛡️',
+            title: 'Lifetime Repair Program',
+            desc: 'Free repairs for the life of your gear to prevent mountain equipment waste.',
+          },
+        ],
+      },
+    },
+    {
+      type: 'categories',
+      config: {
+        title: 'Three categories. One system.',
+        subtitle: 'Field-tested essentials designed to work together.',
+        showAll: true,
+        limit: 6,
+      },
+    },
+    {
+      type: 'featured-products',
+      config: {
+        badge: 'SEASON ESSENTIALS',
+        title: 'Field-tested essentials, quietly organized.',
+        subtitle: 'Sub-300g shells, approach footwear, and technical mountain packs.',
+        limit: 8,
+        viewAllHref: '/products',
+      },
+    },
+    {
+      type: 'banner',
+      config: {
+        badge: 'EDITORIAL STORY • ALTA VIA',
+        title: 'Two hundred kilometers of quiet weather along the Alta Via.',
+        description:
+          'Our field team spent four weeks testing our lightweight matrix mesh shells through alpine wind, granite scree, and sudden mountain downpours.',
+        ctaLabel: 'Read the Field Notes',
+        ctaHref: '/products',
+        backgroundImage:
+          'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=1600&auto=format&fit=crop&q=80',
+        variant: 'dark',
+      },
+    },
+    {
+      type: 'testimonials',
+      config: {
+        title: 'Trail-Tested Reviews',
+        subtitle: 'Field feedback from alpinists, mountain guides, and long-distance hikers.',
+        testimonials: [
+          {
+            name: 'Liam Henderson',
+            rating: 5,
+            text: 'The Trail Runner Lite carried me through 90 miles of wet granite and river crossings in the Wind River Range. Zero blisters, insane grip on steep slab.',
+            role: 'Ultralight Thru-Hiker (Boulder, CO)',
+          },
+          {
+            name: 'Elena Rostova',
+            rating: 5,
+            text: 'Totally stormproof in high-altitude sleet yet genuinely breathable on steep ascents. Minimalist perfection without shouting neon logos.',
+            role: 'Alpine Mountain Guide (Innsbruck, Austria)',
+          },
+        ],
+      },
+    },
+    {
+      type: 'newsletter',
+      config: {
+        title: 'New releases and quiet drops — no noise, once a month.',
+        description:
+          'Field Notes direct to your inbox with edition announcements and zero promotional spam.',
+        placeholder: 'Enter your email address...',
+        ctaLabel: 'Subscribe →',
+      },
+    },
+  ],
   default: [
     {
       type: 'hero',
@@ -721,3 +935,437 @@ export const DEFAULT_HOME_LAYOUT: PageLayout = {
   page: 'home',
   sections: DEFAULT_TEMPLATE_SECTIONS.default,
 };
+
+// ── Universal Section Normalizer ─────────────────────────────────────────────
+/**
+ * Normalizes any section representation (whether from Readdy AI website builder,
+ * CMS Theme Studio, or raw JSON) into a strict SectionConfig object.
+ */
+export function normalizeSection(raw: any): SectionConfig | null {
+  if (!raw || typeof raw !== 'object') return null;
+  if (raw.enabled === false) return null;
+
+  const rawType = String(raw.type || raw.id || '').toLowerCase().trim();
+  if (!rawType) return null;
+
+  // Header and footer are part of the template layout frame unless they contain explicit custom HTML
+  if (
+    (rawType === 'header' || rawType === 'footer') &&
+    !raw.customHtml &&
+    !raw.config?.customHtml &&
+    !raw.contentJson?.customHtml
+  ) {
+    return null;
+  }
+
+  // Extract merged configuration
+  const contentJson = raw.contentJson && typeof raw.contentJson === 'object' ? raw.contentJson : {};
+  const existingConfig = raw.config && typeof raw.config === 'object' ? raw.config : {};
+  const merged: Record<string, any> = {
+    ...contentJson,
+    ...existingConfig,
+  };
+
+  // Hoist top-level fields
+  if (raw.title && !merged.title && !merged.headline) {
+    merged.title = raw.title;
+    merged.headline = raw.title;
+  }
+  if (raw.subtitle && !merged.subtitle && !merged.subheadline) {
+    merged.subtitle = raw.subtitle;
+    merged.subheadline = raw.subtitle;
+  }
+  if (raw.customHtml && !merged.customHtml) {
+    merged.customHtml = raw.customHtml;
+  }
+
+  // If section has custom HTML and is not explicitly mapped or is custom/customHtml
+  if (
+    rawType === 'custom' ||
+    rawType === 'custom_html' ||
+    rawType === 'customhtml' ||
+    (merged.customHtml &&
+      !['hero', 'products', 'featured-products', 'testimonials', 'split-features', 'trust-badges'].includes(
+        rawType,
+      ))
+  ) {
+    return {
+      type: 'custom',
+      config: {
+        title: merged.title || raw.title,
+        subtitle: merged.subtitle || raw.subtitle,
+        customHtml: merged.customHtml || merged.html || '',
+      },
+    };
+  }
+
+  // 1. Hero variations
+  if (
+    rawType === 'hero' ||
+    rawType === 'header' ||
+    rawType === 'impact-hero' ||
+    rawType === 'marketplace_header'
+  ) {
+    return {
+      type: 'hero',
+      config: {
+        headline: merged.headline || merged.title || raw.title || 'Welcome',
+        subheadline: merged.subheadline || merged.subtitle || raw.subtitle,
+        badge: merged.badge,
+        ctaLabel: merged.ctaLabel || merged.ctaPrimary || 'Shop Now',
+        ctaHref: merged.ctaHref || merged.primaryLink || '/products',
+        secondaryCtaLabel: merged.secondaryCtaLabel || merged.ctaSecondary,
+        secondaryCtaHref: merged.secondaryCtaHref || merged.secondaryLink || '/collections',
+        backgroundImage: merged.backgroundImage || merged.image || merged.heroImage,
+        stats: merged.stats,
+        floatingBadge: merged.floatingBadge,
+        trustBadges: merged.trustBadges,
+      },
+    };
+  }
+
+  // 2. Featured Products variations
+  if (
+    rawType === 'featured-products' ||
+    rawType === 'featured_products' ||
+    rawType === 'products' ||
+    rawType === 'catalog' ||
+    rawType === 'marketplace_grid'
+  ) {
+    return {
+      type: 'featured-products',
+      config: {
+        title: merged.title || raw.title || 'Featured Products',
+        subtitle: merged.subtitle || raw.subtitle,
+        badge: merged.badge,
+        collection: merged.collection,
+        category: merged.category,
+        limit: merged.limit ? Number(merged.limit) : 8,
+        viewAllHref: merged.viewAllHref || '/products',
+        products: merged.products,
+        categories: merged.categories,
+      },
+    };
+  }
+
+  // 3. Split Features / Brand Pillars variations
+  if (
+    rawType === 'split-features' ||
+    rawType === 'split_features' ||
+    rawType === 'features' ||
+    rawType === 'story' ||
+    rawType === 'pillars' ||
+    rawType === 'brand_values'
+  ) {
+    const rawTabs = merged.tabs || merged.pillars || [];
+    const normalizedTabs = rawTabs.map((t: any, idx: number) => ({
+      id: t.id || `tab-${idx}`,
+      title: t.title || 'Feature',
+      icon:
+        t.icon ||
+        (t.iconType === 'leaf'
+          ? '🌿'
+          : t.iconType === 'sparkles'
+          ? '✨'
+          : t.iconType === 'shield'
+          ? '🛡️'
+          : '🐾'),
+      desc: t.desc || t.description || '',
+    }));
+
+    return {
+      type: 'split-features',
+      config: {
+        kicker: merged.kicker || merged.badge || 'Our Commitment',
+        titlePrefix: merged.titlePrefix || merged.title || raw.title || 'Complete Care For',
+        titleHighlight: merged.titleHighlight || '',
+        image: merged.image || merged.imageUrl,
+        tabs: normalizedTabs.length > 0 ? normalizedTabs : undefined,
+      },
+    };
+  }
+
+  // 4. Testimonials / Reviews variations
+  if (
+    rawType === 'testimonials' ||
+    rawType === 'reviews' ||
+    rawType === 'social_proof'
+  ) {
+    const rawItems = merged.testimonials || merged.items || [];
+    const normalizedItems = rawItems.map((item: any) => ({
+      name: item.name || 'Verified Customer',
+      rating: Number(item.rating) || 5,
+      text: item.text || item.review || item.comment || '',
+      avatar: item.avatar,
+      role: item.role || item.location || 'Verified Buyer',
+    }));
+
+    return {
+      type: 'testimonials',
+      config: {
+        title: merged.title || raw.title || 'Loved by Customers',
+        subtitle: merged.subtitle || raw.subtitle || merged.summary,
+        testimonials: normalizedItems.length > 0 ? normalizedItems : undefined,
+      },
+    };
+  }
+
+  // 5. Trust Badges variations
+  if (
+    rawType === 'trust-badges' ||
+    rawType === 'trust_badges' ||
+    rawType === 'badges'
+  ) {
+    return {
+      type: 'trust-badges',
+      config: {
+        kicker: merged.kicker,
+        title: merged.title || raw.title,
+        badges: merged.badges,
+        leftBadges: merged.leftBadges,
+        rightBadges: merged.rightBadges,
+        centerImage: merged.centerImage,
+      },
+    };
+  }
+
+  // 6. Categories variations
+  if (
+    rawType === 'categories' ||
+    rawType === 'category-grid' ||
+    rawType === 'category_ribbon'
+  ) {
+    return {
+      type: 'categories',
+      config: {
+        title: merged.title || raw.title,
+        subtitle: merged.subtitle || raw.subtitle,
+        showAll: merged.showAll,
+        limit: merged.limit ? Number(merged.limit) : 6,
+      },
+    };
+  }
+
+  // 7. Collections variations
+  if (rawType === 'collections' || rawType === 'collection-grid') {
+    return {
+      type: 'collections',
+      config: {
+        title: merged.title || raw.title,
+        subtitle: merged.subtitle || raw.subtitle,
+        limit: merged.limit ? Number(merged.limit) : 3,
+        layout: merged.layout,
+      },
+    };
+  }
+
+  // 8. Deal Countdown variations
+  if (
+    rawType === 'deal-countdown' ||
+    rawType === 'deal_countdown' ||
+    rawType === 'lightning_deals' ||
+    rawType === 'flash_sale'
+  ) {
+    return {
+      type: 'deal-countdown',
+      config: {
+        badge: merged.badge,
+        title: merged.title || raw.title,
+        subtitle: merged.subtitle || raw.subtitle,
+        discountPercent: merged.discountPercent,
+        price: merged.price,
+        compareAtPrice: merged.compareAtPrice,
+        productName: merged.productName,
+        productCategory: merged.productCategory,
+        image: merged.image,
+        ctaLabel: merged.ctaLabel,
+        ctaHref: merged.ctaHref,
+        hoursLeft: merged.hoursLeft,
+      },
+    };
+  }
+
+  // 9. Announcement
+  if (rawType === 'announcement' || rawType === 'announcement_ribbon') {
+    return {
+      type: 'announcement',
+      config: {
+        text: merged.text || merged.title || raw.title,
+        title: merged.title || raw.title,
+        badge: merged.badge,
+        linkText: merged.linkText,
+        linkHref: merged.linkHref,
+        dismissible: merged.dismissible,
+      },
+    };
+  }
+
+  // 10. WhatsApp CTA
+  if (rawType === 'whatsapp' || rawType === 'whatsapp_cta') {
+    return {
+      type: 'whatsapp_cta',
+      config: {
+        title: merged.title || raw.title,
+        subtitle: merged.subtitle || raw.subtitle,
+        phoneNumber: merged.phoneNumber || merged.whatsappNumber,
+        message: merged.message,
+        buttonText: merged.buttonText || merged.ctaLabel,
+      },
+    };
+  }
+
+  // 11. Video / Video Showcase
+  if (rawType === 'video' || rawType === 'video_showcase') {
+    return {
+      type: 'video',
+      config: {
+        title: merged.title || raw.title,
+        subtitle: merged.subtitle || raw.subtitle,
+        videoUrl: merged.videoUrl || merged.url || merged.src,
+        poster: merged.poster || merged.image,
+        badge: merged.badge,
+        autoplay: merged.autoplay,
+      },
+    };
+  }
+
+  // 12. Slider / Widgets
+  if (rawType === 'slider' || rawType === 'widgets') {
+    return {
+      type: 'slider',
+      config: {
+        title: merged.title || raw.title,
+        subtitle: merged.subtitle || raw.subtitle,
+        items: merged.items || merged.widgets || [],
+      },
+    };
+  }
+
+  // 13. Banner
+  if (rawType === 'banner') {
+    return {
+      type: 'banner',
+      config: {
+        title: merged.title || raw.title,
+        description: merged.description || merged.subtitle || raw.subtitle,
+        badge: merged.badge,
+        ctaLabel: merged.ctaLabel,
+        ctaHref: merged.ctaHref,
+        backgroundImage: merged.backgroundImage || merged.image,
+        variant: merged.variant,
+      },
+    };
+  }
+
+  // 14. Newsletter
+  if (rawType === 'newsletter') {
+    return {
+      type: 'newsletter',
+      config: {
+        title: merged.title || raw.title,
+        description: merged.description || merged.subtitle || raw.subtitle,
+        placeholder: merged.placeholder,
+        ctaLabel: merged.ctaLabel,
+      },
+    };
+  }
+
+  // 15. Lookbook
+  if (rawType === 'lookbook') {
+    return {
+      type: 'lookbook',
+      config: {
+        lookbookTitle: merged.lookbookTitle || merged.title || raw.title,
+        lookbookDesc: merged.lookbookDesc || merged.description || merged.subtitle || raw.subtitle,
+        lookbookImage: merged.lookbookImage || merged.image,
+        badge: merged.badge,
+        ctaLabel: merged.ctaLabel,
+        ctaHref: merged.ctaHref,
+        secondaryCtaLabel: merged.secondaryCtaLabel,
+        secondaryCtaHref: merged.secondaryCtaHref,
+      },
+    };
+  }
+
+  // 16. Room Grid
+  if (rawType === 'room-grid' || rawType === 'room_grid') {
+    return {
+      type: 'room-grid',
+      config: {
+        tagline: merged.tagline || merged.badge,
+        title: merged.title || raw.title,
+        viewAllHref: merged.viewAllHref,
+        viewAllLabel: merged.viewAllLabel,
+        items: merged.items,
+      },
+    };
+  }
+
+  // 17. Product Matrix
+  if (rawType === 'product-matrix' || rawType === 'product_matrix') {
+    return {
+      type: 'product-matrix',
+      config: {
+        title: merged.title || raw.title,
+        subtitle: merged.subtitle || raw.subtitle,
+        limit: merged.limit ? Number(merged.limit) : 3,
+      },
+    };
+  }
+
+  // 18. Custom Form
+  if (rawType === 'custom_form' || rawType === 'form') {
+    return {
+      type: 'custom_form',
+      config: {
+        formId: merged.formId,
+        formSlug: merged.formSlug,
+        formTitle: merged.formTitle,
+        heading: merged.heading || merged.title || raw.title,
+        subtitle: merged.subtitle || raw.subtitle,
+        containerWidth: merged.containerWidth,
+        containerMaxWidth: merged.containerMaxWidth,
+      },
+    };
+  }
+
+  // 19. FAQ / Locations
+  if (rawType === 'faq-locations' || rawType === 'faq_locations' || rawType === 'faq') {
+    return {
+      type: 'faq-locations',
+      config: {
+        locationsTitle: merged.locationsTitle,
+        locations: merged.locations,
+        contactCtaLabel: merged.contactCtaLabel,
+        contactCtaHref: merged.contactCtaHref,
+        centerImage: merged.centerImage,
+        faqTitle: merged.faqTitle || merged.title || raw.title,
+        faqs: merged.faqs,
+      },
+    };
+  }
+
+  // 20. Spacer
+  if (rawType === 'spacer') {
+    return {
+      type: 'spacer',
+      config: {
+        height: merged.height ? Number(merged.height) : 32,
+      },
+    };
+  }
+
+  // Fallback: If customHtml is present in any other unrecognized type, render as custom section
+  if (merged.customHtml || raw.customHtml) {
+    return {
+      type: 'custom',
+      config: {
+        title: merged.title || raw.title,
+        subtitle: merged.subtitle || raw.subtitle,
+        customHtml: merged.customHtml || raw.customHtml || '',
+      },
+    };
+  }
+
+  return null;
+}

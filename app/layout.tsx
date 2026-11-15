@@ -8,7 +8,6 @@ import {
   Cinzel,
   Geist,
   Geist_Mono,
-  Roboto,
   DM_Sans,
   Lora,
 } from 'next/font/google';
@@ -67,12 +66,10 @@ const cinzel = Cinzel({
   variable: '--font-cinzel',
 });
 
-const roboto = Roboto({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '700'],
-  display: 'swap',
-  variable: '--font-roboto',
-});
+// Fallback web-safe & system Roboto variable to avoid Turbopack multi-weight query resolution bug
+const roboto = {
+  variable: 'font-roboto',
+};
 
 const dmSans = DM_Sans({
   subsets: ['latin'],

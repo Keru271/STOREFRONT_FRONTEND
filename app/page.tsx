@@ -3,7 +3,7 @@ import { getProducts } from '@/lib/api/products';
 import { getCollections, getCategories } from '@/lib/api/catalog';
 import { resolveTemplate } from '@/templates';
 import { SectionResolver } from '@/lib/sections/SectionResolver';
-import { DEFAULT_TEMPLATE_SECTIONS } from '@/lib/sections/types';
+import { DEFAULT_TEMPLATE_SECTIONS, normalizeSection } from '@/lib/sections/types';
 import type { SectionConfig } from '@/lib/sections/types';
 
 interface HomePageProps {
@@ -60,6 +60,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           default: ['default', 'general', 'pulse-streetwear', 'botanica-wellness'],
           'pulse-streetwear': ['pulse-streetwear', 'default', 'streetwear'],
           'botanica-wellness': ['botanica-wellness', 'default', 'botanica', 'wellness'],
+          northvale: ['northvale', 'northvale-outdoor', 'outdoor', 'alpine', 'trail', 'hiking'],
+          'northvale-outdoor': ['northvale-outdoor', 'northvale', 'outdoor', 'alpine'],
         };
 
         const checkKeys = [activeSlug, lowerSlug, ...(ALIASES[lowerSlug] || [])];
@@ -83,13 +85,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         }
 
         if (Array.isArray(candidateList) && candidateList.length > 0) {
-          // Filter out disabled sections and map to SectionConfig shape
+          // Normalize every section using universal normalizeSection
           const activeList = candidateList
-            .filter((s) => s && s.enabled !== false)
-            .map((s) => ({
-              type: s.type,
-              config: s.config || {},
-            })) as SectionConfig[];
+            .map((s) => normalizeSection(s))
+            .filter((s): s is SectionConfig => s !== null);
 
           if (activeList.length > 0) {
             customSections = activeList;
