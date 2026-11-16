@@ -8,6 +8,7 @@ import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
 import QuickViewModal from '@/components/shared/QuickViewModal';
 import NotifyMeModal from '@/components/shared/NotifyMeModal';
+import { getProductStockInfo } from '@/lib/stock';
 
 interface MinimalProductCardProps {
   product: Product;
@@ -35,14 +36,9 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
     : 0;
 
-  const stock = hasVariants
-    ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
-    : product.stockQuantity !== undefined
-      ? Number(product.stockQuantity)
-      : product.inventory !== undefined
-        ? Number(product.inventory)
-        : 1;
-  const isOutOfStock = stock <= 0;
+  const stockInfo = getProductStockInfo(product);
+  const stock = stockInfo.stock;
+  const isOutOfStock = stockInfo.isOutOfStock;
 
   return (
     <div className="group relative block">
@@ -61,7 +57,7 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
               alt={product.name}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              className={`object-cover transition-transform duration-700 group-hover:scale-110 ${isOutOfStock ? 'opacity-60 grayscale-[35%]' : ''}`}
             />
           ) : (
             <div
@@ -84,6 +80,15 @@ export default function MinimalProductCard({ product }: MinimalProductCardProps)
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
+            </div>
+          )}
+
+          {/* Center Sold Out Badge */}
+          {isOutOfStock && (
+            <div className="absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center z-15 pointer-events-none">
+              <span className="bg-rose-600 text-white text-xs font-black uppercase tracking-widest px-4 py-1.5 shadow-lg">
+                Sold Out
+              </span>
             </div>
           )}
 

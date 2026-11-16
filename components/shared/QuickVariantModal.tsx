@@ -7,6 +7,7 @@ import type { Product, ProductVariant } from '@/lib/api/types';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useToast } from '@/hooks/useToast';
+import { getProductStockInfo } from '@/lib/stock';
 
 export interface QuickVariantModalProps {
   isOpen: boolean;
@@ -57,15 +58,9 @@ export default function QuickVariantModal({ isOpen, onClose, product }: QuickVar
       : product.compareAtPrice
         ? Number(product.compareAtPrice)
         : null;
-  const stock =
-    selectedVariant?.inventory != null
-      ? Number(selectedVariant.inventory)
-      : product.stockQuantity !== undefined
-        ? Number(product.stockQuantity)
-        : product.inventory !== undefined
-          ? Number(product.inventory)
-          : 1;
-  const isOutOfStock = stock <= 0;
+  const stockInfo = getProductStockInfo(product, selectedVariant?.id);
+  const stock = stockInfo.stock;
+  const isOutOfStock = stockInfo.isOutOfStock;
   const activeSku = selectedVariant?.sku || product.sku;
 
   const discount =
@@ -162,11 +157,18 @@ export default function QuickVariantModal({ isOpen, onClose, product }: QuickVar
                   alt={product.name}
                   fill
                   sizes="96px"
-                  className="object-cover"
+                  className={`object-cover ${isOutOfStock ? 'opacity-50 grayscale' : ''}`}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-2xl opacity-40">
                   🛍️
+                </div>
+              )}
+              {isOutOfStock && (
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-10">
+                  <span className="px-2 py-0.5 rounded bg-rose-600 text-white font-black text-[9px] uppercase tracking-wider shadow">
+                    Sold Out
+                  </span>
                 </div>
               )}
             </div>

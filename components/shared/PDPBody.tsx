@@ -36,6 +36,7 @@ import {
 } from '@/lib/api';
 import { StorefrontThreeDViewer } from '@/components/shared/StorefrontThreeDViewer';
 import { Box, Sparkles, Smartphone, Camera, Eye } from 'lucide-react';
+import { getProductStockInfo } from '@/lib/stock';
 
 const ReviewModal = dynamic(() => import('./ReviewModal'), { ssr: false });
 const NotifyMeModal = dynamic(() => import('./NotifyMeModal'), { ssr: false });
@@ -133,15 +134,9 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
       : product.compareAtPrice
         ? Number(product.compareAtPrice)
         : null;
-  const stock =
-    selectedVariant?.inventory != null
-      ? Number(selectedVariant.inventory)
-      : product.stockQuantity !== undefined
-        ? Number(product.stockQuantity)
-        : product.inventory !== undefined
-          ? Number(product.inventory)
-          : 1;
-  const isOutOfStock = stock <= 0;
+  const stockInfo = getProductStockInfo(product, selectedVariant?.id);
+  const stock = stockInfo.stock;
+  const isOutOfStock = stockInfo.isOutOfStock;
   const activeSku = selectedVariant?.sku || product.sku;
 
   const discount =
@@ -511,10 +506,23 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                 </div>
               )}
 
+              {/* Out of Stock Visual Overlay */}
+              {!is3DViewActive && isOutOfStock && (
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center p-4 select-none">
+                  <div className="px-5 py-2.5 rounded-full bg-slate-900/95 text-white font-black text-xs sm:text-sm uppercase tracking-widest border border-white/20 shadow-2xl flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
+                    <span>Currently Out of Stock</span>
+                  </div>
+                  <span className="text-white/90 text-xs font-medium mt-1.5 drop-shadow-sm">
+                    Restocking soon • Notification available below
+                  </span>
+                </div>
+              )}
+
               {/* Discount Tag */}
               {!is3DViewActive && discount > 0 && (
                 <span
-                  className={`absolute top-4 left-4 px-3 py-1.5 text-xs font-black text-white shadow-lg z-10 ${
+                  className={`absolute top-4 ${isOutOfStock ? 'left-24 sm:left-28' : 'left-4'} px-3 py-1.5 text-xs font-black text-white shadow-lg z-10 ${
                     isMinimal
                       ? 'rounded-none bg-black text-white font-mono'
                       : isLuxe
@@ -524,6 +532,13 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                   style={isMinimal || isLuxe ? undefined : { backgroundColor: 'var(--sf-accent)' }}
                 >
                   -{discount}% OFF
+                </span>
+              )}
+
+              {/* Out of Stock Corner Badge */}
+              {!is3DViewActive && isOutOfStock && (
+                <span className="absolute top-4 left-4 px-3 py-1.5 text-xs font-black uppercase tracking-wider bg-rose-600 text-white shadow-lg z-10 rounded-full">
+                  Sold Out
                 </span>
               )}
 
@@ -656,13 +671,30 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                   •
                 </span>
                 <span
-                  className={`text-xs font-bold ${isOutOfStock ? 'text-rose-600' : stock <= 5 ? 'text-amber-600' : 'text-emerald-600'}`}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+                    isOutOfStock
+                      ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800'
+                      : stock <= 5
+                        ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800'
+                        : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                  }`}
                 >
-                  {isOutOfStock
-                    ? '✕ Out of Stock'
-                    : stock <= 5
-                      ? `⚠️ Only ${stock} units remaining`
-                      : `✓ In Stock (${stock} available)`}
+                  {isOutOfStock ? (
+                    <>
+                      <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                      <span>✕ Out of Stock</span>
+                    </>
+                  ) : stock <= 5 ? (
+                    <>
+                      <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                      <span>⚠️ Only {stock} units left!</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span>✓ In Stock ({stock} available)</span>
+                    </>
+                  )}
                 </span>
               </div>
             </div>
@@ -728,7 +760,13 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                 <div className="flex flex-wrap gap-2.5">
                   {product.variants.map((v) => {
                     const isSelected = selectedVariantId === v.id;
-                    const vStock = Number(v.inventory ?? 0);
+                    const vStock = Number(
+                      v.inventory ??
+                      (v as any).stockQuantity ??
+                      (v as any).quantity ??
+                      (v as any).stock ??
+                      0
+                    );
                     const isVOut = vStock <= 0;
 
                     return (

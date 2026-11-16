@@ -10,6 +10,7 @@ import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
 import QuickViewModal from '@/components/shared/QuickViewModal';
 import NotifyMeModal from '@/components/shared/NotifyMeModal';
+import { getProductStockInfo } from '@/lib/stock';
 
 interface DefaultProductCardProps {
   product: Product;
@@ -43,14 +44,9 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
   const productHref = product.urlSlug ? `/products/${product.urlSlug}` : `/products/${product.id}`;
   const isWishlisted = isInWishlist(product.id);
 
-  const stock = hasVariants
-    ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
-    : product.stockQuantity !== undefined
-      ? Number(product.stockQuantity)
-      : product.inventory !== undefined
-        ? Number(product.inventory)
-        : 1;
-  const isOutOfStock = stock <= 0;
+  const stockInfo = getProductStockInfo(product);
+  const stock = stockInfo.stock;
+  const isOutOfStock = stockInfo.isOutOfStock;
 
   const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -170,11 +166,20 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
               alt={product.name}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              className={`object-cover group-hover:scale-105 transition-transform duration-500 ${isOutOfStock ? 'opacity-65 grayscale-[40%]' : ''}`}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
               No Image
+            </div>
+          )}
+
+          {/* Out of Stock Center Overlay Badge */}
+          {isOutOfStock && (
+            <div className="absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center z-15 pointer-events-none">
+              <span className="bg-rose-600 text-white text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-lg">
+                Sold Out
+              </span>
             </div>
           )}
 
@@ -300,6 +305,11 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
               {product.compareAtPrice && (
                 <span className="text-sm line-through text-gray-400">
                   {formatPrice(product.compareAtPrice)}
+                </span>
+              )}
+              {isOutOfStock && (
+                <span className="text-[11px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50 px-2 py-0.5 rounded-md border border-rose-200 dark:border-rose-900/60">
+                  Out of Stock
                 </span>
               )}
             </div>

@@ -10,6 +10,7 @@ import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
 import QuickViewModal from '@/components/shared/QuickViewModal';
 import NotifyMeModal from '@/components/shared/NotifyMeModal';
+import { getProductStockInfo } from '@/lib/stock';
 
 export interface FunoProductCardProps {
   product: Product;
@@ -42,14 +43,9 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
       ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
       : 0;
 
-  const stock = hasVariants
-    ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
-    : product.stockQuantity !== undefined
-      ? Number(product.stockQuantity)
-      : product.inventory !== undefined
-        ? Number(product.inventory)
-        : 1;
-  const isOutOfStock = stock <= 0;
+  const stockInfo = getProductStockInfo(product);
+  const stock = stockInfo.stock;
+  const isOutOfStock = stockInfo.isOutOfStock;
 
   const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -141,7 +137,7 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
               alt={product.name}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-contain p-2 group-hover:scale-106 transition-transform duration-500"
+              className={`object-contain p-2 group-hover:scale-106 transition-transform duration-500 ${isOutOfStock ? 'opacity-60 grayscale-[30%]' : ''}`}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-4xl text-slate-300">
@@ -149,6 +145,15 @@ export default function FunoProductCard({ product }: FunoProductCardProps) {
             </div>
           )}
         </Link>
+
+        {/* Center Sold Out Badge */}
+        {isOutOfStock && (
+          <div className="absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center z-15 pointer-events-none">
+            <span className="bg-rose-600 text-white text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-lg">
+              Sold Out
+            </span>
+          </div>
+        )}
 
         {/* Quick Action Overlay on Hover */}
         <div className="absolute inset-x-3 bottom-3 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 flex gap-2">

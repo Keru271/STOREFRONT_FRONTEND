@@ -10,6 +10,7 @@ import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
 import QuickViewModal from '@/components/shared/QuickViewModal';
 import NotifyMeModal from '@/components/shared/NotifyMeModal';
+import { getProductStockInfo } from '@/lib/stock';
 
 export interface PawzyProductCardProps {
   product: Product;
@@ -42,14 +43,9 @@ export default function PawzyProductCard({ product }: PawzyProductCardProps) {
       ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
       : 0;
 
-  const stock = hasVariants
-    ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
-    : product.stockQuantity !== undefined
-      ? Number(product.stockQuantity)
-      : product.inventory !== undefined
-        ? Number(product.inventory)
-        : 1;
-  const isOutOfStock = stock <= 0;
+  const stockInfo = getProductStockInfo(product);
+  const stock = stockInfo.stock;
+  const isOutOfStock = stockInfo.isOutOfStock;
 
   const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -138,11 +134,19 @@ export default function PawzyProductCard({ product }: PawzyProductCardProps) {
               alt={product.name}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-contain p-3 group-hover:scale-108 transition-transform duration-500"
+              className={`object-contain p-3 group-hover:scale-108 transition-transform duration-500 ${isOutOfStock ? 'opacity-60 grayscale-[35%]' : ''}`}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-5xl">
               🐕
+            </div>
+          )}
+          {/* Center Sold Out Badge */}
+          {isOutOfStock && (
+            <div className="absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center z-15 pointer-events-none rounded-2xl">
+              <span className="bg-rose-600 text-white text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-lg">
+                Sold Out
+              </span>
             </div>
           )}
         </Link>
@@ -198,6 +202,11 @@ export default function PawzyProductCard({ product }: PawzyProductCardProps) {
           {product.compareAtPrice && product.compareAtPrice > product.price && (
             <span className="text-xs text-rose-400 dark:text-rose-400/80 line-through">
               {formatPrice(product.compareAtPrice)}
+            </span>
+          )}
+          {isOutOfStock && (
+            <span className="text-[10px] font-black text-rose-600 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-full">
+              Out of Stock
             </span>
           )}
         </div>

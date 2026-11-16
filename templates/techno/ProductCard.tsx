@@ -10,6 +10,7 @@ import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
 import QuickViewModal from '@/components/shared/QuickViewModal';
 import NotifyMeModal from '@/components/shared/NotifyMeModal';
+import { getProductStockInfo } from '@/lib/stock';
 import { Heart, ShoppingBag, Eye, MapPin, Check, Sparkles } from 'lucide-react';
 
 export interface TechnoProductCardProps {
@@ -83,14 +84,9 @@ export default function TechnoProductCard({ product }: TechnoProductCardProps) {
       ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
       : 0;
 
-  const stock = hasVariants
-    ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
-    : product.stockQuantity !== undefined
-      ? Number(product.stockQuantity)
-      : product.inventory !== undefined
-        ? Number(product.inventory)
-        : 1;
-  const isOutOfStock = stock <= 0;
+  const stockInfo = getProductStockInfo(product);
+  const stock = stockInfo.stock;
+  const isOutOfStock = stockInfo.isOutOfStock;
 
   // Stable deterministic maker assignment based on product id
   const charCode = (product.id || '1').split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
@@ -152,8 +148,8 @@ export default function TechnoProductCard({ product }: TechnoProductCardProps) {
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className={`object-cover object-center transition-transform duration-500 group-hover:scale-105 ${
-                secondaryImage ? 'group-hover:opacity-0' : ''
-              }`}
+                isOutOfStock ? 'opacity-60 grayscale-[35%]' : ''
+              } ${secondaryImage ? 'group-hover:opacity-0' : ''}`}
             />
             {secondaryImage && (
               <Image
@@ -161,10 +157,19 @@ export default function TechnoProductCard({ product }: TechnoProductCardProps) {
                 alt={`${product.name} alternate view`}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="object-cover object-center absolute inset-0 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-105"
+                className={`object-cover object-center absolute inset-0 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-105 ${isOutOfStock ? 'opacity-60 grayscale-[35%]' : ''}`}
               />
             )}
           </Link>
+
+          {/* Center Sold Out Badge */}
+          {isOutOfStock && (
+            <div className="absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center z-15 pointer-events-none">
+              <span className="bg-[#1C1917] text-white text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-[4px] shadow-lg">
+                Sold Out
+              </span>
+            </div>
+          )}
 
           {/* Floating Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10 pointer-events-none">
@@ -269,6 +274,11 @@ export default function TechnoProductCard({ product }: TechnoProductCardProps) {
                     style={{ fontFamily: "'Source Code Pro', monospace" }}
                   >
                     {formatPrice(product.compareAtPrice)}
+                  </span>
+                )}
+                {isOutOfStock && (
+                  <span className="text-[10px] font-bold text-[#DC2626] bg-[#FEE2E2] px-1.5 py-0.5 rounded-[4px] uppercase tracking-wider">
+                    Sold Out
                   </span>
                 )}
               </div>

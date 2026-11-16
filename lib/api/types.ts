@@ -368,6 +368,7 @@ export interface Cart {
   items: CartItem[];
   totalAmount: number;
   itemCount: number;
+  hasOutOfStockItems?: boolean;
   message?: string;
   updatedAt?: string;
 }

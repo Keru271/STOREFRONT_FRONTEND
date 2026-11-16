@@ -1611,13 +1611,28 @@ function FaqLocationsSection({
 
 // ── 17. Custom HTML Section ───────────────────────────────────────────────────
 
+function sanitizeCustomHtml(dirty: string): string {
+  if (!dirty || typeof dirty !== 'string') return '';
+  return dirty
+    // Remove script tags and content
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '')
+    // Remove iframe, object, embed, applet, base, link tags
+    .replace(/<\/?(?:iframe|object|embed|applet|base|link|meta)\b[^>]*>/gi, '')
+    // Remove inline event handlers (e.g. onerror=, onload=, onclick=)
+    .replace(/\s*on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    // Remove dangerous URI schemes
+    .replace(/href\s*=\s*["']?\s*(?:javascript|vbscript|data):[^"'>\s]*/gi, 'href="#"')
+    .replace(/src\s*=\s*["']?\s*(?:javascript|vbscript):[^"'>\s]*/gi, 'src=""');
+}
+
 function CustomSection({
   config,
 }: {
   config: Extract<SectionConfig, { type: 'custom' }>['config'];
 }) {
-  const markup = config.customHtml || config.html || '';
-  if (!markup) return null;
+  const rawMarkup = config.customHtml || config.html || '';
+  if (!rawMarkup) return null;
+  const markup = sanitizeCustomHtml(rawMarkup);
 
   return (
     <section className="w-full py-8 overflow-hidden">

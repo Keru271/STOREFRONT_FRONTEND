@@ -9,6 +9,7 @@ import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
 import QuickViewModal from '@/components/shared/QuickViewModal';
 import NotifyMeModal from '@/components/shared/NotifyMeModal';
+import { getProductStockInfo } from '@/lib/stock';
 
 type LuxeProduct = Product & Partial<Pick<ProductDetail, 'colorOptions'>>;
 
@@ -48,14 +49,9 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
     await toggleWishlist(product.id);
   };
 
-  const stock = hasVariants
-    ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
-    : product.stockQuantity !== undefined
-      ? Number(product.stockQuantity)
-      : product.inventory !== undefined
-        ? Number(product.inventory)
-        : 1;
-  const isOutOfStock = stock <= 0;
+  const stockInfo = getProductStockInfo(product);
+  const stock = stockInfo.stock;
+  const isOutOfStock = stockInfo.isOutOfStock;
 
   return (
     <div
@@ -79,7 +75,7 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
               alt={product.name}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className={`object-cover transition-transform duration-700 group-hover:scale-105 ${isOutOfStock ? 'opacity-60 grayscale-[35%]' : ''}`}
             />
           ) : (
             <div
@@ -132,12 +128,16 @@ export default function LuxeProductCard({ product }: LuxeProductCardProps) {
                 −{discount}%
               </span>
             )}
-            {isOutOfStock && (
-              <span className="px-2.5 py-0.5 text-xs font-bold tracking-widest uppercase bg-rose-600 text-white shadow-sm">
-                Out of Stock
-              </span>
-            )}
           </div>
+
+          {/* Center Sold Out Badge */}
+          {isOutOfStock && (
+            <div className="absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center z-15 pointer-events-none">
+              <span className="bg-rose-600 text-white text-xs font-black uppercase tracking-widest px-4 py-1.5 shadow-lg">
+                Sold Out
+              </span>
+            </div>
+          )}
 
           {/* Quick Option or Notify Me Button on Hover */}
           {isOutOfStock ? (

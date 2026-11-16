@@ -20,7 +20,9 @@ import {
   Tag,
   ShieldCheck,
   Check,
+  AlertCircle,
 } from 'lucide-react';
+import { isCartItemOutOfStock } from '@/lib/stock';
 
 export interface CommonCartPageProps {
   theme: ThemeConfig;
@@ -179,6 +181,8 @@ export function CommonCartPage({ theme }: CommonCartPageProps) {
     ? Number((discountedSubtotal + shipping).toFixed(2))
     : Number((discountedSubtotal + taxAmount + shipping).toFixed(2));
 
+  const hasOutOfStockItems = items.some((it) => isCartItemOutOfStock(it));
+
   if (isLoading && items.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-neutral-950">
@@ -248,6 +252,21 @@ export function CommonCartPage({ theme }: CommonCartPageProps) {
                 </span>
               </div>
 
+              {/* Out of Stock Warning Banner */}
+              {hasOutOfStockItems && (
+                <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+                  <div className="text-sm">
+                    <p className="font-bold text-rose-900 dark:text-rose-200">
+                      Some items in your cart are currently out of stock
+                    </p>
+                    <p className="text-xs text-rose-700 dark:text-rose-400 mt-0.5">
+                      Please remove unavailable items before proceeding to checkout.
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* Free Delivery Milestone Progress */}
               {freeThreshold > 0 && (
                 <div className="p-4 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-xs">
@@ -283,93 +302,127 @@ export function CommonCartPage({ theme }: CommonCartPageProps) {
 
               {/* Items Card List */}
               <div className="bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 divide-y divide-neutral-100 dark:divide-neutral-800 overflow-hidden shadow-xs">
-                {items.map((item) => (
-                  <div
-                    key={`${item.productId}-${item.variantId || 'base'}`}
-                    className="p-5 sm:p-6 flex items-start gap-4 sm:gap-6 hover:bg-neutral-50/50 dark:hover:bg-neutral-800/30 transition"
-                  >
-                    {/* Quantity Pill Stepper */}
-                    <div className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 text-xs font-bold shrink-0 mt-1">
-                      <button
-                        onClick={() => {
-                          if (item.quantity <= 1) {
-                            deleteToCart(item.productId, item.variantId);
-                          } else {
-                            updateQuantity(item.productId, item.quantity - 1, item.variantId);
-                          }
-                        }}
-                        className="text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white transition p-0.5 cursor-pointer"
-                        aria-label="Decrease quantity"
-                      >
-                        {item.quantity <= 1 ? (
-                          <Trash2 className="w-3.5 h-3.5 text-rose-500" />
-                        ) : (
-                          <Minus className="w-3.5 h-3.5" />
+                {items.map((item) => {
+                  const itemOutOfStock = isCartItemOutOfStock(item);
+                  return (
+                    <div
+                      key={`${item.productId}-${item.variantId || 'base'}`}
+                      className={`p-5 sm:p-6 flex items-start gap-4 sm:gap-6 transition ${
+                        itemOutOfStock
+                          ? 'bg-rose-50/30 dark:bg-rose-950/20 border-l-4 border-l-rose-500'
+                          : 'hover:bg-neutral-50/50 dark:hover:bg-neutral-800/30'
+                      }`}
+                    >
+                      {/* Quantity Pill Stepper */}
+                      <div className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 text-xs font-bold shrink-0 mt-1">
+                        <button
+                          onClick={() => {
+                            if (item.quantity <= 1) {
+                              deleteToCart(item.productId, item.variantId);
+                            } else {
+                              updateQuantity(item.productId, item.quantity - 1, item.variantId);
+                            }
+                          }}
+                          className="text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white transition p-0.5 cursor-pointer"
+                          aria-label="Decrease quantity"
+                        >
+                          {item.quantity <= 1 ? (
+                            <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                          ) : (
+                            <Minus className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                        <span className="w-5 text-center text-sm font-extrabold">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => {
+                            if (itemOutOfStock) return;
+                            updateQuantity(item.productId, item.quantity + 1, item.variantId);
+                          }}
+                          disabled={itemOutOfStock}
+                          className={`transition p-0.5 ${
+                            itemOutOfStock
+                              ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
+                              : 'text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white cursor-pointer'
+                          }`}
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      {/* Middle: Details */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <Link
+                            href={`/products/${item.productId}`}
+                            className="text-base font-bold text-neutral-900 dark:text-white hover:underline line-clamp-2"
+                          >
+                            {item.name}
+                          </Link>
+                          {itemOutOfStock && (
+                            <span className="shrink-0 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider rounded-md bg-rose-600 text-white shadow-xs">
+                              Out of Stock
+                            </span>
+                          )}
+                        </div>
+
+                        {item.options && (
+                          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 line-clamp-1">
+                            {[
+                              item.options.variant,
+                              item.options.size ? `Size: ${item.options.size}` : null,
+                              item.options.color ? `Color: ${item.options.color}` : null,
+                            ]
+                              .filter(Boolean)
+                              .join(' • ')}
+                          </p>
                         )}
-                      </button>
-                      <span className="w-5 text-center text-sm font-extrabold">
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() =>
-                          updateQuantity(item.productId, item.quantity + 1, item.variantId)
-                        }
-                        className="text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white transition p-0.5 cursor-pointer"
-                        aria-label="Increase quantity"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
 
-                    {/* Middle: Details */}
-                    <div className="flex-1 min-w-0">
-                      <Link
-                        href={`/products/${item.productId}`}
-                        className="text-base font-bold text-neutral-900 dark:text-white hover:underline line-clamp-2"
-                      >
-                        {item.name}
-                      </Link>
+                        {itemOutOfStock && (
+                          <div className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-rose-600 dark:text-rose-400">
+                            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                            <span>Currently unavailable. Remove this item to proceed.</span>
+                          </div>
+                        )}
 
-                      {item.options && (
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 line-clamp-1">
-                          {[
-                            item.options.variant,
-                            item.options.size ? `Size: ${item.options.size}` : null,
-                            item.options.color ? `Color: ${item.options.color}` : null,
-                          ]
-                            .filter(Boolean)
-                            .join(' • ')}
-                        </p>
-                      )}
+                        <div className="mt-2 flex items-center justify-between">
+                          <span className="text-xs text-neutral-400 font-medium">
+                            {formatPrice(item.price)} each
+                          </span>
+                          <span className={`text-base font-extrabold ${itemOutOfStock ? 'line-through text-neutral-400' : 'text-neutral-900 dark:text-white'}`}>
+                            {formatPrice(item.price * item.quantity)}
+                          </span>
+                        </div>
+                      </div>
 
-                      <div className="mt-2 flex items-center justify-between">
-                        <span className="text-xs text-neutral-400 font-medium">
-                          {formatPrice(item.price)} each
-                        </span>
-                        <span className="text-base font-extrabold text-neutral-900 dark:text-white">
-                          {formatPrice(item.price * item.quantity)}
-                        </span>
+                      {/* Right: Square Thumbnail (Uber Eats style) */}
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 shrink-0 relative border border-neutral-200/60 dark:border-neutral-700/60">
+                        {item.image ? (
+                          <Image
+                            src={item.image}
+                            alt={item.name}
+                            fill
+                            sizes="96px"
+                            className={`object-cover ${itemOutOfStock ? 'opacity-40 grayscale' : ''}`}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-2xl text-neutral-300">
+                            🛍️
+                          </div>
+                        )}
+                        {itemOutOfStock && (
+                          <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center p-1 z-10 text-center">
+                            <span className="bg-rose-600 text-white text-[9px] font-black uppercase px-1.5 py-0.5 rounded shadow-sm">
+                              Sold Out
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
-
-                    {/* Right: Square Thumbnail (Uber Eats style) */}
-                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 shrink-0 relative border border-neutral-200/60 dark:border-neutral-700/60">
-                      {item.image ? (
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          fill
-                          sizes="96px"
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-2xl text-neutral-300">
-                          🛍️
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Add Items Secondary Button */}
@@ -487,7 +540,9 @@ export function CommonCartPage({ theme }: CommonCartPageProps) {
 
                 {/* Primary CTA Button: Go to checkout */}
                 <button
+                  disabled={hasOutOfStockItems}
                   onClick={() => {
+                    if (hasOutOfStockItems) return;
                     const checkoutUrl = appliedDiscount
                       ? `/checkout?coupon=${encodeURIComponent(appliedDiscount.code)}`
                       : '/checkout';
@@ -497,10 +552,23 @@ export function CommonCartPage({ theme }: CommonCartPageProps) {
                       router.push(checkoutUrl);
                     }
                   }}
-                  className="w-full py-4 px-6 rounded-2xl font-bold text-sm bg-black text-white dark:bg-white dark:text-black hover:opacity-90 active:scale-[0.99] transition shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                  className={`w-full py-4 px-6 rounded-2xl font-bold text-sm transition shadow-lg flex items-center justify-center gap-2 ${
+                    hasOutOfStockItems
+                      ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed shadow-none'
+                      : 'bg-black text-white dark:bg-white dark:text-black hover:opacity-90 active:scale-[0.99] cursor-pointer'
+                  }`}
                 >
-                  <span>{isAuthenticated ? 'Go to checkout' : 'Sign in to checkout'}</span>
-                  <ArrowRight className="w-4 h-4" />
+                  {hasOutOfStockItems ? (
+                    <>
+                      <AlertCircle className="w-4 h-4 text-rose-500" />
+                      <span>Remove Out of Stock Items to Checkout</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>{isAuthenticated ? 'Go to checkout' : 'Sign in to checkout'}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
                 </button>
 
                 <div className="flex items-center justify-center gap-2 text-xs text-neutral-400 text-center">

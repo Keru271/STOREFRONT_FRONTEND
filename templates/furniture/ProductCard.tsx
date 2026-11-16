@@ -10,6 +10,7 @@ import { useCurrency } from '@/hooks/useCurrency';
 import QuickVariantModal from '@/components/shared/QuickVariantModal';
 import QuickViewModal from '@/components/shared/QuickViewModal';
 import NotifyMeModal from '@/components/shared/NotifyMeModal';
+import { getProductStockInfo } from '@/lib/stock';
 import { Heart, ShoppingBag, Eye, Star } from 'lucide-react';
 
 export interface FurnitureProductCardProps {
@@ -54,14 +55,9 @@ export default function FurnitureProductCard({
       ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
       : 0;
 
-  const stock = hasVariants
-    ? product.variants!.reduce((sum, v) => sum + Number(v.inventory ?? 0), 0)
-    : product.stockQuantity !== undefined
-      ? Number(product.stockQuantity)
-      : product.inventory !== undefined
-        ? Number(product.inventory)
-        : 10;
-  const isOutOfStock = stock <= 0;
+  const stockInfo = getProductStockInfo(product);
+  const stock = stockInfo.stock;
+  const isOutOfStock = stockInfo.isOutOfStock;
 
   const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -152,9 +148,18 @@ export default function FurnitureProductCard({
               alt={product.name}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+              className={`object-cover group-hover:scale-105 transition-transform duration-500 ease-out ${isOutOfStock ? 'opacity-60 grayscale-[35%]' : ''}`}
             />
           </Link>
+
+          {/* Center Sold Out Badge */}
+          {isOutOfStock && (
+            <div className="absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center z-15 pointer-events-none">
+              <span className="bg-[#ba1a1a] text-white text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-lg">
+                Sold Out
+              </span>
+            </div>
+          )}
 
           {/* Quick Add Overlay */}
           <div className="absolute inset-x-3 bottom-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
@@ -235,6 +240,11 @@ export default function FurnitureProductCard({
               {product.compareAtPrice && product.compareAtPrice > product.price && (
                 <span className="text-[12px] text-[#747878] line-through">
                   {formatPrice(product.compareAtPrice)}
+                </span>
+              )}
+              {isOutOfStock && (
+                <span className="text-[10px] font-bold text-[#ba1a1a] bg-[#ffdad6]/60 px-2 py-0.5 rounded uppercase tracking-wider">
+                  Sold Out
                 </span>
               )}
             </div>

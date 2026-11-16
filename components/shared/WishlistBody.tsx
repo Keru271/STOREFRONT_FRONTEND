@@ -11,6 +11,7 @@ import type { ThemeConfig } from '@/lib/api/types';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/hooks/useCurrency';
+import { getProductStockInfo } from '@/lib/stock';
 
 export interface WishlistBodyProps {
   theme: ThemeConfig;
@@ -120,6 +121,8 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
             {items.map((item) => {
               const image = item.image || item.images?.[0];
               const href = `/products/${item.urlSlug || item.id}`;
+              const stockInfo = getProductStockInfo(item);
+              const isOutOfStock = stockInfo.isOutOfStock;
 
               return (
                 <div
@@ -133,7 +136,7 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
                   {/* Remove button */}
                   <button
                     onClick={() => deleteFromWishlist(item.id)}
-                    className="absolute top-3 right-3 z-10 p-2 rounded-full shadow-md transition hover:scale-110"
+                    className="absolute top-3 right-3 z-20 p-2 rounded-full shadow-md transition hover:scale-110"
                     style={{
                       backgroundColor: 'color-mix(in srgb, var(--sf-bg) 90%, transparent)',
                       color: 'var(--sf-accent)',
@@ -165,11 +168,22 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
                           alt={item.name}
                           fill
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          className={`object-cover group-hover:scale-105 transition-transform duration-300 ${
+                            isOutOfStock ? 'opacity-65 grayscale-[30%]' : ''
+                          }`}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-4xl opacity-20">
                           🛍️
+                        </div>
+                      )}
+
+                      {/* Out of Stock Image Badge & Overlay */}
+                      {isOutOfStock && (
+                        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] z-10 flex flex-col items-center justify-center p-2 select-none">
+                          <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-slate-900/90 text-white border border-white/20 shadow-md">
+                            Out of Stock
+                          </span>
                         </div>
                       )}
                     </div>
@@ -190,19 +204,27 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
                       >
                         {item.name}
                       </h3>
-                      <div className="flex items-baseline gap-2">
-                        <span
-                          className="text-base font-extrabold"
-                          style={{ color: 'var(--sf-primary)' }}
-                        >
-                          {formatPrice(item.price)}
-                        </span>
-                        {item.compareAtPrice && (
+                      <div className="flex items-baseline justify-between gap-2">
+                        <div className="flex items-baseline gap-2">
                           <span
-                            className="text-xs line-through"
-                            style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}
+                            className="text-base font-extrabold"
+                            style={{ color: 'var(--sf-primary)' }}
                           >
-                            {formatPrice(item.compareAtPrice)}
+                            {formatPrice(item.price)}
+                          </span>
+                          {item.compareAtPrice && (
+                            <span
+                              className="text-xs line-through"
+                              style={{ color: 'color-mix(in srgb, var(--sf-text) 35%, transparent)' }}
+                            >
+                              {formatPrice(item.compareAtPrice)}
+                            </span>
+                          )}
+                        </div>
+
+                        {isOutOfStock && (
+                          <span className="text-xs font-bold text-rose-600">
+                            ✕ Out of Stock
                           </span>
                         )}
                       </div>
@@ -211,48 +233,41 @@ export function WishlistBody({ theme: _theme }: WishlistBodyProps) {
 
                   {/* Move to cart */}
                   <div className="p-4 pt-0">
-                    {(() => {
-                      const stock =
-                        item.stockQuantity !== undefined
-                          ? Number(item.stockQuantity)
-                          : (item as any).inventory !== undefined
-                            ? Number((item as any).inventory)
-                            : 1;
-                      const isOutOfStock = stock <= 0;
-                      return (
-                        <button
-                          onClick={() => handleMoveToCart(item.id)}
-                          disabled={movingId === item.id || isOutOfStock}
-                          className="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-white shadow transition flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                          style={{
-                            backgroundColor: isOutOfStock ? '#64748b' : 'var(--sf-primary)',
-                          }}
-                        >
-                          {movingId === item.id ? (
-                            'Moving…'
-                          ) : isOutOfStock ? (
-                            'Out of Stock'
-                          ) : (
-                            <>
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                                />
-                              </svg>
-                              Move to Cart
-                            </>
-                          )}
-                        </button>
-                      );
-                    })()}
+                    <button
+                      onClick={() => handleMoveToCart(item.id)}
+                      disabled={movingId === item.id || isOutOfStock}
+                      className={`w-full py-2.5 px-4 rounded-xl font-bold text-xs shadow transition flex items-center justify-center gap-2 ${
+                        isOutOfStock
+                          ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed opacity-80'
+                          : 'text-white hover:opacity-90 cursor-pointer'
+                      }`}
+                      style={{
+                        backgroundColor: isOutOfStock ? undefined : 'var(--sf-primary)',
+                      }}
+                    >
+                      {movingId === item.id ? (
+                        'Moving…'
+                      ) : isOutOfStock ? (
+                        'Out of Stock'
+                      ) : (
+                        <>
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                            />
+                          </svg>
+                          Move to Cart
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
               );

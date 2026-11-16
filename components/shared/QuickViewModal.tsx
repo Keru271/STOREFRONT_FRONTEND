@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useToast } from '@/hooks/useToast';
+import { getProductStockInfo } from '@/lib/stock';
 import NotifyMeModal from './NotifyMeModal';
 
 export interface QuickViewModalProps {
@@ -100,17 +101,9 @@ export default function QuickViewModal({
         ? Number(product.compareAtPrice)
         : null;
 
-  const stock = hasVariants
-    ? selectedVariant?.inventory != null
-      ? Number(selectedVariant.inventory)
-      : 0
-    : product.stockQuantity !== undefined
-      ? Number(product.stockQuantity)
-      : product.inventory !== undefined
-        ? Number(product.inventory)
-        : 1;
-
-  const isOutOfStock = stock <= 0;
+  const stockInfo = getProductStockInfo(product, selectedVariant?.id);
+  const stock = stockInfo.stock;
+  const isOutOfStock = stockInfo.isOutOfStock;
   const activeSku = selectedVariant?.sku || product.sku;
   const isWishlisted = isInWishlist(product.id);
 
@@ -275,6 +268,15 @@ export default function QuickViewModal({
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-4xl opacity-30">
                     🛍️
+                  </div>
+                )}
+
+                {/* Out of Stock Overlay */}
+                {isOutOfStock && (
+                  <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px] flex items-center justify-center z-20">
+                    <span className="px-3.5 py-1.5 rounded-full bg-rose-600 text-white font-black text-xs uppercase tracking-widest shadow-xl">
+                      Out of Stock
+                    </span>
                   </div>
                 )}
 
