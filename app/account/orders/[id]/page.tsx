@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { getCustomerOrder } from '@/lib/api/customer';
 import { trackShipmentAwb } from '@/lib/api/shipping';
 import { useAuth } from '@/hooks/useAuth';
+import { OrderDetailSkeleton } from '@/components/ui/Skeleton';
 import type { Order, TrackingStatusResponse } from '@/lib/api/types';
 import {
   ArrowLeft,
@@ -99,12 +100,7 @@ export default function AccountOrderDetailPage() {
   }, [authLoading, isAuthenticated, orderId, router]);
 
   if (authLoading || isLoading) {
-    return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4 max-w-4xl mx-auto space-y-6">
-        <div className="h-40 bg-white dark:bg-slate-900 rounded-3xl animate-pulse" />
-        <div className="h-64 bg-white dark:bg-slate-900 rounded-3xl animate-pulse" />
-      </div>
-    );
+    return <OrderDetailSkeleton />;
   }
 
   if (error || !order) {

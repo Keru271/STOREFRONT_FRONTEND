@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getCustomerOrders } from '@/lib/api/customer';
 import { useAuth } from '@/hooks/useAuth';
+import { OrdersListSkeleton } from '@/components/ui/Skeleton';
 import type { Order } from '@/lib/api/types';
 import {
   ShoppingBag,
@@ -76,16 +77,7 @@ export default function AccountOrdersPage() {
   });
 
   if (authLoading || isLoading) {
-    return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4 sm:px-6 max-w-5xl mx-auto space-y-4">
-        {[...Array(3)].map((_, i) => (
-          <div
-            key={i}
-            className="h-28 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 animate-pulse"
-          />
-        ))}
-      </div>
-    );
+    return <OrdersListSkeleton />;
   }
 
   return (

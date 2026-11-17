@@ -32,12 +32,12 @@ export function parseFontName(rawFont: string | null | undefined): {
   fallback: string;
 } {
   if (!rawFont || !rawFont.trim()) {
-    return { cleanName: 'Inter', fallback: 'sans-serif' };
+    return { cleanName: 'Plus Jakarta Sans', fallback: 'sans-serif' };
   }
 
   // Handle strings like "Playfair Display, serif" or "'Outfit', sans-serif"
   const parts = rawFont.split(',').map((p) => p.trim().replace(/^['"]+|['"]+$/g, ''));
-  const cleanName = parts[0] || 'Inter';
+  const cleanName = parts[0] || 'Plus Jakarta Sans';
 
   // Determine fallback (serif, sans-serif, monospace)
   let fallback = parts.slice(1).join(', ');
