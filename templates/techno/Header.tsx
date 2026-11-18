@@ -41,9 +41,9 @@ export function MarketNestLogo({ className = 'h-9' }: { className?: string }) {
           <path d="M12 9v12" />
         </svg>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col min-w-0">
         <span
-          className="text-2xl font-bold tracking-tight text-[#1C1917] leading-none"
+          className="text-lg sm:text-2xl font-bold tracking-tight text-[#1C1917] leading-none truncate max-w-[130px] sm:max-w-[200px] md:max-w-none"
           style={{ fontFamily: "'Lora', serif" }}
         >
           MarketNest

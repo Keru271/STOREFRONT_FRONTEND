@@ -198,11 +198,11 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
       </div>
 
       {/* Info Body */}
-      <div className="p-5 flex flex-col flex-1 justify-between">
+      <div className="p-3 sm:p-5 flex flex-col flex-1 justify-between">
         <div>
           {/* Category Tag */}
           <span
-            className="text-[11px] font-bold uppercase tracking-wider block mb-1"
+            className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider block mb-1 truncate"
             style={{ color: 'var(--sf-primary)' }}
           >
             {product.categoryName || 'FURNITURE'}
@@ -211,7 +211,7 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
           {/* Title */}
           <Link href={href} className="block">
             <h3
-              className="font-bold text-sm transition line-clamp-2 leading-snug font-heading"
+              className="font-bold text-xs sm:text-sm transition line-clamp-2 leading-snug font-heading"
               style={{ color: 'var(--sf-text)' }}
             >
               {product.name}
@@ -220,31 +220,31 @@ export default function MincomProductCard({ product }: MincomProductCardProps) {
 
           {/* Star Rating */}
           <div
-            className="flex items-center gap-1 mt-1.5 text-xs"
+            className="flex items-center gap-1 mt-1 text-[11px] sm:text-xs"
             style={{ color: 'var(--sf-accent, var(--sf-primary))' }}
           >
             {'★★★★★'}
-            <span className="text-[10px] opacity-60 ml-1 font-medium">(4.9)</span>
+            <span className="text-[9px] sm:text-[10px] opacity-60 ml-0.5 font-medium">(4.9)</span>
           </div>
         </div>
 
         {/* Price Row */}
-        <div className="mt-4 pt-3 border-t border-slate-100/20 flex items-baseline justify-between">
-          <div className="flex items-baseline gap-2">
-            <span className="text-lg font-black" style={{ color: 'var(--sf-text)' }}>
+        <div className="mt-2.5 sm:mt-4 pt-2 sm:pt-3 border-t border-slate-100/20 flex flex-wrap items-baseline justify-between gap-1">
+          <div className="flex items-baseline gap-1.5 flex-wrap">
+            <span className="text-sm sm:text-lg font-black" style={{ color: 'var(--sf-text)' }}>
               {hasPriceRange
                 ? `From ${formatPrice(minVariantPrice)}`
                 : formatPrice(minVariantPrice)}
             </span>
             {product.compareAtPrice && product.compareAtPrice > product.price && (
-              <span className="text-xs opacity-50 line-through">
+              <span className="text-[11px] sm:text-xs opacity-50 line-through">
                 {formatPrice(product.compareAtPrice)}
               </span>
             )}
           </div>
 
           <span
-            className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+            className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full whitespace-nowrap"
             style={{
               backgroundColor: isOutOfStock
                 ? 'rgba(239, 68, 68, 0.15)'

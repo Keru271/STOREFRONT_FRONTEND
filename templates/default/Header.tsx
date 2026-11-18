@@ -119,7 +119,7 @@ export default function DefaultHeader() {
                 </svg>
               </button>
 
-              <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+              <Link href="/" className="flex items-center gap-2 flex-shrink-0 min-w-0">
                 {theme.logo ? (
                   <Image
                     src={theme.logo}
@@ -127,11 +127,11 @@ export default function DefaultHeader() {
                     width={110}
                     height={32}
                     priority
-                    className="h-8 w-auto object-contain"
+                    className="h-8 w-auto object-contain max-w-[130px] sm:max-w-[180px]"
                   />
                 ) : (
                   <span
-                    className="text-xl font-bold tracking-tight"
+                    className="text-base sm:text-xl font-bold tracking-tight truncate max-w-[140px] sm:max-w-[220px] md:max-w-none"
                     style={{ color: 'var(--sf-primary)' }}
                   >
                     {theme.storeName}

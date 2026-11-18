@@ -190,18 +190,18 @@ export default function FurnitureProductCard({
         </div>
 
         {/* Product Details */}
-        <div className="p-4 flex flex-col flex-grow">
+        <div className="p-3 sm:p-4 flex flex-col flex-grow">
           {/* Rating */}
-          <div className="flex items-center gap-1 mb-1.5">
+          <div className="flex items-center gap-1 mb-1">
             <div className="flex text-[#D4A373]">
-              <Star className="w-3.5 h-3.5 fill-[#D4A373]" />
-              <Star className="w-3.5 h-3.5 fill-[#D4A373]" />
-              <Star className="w-3.5 h-3.5 fill-[#D4A373]" />
-              <Star className="w-3.5 h-3.5 fill-[#D4A373]" />
-              <Star className="w-3.5 h-3.5 fill-[#D4A373]" />
+              <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-[#D4A373]" />
+              <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-[#D4A373]" />
+              <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-[#D4A373]" />
+              <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-[#D4A373]" />
+              <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-[#D4A373]" />
             </div>
             <span
-              className="text-[12px] text-[#747878] ml-1"
+              className="text-[11px] sm:text-[12px] text-[#747878] ml-1"
               style={{ fontFamily: 'var(--font-plus-jakarta, sans-serif)' }}
             >
               ({product.reviewsCount ?? (100 + (product.id.charCodeAt(0) % 150))})
@@ -211,7 +211,7 @@ export default function FurnitureProductCard({
           {/* Product Title */}
           <Link href={productUrl}>
             <h3
-              className="text-[17px] font-semibold text-[#040505] mb-1 hover:text-[#466557] transition-colors line-clamp-1"
+              className="text-xs sm:text-[16px] font-semibold text-[#040505] mb-1 hover:text-[#466557] transition-colors line-clamp-2 sm:line-clamp-1 leading-snug"
               style={{ fontFamily: 'var(--font-playfair, serif)' }}
             >
               {product.name}
@@ -220,17 +220,17 @@ export default function FurnitureProductCard({
 
           {/* Short Description */}
           <p
-            className="text-[13px] text-[#444748] line-clamp-1 mb-3"
+            className="text-[11px] sm:text-[13px] text-[#444748] line-clamp-1 mb-2 sm:mb-3"
             style={{ fontFamily: 'var(--font-plus-jakarta, sans-serif)' }}
           >
             {product.description || 'Artisanal interior and living design object.'}
           </p>
 
           {/* Price & Materials/Swatches */}
-          <div className="mt-auto flex items-center justify-between pt-1 border-t border-[#e3e2e0]/40">
-            <div className="flex items-baseline gap-2">
+          <div className="mt-auto flex flex-wrap items-center justify-between gap-1 pt-1 border-t border-[#e3e2e0]/40">
+            <div className="flex items-baseline gap-1.5 flex-wrap">
               <span
-                className="text-[14px] font-semibold text-[#040505]"
+                className="text-xs sm:text-[14px] font-semibold text-[#040505]"
                 style={{ fontFamily: 'var(--font-plus-jakarta, sans-serif)' }}
               >
                 {hasPriceRange

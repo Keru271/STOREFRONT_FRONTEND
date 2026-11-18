@@ -149,8 +149,8 @@ export default function MincomHeader() {
                   >
                     {(theme.storeName || 'M').charAt(0).toUpperCase()}
                   </div>
-                  <div className="flex flex-col leading-none">
-                    <span className="text-lg sm:text-xl font-black tracking-tight text-white uppercase font-sans">
+                  <div className="flex flex-col leading-none min-w-0">
+                    <span className="text-sm sm:text-lg font-black tracking-tight text-white uppercase font-sans truncate max-w-[130px] sm:max-w-[200px] md:max-w-none">
                       {theme.storeName || 'MINCOM'}
                     </span>
                     <span

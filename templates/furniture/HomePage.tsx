@@ -272,7 +272,7 @@ export default function FurnitureHomePage({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {curatedCategories.map((cat) => (
               <Link
                 key={cat.title}
@@ -359,7 +359,7 @@ export default function FurnitureHomePage({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
               {filteredProducts.map((p, idx) => {
                 const badges: Array<{ badge: string; type: 'new' | 'bestseller' | 'botanical' | 'limited' }> = [
                   { badge: 'New Season', type: 'new' },

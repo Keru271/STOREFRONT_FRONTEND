@@ -78,12 +78,6 @@ export default function PawzyHeader() {
 
   return (
     <>
-      {/* ── Google Fonts Link ─────────────────────────────────────────────── */}
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700;800;900&display=swap"
-      />
-
       {/* ── Top Utility Notification Bar ──────────────────────────────────── */}
       <div
         className="w-full bg-[#fbfbfb] text-[#6b7280] text-[12px] py-2 px-4 border-b border-[#eaeaea]"

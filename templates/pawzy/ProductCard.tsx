@@ -152,11 +152,11 @@ export default function PawzyProductCard({ product }: PawzyProductCardProps) {
         </Link>
 
         {/* Full Width Yellow Add To Cart Button at Bottom of Card Box */}
-        <div className="relative z-10 pt-2">
+        <div className="relative z-10 pt-1.5 sm:pt-2">
           <button
             onClick={handleQuickAdd}
             disabled={isAdding}
-            className={`w-full py-3 px-4 rounded-full font-extrabold text-xs uppercase tracking-wider shadow-md transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer ${
+            className={`w-full py-2 sm:py-2.5 px-2 rounded-full font-extrabold text-[10px] sm:text-xs uppercase tracking-wider shadow-sm transition flex items-center justify-center gap-1 active:scale-95 cursor-pointer ${
               isOutOfStock
                 ? 'bg-slate-300 dark:bg-slate-800 text-slate-500 cursor-not-allowed'
                 : 'bg-[#ffd100] hover:bg-[#ffc400] text-slate-950'
@@ -170,7 +170,7 @@ export default function PawzyProductCard({ product }: PawzyProductCardProps) {
                   : isOutOfStock
                     ? 'Sold Out'
                     : hasVariants
-                      ? 'Select Options'
+                      ? 'Options'
                       : 'Add To Cart'}
             </span>
           </button>
@@ -180,7 +180,7 @@ export default function PawzyProductCard({ product }: PawzyProductCardProps) {
       {/* Centered Product Info Below Card Box */}
       <div className="text-center space-y-1 px-1">
         <Link href={href} className="block">
-          <h3 className="font-extrabold text-sm text-slate-900 dark:text-white line-clamp-1 hover:text-sky-600 transition">
+          <h3 className="font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 leading-snug hover:text-sky-600 transition">
             {product.name}
           </h3>
         </Link>

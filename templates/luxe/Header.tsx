@@ -223,9 +223,9 @@ export default function LuxeHeader() {
                   className="h-8 sm:h-10 w-auto object-contain mx-auto transition-transform group-hover:scale-105"
                 />
               ) : (
-                <div>
+                <div className="min-w-0">
                   <span
-                    className="text-xl sm:text-2xl font-bold tracking-[0.25em] uppercase block"
+                    className="text-base sm:text-xl font-bold tracking-[0.2em] sm:tracking-[0.25em] uppercase block truncate max-w-[140px] sm:max-w-[220px] md:max-w-none"
                     style={{ color: 'var(--sf-text)' }}
                   >
                     {theme.storeName}

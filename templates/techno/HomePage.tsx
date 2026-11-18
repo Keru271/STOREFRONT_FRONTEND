@@ -330,7 +330,7 @@ export default function TechnoHomePage({
           </div>
 
           {/* Product Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {displayProducts.map((product) => (
               <TechnoProductCard key={product.id} product={product} />
             ))}

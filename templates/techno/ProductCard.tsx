@@ -213,22 +213,22 @@ export default function TechnoProductCard({ product }: TechnoProductCardProps) {
           </div>
         </div>
 
-        {/* Content Area — flat layout, generous 20px padding */}
-        <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-          <div className="space-y-2">
+        {/* Content Area — flat layout, responsive padding */}
+        <div className="p-3 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
+          <div className="space-y-1.5">
             {/* Maker Attribution & Studio Origin */}
-            <div className="flex items-center gap-2 pb-1 border-b border-[#F5F5F4]">
+            <div className="flex items-center gap-1.5 pb-1 border-b border-[#F5F5F4]">
               <img
                 src={maker.avatar}
                 alt={maker.name}
-                className="w-5 h-5 rounded-full object-cover border border-[#D6D3D1] flex-shrink-0"
+                className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover border border-[#D6D3D1] flex-shrink-0"
               />
-              <span className="text-[12px] font-medium text-[#57534E] truncate">
+              <span className="text-[11px] sm:text-[12px] font-medium text-[#57534E] truncate">
                 {maker.name}
               </span>
-              <span className="text-[#D6D3D1] text-[11px]">·</span>
-              <span className="text-[11px] text-[#A8A29E] flex items-center gap-0.5 truncate">
-                <MapPin className="w-3 h-3 text-[#D4A373] inline flex-shrink-0" />
+              <span className="text-[#D6D3D1] text-[10px] sm:text-[11px]">·</span>
+              <span className="text-[10px] sm:text-[11px] text-[#A8A29E] flex items-center gap-0.5 truncate">
+                <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#D4A373] inline flex-shrink-0" />
                 {maker.location}
               </span>
             </div>
@@ -236,7 +236,7 @@ export default function TechnoProductCard({ product }: TechnoProductCardProps) {
             {/* Product Title — Lora serif heading font */}
             <Link href={href} className="block group-hover:text-[#C2410C] transition-colors">
               <h3
-                className="text-[17px] font-semibold text-[#1C1917] leading-snug line-clamp-2"
+                className="text-xs sm:text-[17px] font-semibold text-[#1C1917] leading-snug line-clamp-2"
                 style={{ fontFamily: "'Lora', serif" }}
               >
                 {product.name}
@@ -244,12 +244,12 @@ export default function TechnoProductCard({ product }: TechnoProductCardProps) {
             </Link>
 
             {/* Material & Craft Description Tag */}
-            <div className="flex items-center gap-1.5 pt-0.5">
-              <span className="inline-block text-[11px] font-semibold uppercase tracking-wider text-[#365314] bg-[#DCFCE7]/60 px-2 py-0.5 rounded-[4px] border border-[#365314]/20">
+            <div className="flex items-center gap-1.5 pt-0.5 flex-wrap">
+              <span className="inline-block text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-[#365314] bg-[#DCFCE7]/60 px-1.5 sm:px-2 py-0.5 rounded-[4px] border border-[#365314]/20">
                 {materialTag}
               </span>
               {product.brandName && (
-                <span className="text-[11px] text-[#57534E] font-medium">
+                <span className="text-[10px] sm:text-[11px] text-[#57534E] font-medium truncate">
                   by {product.brandName}
                 </span>
               )}
@@ -257,11 +257,11 @@ export default function TechnoProductCard({ product }: TechnoProductCardProps) {
           </div>
 
           {/* Pricing & CTA Row */}
-          <div className="pt-2 border-t border-[#E7E5E4] flex items-center justify-between gap-2">
+          <div className="pt-2 border-t border-[#E7E5E4] flex flex-wrap items-center justify-between gap-1.5">
             <div className="flex flex-col">
-              <div className="flex items-baseline gap-2">
+              <div className="flex items-baseline gap-1.5 flex-wrap">
                 <span
-                  className="text-[18px] font-semibold text-[#1C1917]"
+                  className="text-sm sm:text-[18px] font-semibold text-[#1C1917]"
                   style={{ fontFamily: "'Source Code Pro', monospace" }}
                 >
                   {hasPriceRange
@@ -270,26 +270,26 @@ export default function TechnoProductCard({ product }: TechnoProductCardProps) {
                 </span>
                 {product.compareAtPrice && product.compareAtPrice > product.price && (
                   <span
-                    className="text-[13px] text-[#A8A29E] line-through"
+                    className="text-[11px] sm:text-[13px] text-[#A8A29E] line-through"
                     style={{ fontFamily: "'Source Code Pro', monospace" }}
                   >
                     {formatPrice(product.compareAtPrice)}
                   </span>
                 )}
                 {isOutOfStock && (
-                  <span className="text-[10px] font-bold text-[#DC2626] bg-[#FEE2E2] px-1.5 py-0.5 rounded-[4px] uppercase tracking-wider">
+                  <span className="text-[9px] sm:text-[10px] font-bold text-[#DC2626] bg-[#FEE2E2] px-1 py-0.5 rounded-[4px] uppercase tracking-wider">
                     Sold Out
                   </span>
                 )}
               </div>
-              <span className="text-[11px] text-[#57534E]">Direct from artisan</span>
+              <span className="text-[10px] sm:text-[11px] text-[#57534E]">Direct from artisan</span>
             </div>
 
             {/* Primary Action Button — Terracotta filled, 4px radius, flat border */}
             <button
               onClick={handleQuickAdd}
               disabled={isAdding}
-              className={`h-[38px] px-3.5 rounded-[4px] text-[13px] font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+              className={`h-[32px] sm:h-[38px] px-2.5 sm:px-3.5 rounded-[4px] text-[11px] sm:text-[13px] font-semibold flex items-center justify-center gap-1 transition-colors ${
                 isOutOfStock
                   ? 'bg-transparent text-[#57534E] border border-[#D6D3D1] hover:bg-[#FDF6EC]'
                   : added

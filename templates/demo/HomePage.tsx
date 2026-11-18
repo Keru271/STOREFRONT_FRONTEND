@@ -289,7 +289,7 @@ export default function DemoHomePage({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {CATEGORY_TILES.map((cat, idx) => (
               <Link
                 key={idx}
@@ -354,7 +354,7 @@ export default function DemoHomePage({
             </div>
 
             {/* Products Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
               {filteredProducts.slice(0, 8).map((prod) => (
                 <DemoProductCard key={prod.id} product={prod} />
               ))}

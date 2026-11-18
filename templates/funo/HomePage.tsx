@@ -153,7 +153,7 @@ export default function FunoHomePage({ theme, products, collections, categories 
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {CATEGORY_TILES.map((cat, idx) => (
               <Link
                 key={idx}
@@ -217,7 +217,7 @@ export default function FunoHomePage({ theme, products, collections, categories 
             </div>
 
             {/* Products Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
               {filteredProducts.slice(0, 8).map((prod) => (
                 <FunoProductCard key={prod.id} product={prod} />
               ))}

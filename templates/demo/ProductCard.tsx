@@ -196,7 +196,7 @@ export default function DemoProductCard({ product }: DemoProductCardProps) {
       </div>
 
       {/* Info Body */}
-      <div className="p-4 sm:p-5 flex flex-col flex-1 justify-between space-y-3">
+      <div className="p-3 sm:p-5 flex flex-col flex-1 justify-between space-y-2.5">
         <div>
           {/* Category */}
           <span className="text-[10px] font-bold uppercase tracking-wider text-[#ff9638] block mb-1">

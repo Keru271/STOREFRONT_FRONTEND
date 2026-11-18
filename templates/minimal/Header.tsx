@@ -85,7 +85,7 @@ export default function MinimalHeader() {
             {/* Logo */}
             <Link
               href="/"
-              className="text-base sm:text-lg font-light tracking-[0.15em] uppercase flex items-center"
+              className="text-sm sm:text-lg font-light tracking-[0.15em] uppercase flex items-center truncate max-w-[140px] sm:max-w-[220px] md:max-w-none"
               style={{ color: 'var(--sf-text)' }}
             >
               {theme.logo ? (

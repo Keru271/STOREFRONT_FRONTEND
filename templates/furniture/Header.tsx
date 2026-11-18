@@ -21,8 +21,8 @@ import {
 
 export function AuraBrandLogo({ storeName = 'AURA' }: { storeName?: string }) {
   return (
-    <Link href="/" className="flex items-center gap-2.5 group select-none">
-      <div className="w-8 h-8 rounded-sm bg-[#040505] flex items-center justify-center text-white transition-transform group-hover:scale-105">
+    <Link href="/" className="flex items-center gap-2.5 group select-none min-w-0">
+      <div className="w-8 h-8 rounded-sm bg-[#040505] flex items-center justify-center text-white transition-transform group-hover:scale-105 shrink-0">
         <svg
           viewBox="0 0 24 24"
           fill="none"
@@ -38,7 +38,7 @@ export function AuraBrandLogo({ storeName = 'AURA' }: { storeName?: string }) {
         </svg>
       </div>
       <span
-        className="text-[22px] font-semibold tracking-tight text-[#040505]"
+        className="text-[17px] sm:text-[22px] font-semibold tracking-tight text-[#040505] truncate max-w-[130px] sm:max-w-[200px] md:max-w-none"
         style={{ fontFamily: 'var(--font-playfair, serif)' }}
       >
         {storeName}

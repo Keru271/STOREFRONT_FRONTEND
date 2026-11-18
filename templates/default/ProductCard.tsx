@@ -278,10 +278,10 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
         </div>
 
         {/* Product Info */}
-        <div className="p-4">
+        <div className="p-3 sm:p-4">
           {product.brandName && (
             <p
-              className="text-xs font-medium mb-1 tracking-wider uppercase"
+              className="text-[11px] sm:text-xs font-medium mb-1 tracking-wider uppercase truncate"
               style={{ color: 'color-mix(in srgb, var(--sf-text) 45%, transparent)' }}
             >
               {product.brandName}
@@ -289,26 +289,26 @@ export default function DefaultProductCard({ product }: DefaultProductCardProps)
           )}
 
           <h3
-            className="font-semibold text-sm leading-snug mb-2 line-clamp-2 transition-colors hover:opacity-80"
+            className="font-semibold text-xs sm:text-sm leading-snug mb-2 line-clamp-2 transition-colors hover:opacity-80"
             style={{ color: 'var(--sf-text)' }}
           >
             {product.name}
           </h3>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-base font-bold" style={{ color: 'var(--sf-primary)' }}>
+          <div className="flex flex-wrap items-center justify-between gap-1">
+            <div className="flex items-baseline gap-1.5 flex-wrap">
+              <span className="text-sm sm:text-base font-bold" style={{ color: 'var(--sf-primary)' }}>
                 {hasPriceRange
                   ? `From ${formatPrice(minVariantPrice)}`
                   : formatPrice(minVariantPrice)}
               </span>
               {product.compareAtPrice && (
-                <span className="text-sm line-through text-gray-400">
+                <span className="text-xs line-through text-gray-400">
                   {formatPrice(product.compareAtPrice)}
                 </span>
               )}
               {isOutOfStock && (
-                <span className="text-[11px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50 px-2 py-0.5 rounded-md border border-rose-200 dark:border-rose-900/60">
+                <span className="text-[10px] sm:text-[11px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50 px-1.5 py-0.5 rounded-md border border-rose-200 dark:border-rose-900/60">
                   Out of Stock
                 </span>
               )}

@@ -419,7 +419,7 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
         </span>
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8 pb-24 md:pb-12 w-full flex-grow">
         {/* ── Product Hero Grid ─────────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
           {/* ── 1. Media Gallery (Left Column) ─────────────────────────── */}
@@ -562,13 +562,13 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
 
             {/* Thumbnail Strip with 3D Media Tile */}
             {(allImages.length > 1 || has3DModel) && (
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide items-center">
+              <div className="flex gap-2.5 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide items-center snap-x snap-mandatory touch-scroll">
                 {/* 3D Model Tile */}
                 {has3DModel && (
                   <button
                     type="button"
                     onClick={() => setIs3DViewActive(true)}
-                    className={`w-20 h-20 overflow-hidden border-2 flex-shrink-0 relative transition cursor-pointer flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-indigo-950/80 to-slate-900 text-white ${
+                    className={`w-16 h-16 sm:w-20 sm:h-20 snap-start overflow-hidden border-2 flex-shrink-0 relative transition cursor-pointer flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-indigo-950/80 to-slate-900 text-white ${
                       isMinimal ? 'rounded-none' : isLuxe ? 'rounded-none' : isMincom ? 'rounded-lg' : 'rounded-2xl'
                     } ${is3DViewActive ? 'border-indigo-500 shadow-lg ring-2 ring-indigo-500/30' : 'border-indigo-900/40 opacity-80 hover:opacity-100'}`}
                   >
@@ -584,7 +584,7 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                       setSelectedImage(img);
                       setIs3DViewActive(false);
                     }}
-                    className={`w-20 h-20 overflow-hidden border-2 flex-shrink-0 relative transition cursor-pointer ${
+                    className={`w-16 h-16 sm:w-20 sm:h-20 snap-start overflow-hidden border-2 flex-shrink-0 relative transition cursor-pointer ${
                       isMinimal
                         ? 'rounded-none'
                         : isLuxe
@@ -1771,12 +1771,53 @@ export function PDPBody({ theme, product, relatedProducts, renderRelatedCard }: 
                     View All →
                   </Link>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                   {relatedProducts.map((p) => renderRelatedCard(p))}
                 </div>
               </div>
             )}
         </main>
+
+        {/* ── Mobile Sticky Bottom Action Bar (visible on < md screens) ── */}
+        <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+          <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate font-medium">
+                {product.name}
+              </p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-base font-black" style={{ color: 'var(--sf-primary)' }}>
+                  {formatPrice(activePrice)}
+                </span>
+                {activeCompareAtPrice && activeCompareAtPrice > activePrice && (
+                  <span className="text-xs line-through opacity-50">
+                    {formatPrice(activeCompareAtPrice)}
+                  </span>
+                )}
+              </div>
+            </div>
+            {isOutOfStock ? (
+              <button
+                type="button"
+                onClick={() => setIsNotifyMeOpen(true)}
+                className="px-4 py-2.5 rounded-xl font-bold text-xs bg-slate-900 text-white dark:bg-white dark:text-slate-900 flex items-center gap-1.5 shadow cursor-pointer shrink-0 active:scale-95"
+              >
+                <span>🔔 Notify Me</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                disabled={isAdding}
+                className="px-5 py-2.5 rounded-xl font-bold text-xs text-white flex items-center gap-1.5 shadow cursor-pointer shrink-0 disabled:opacity-60 active:scale-95"
+                style={{ backgroundColor: 'var(--sf-primary)' }}
+              >
+                <span>{isAdding ? 'Adding...' : 'Add to Bag'}</span>
+                <span>🛍️</span>
+              </button>
+            )}
+          </div>
+        </div>
 
         {/* Review Modal (Loaded dynamically on demand) */}
         {isReviewModalOpen && (
