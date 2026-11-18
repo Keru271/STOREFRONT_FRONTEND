@@ -2,7 +2,7 @@
 // Customer registration, login, logout, profile (getInfo), profile update (editInfo), and orders.
 // Authentication is securely maintained via HttpOnly session cookies.
 
-import { apiClient } from './client';
+import { apiClient, clearCustomerSession } from './client';
 import type {
   AuthResponse,
   CustomerAddress,
@@ -41,9 +41,7 @@ export async function loginCustomer(data: CustomerLoginInput): Promise<AuthRespo
  * Logs out the authenticated customer by clearing the session.
  */
 export async function logoutCustomer(): Promise<{ message: string }> {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('customer_token');
-  }
+  clearCustomerSession();
   return apiClient.post<{ message: string }>('api/storefront/account/logout', {});
 }
 

@@ -54,15 +54,31 @@ export interface StorefrontForm {
   createdAt: string;
 }
 
-const rawCmsUrl = (process.env.NEXT_PUBLIC_CMS_API_URL || 'http://localhost:5000/api').replace(/\/+$/, '');
-const CMS_API_URL = rawCmsUrl.endsWith('/api') ? rawCmsUrl : `${rawCmsUrl}/api`;
+function resolveFormsApiUrl(): string {
+  const envSf = (process.env.NEXT_PUBLIC_STOREFRONT_API_URL || '').trim().replace(/\/+$/, '');
+  const envCms = (process.env.NEXT_PUBLIC_CMS_API_URL || '').trim().replace(/\/+$/, '');
+
+  if (typeof window !== 'undefined') {
+    const isLocalhost =
+      window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (!isLocalhost) {
+      if (envSf && !envSf.includes('localhost')) return envSf.endsWith('/api') ? envSf : `${envSf}/api`;
+      if (envCms && !envCms.includes('localhost')) return envCms.endsWith('/api') ? envCms : `${envCms}/api`;
+      return '/api';
+    }
+  }
+
+  const base = envCms || envSf || 'http://localhost:5000/api';
+  return base.endsWith('/api') ? base : `${base}/api`;
+}
 
 /**
  * Fetch a form by its slug or ID
  */
 export async function getStorefrontForm(slugOrId: string): Promise<StorefrontForm | null> {
+  const apiUrl = resolveFormsApiUrl();
   try {
-    const res = await fetch(`${CMS_API_URL}/forms/${slugOrId}`, {
+    const res = await fetch(`${apiUrl}/forms/${slugOrId}`, {
       next: { revalidate: 60, tags: [`form-${slugOrId}`] },
     });
     if (!res.ok) return null;
@@ -80,7 +96,8 @@ export async function submitStorefrontForm(
   slugOrId: string,
   payload: { data: Record<string, any>; submitterName?: string; submitterEmail?: string }
 ): Promise<{ message: string; submissionId?: string; successType?: string; redirectUrl?: string }> {
-  const res = await fetch(`${CMS_API_URL}/forms/${slugOrId}/submit`, {
+  const apiUrl = resolveFormsApiUrl();
+  const res = await fetch(`${apiUrl}/forms/${slugOrId}/submit`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),

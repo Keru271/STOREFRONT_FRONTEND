@@ -61,6 +61,39 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  async rewrites() {
+    return [
+      {
+        source: '/about',
+        destination: '/pages/about',
+      },
+      {
+        source: '/faq',
+        destination: '/pages/faq',
+      },
+      {
+        source: '/shipping-returns',
+        destination: '/policies/shipping-returns',
+      },
+      {
+        source: '/privacy-policy',
+        destination: '/policies/privacy-policy',
+      },
+      {
+        source: '/terms-and-conditions',
+        destination: '/policies/terms-and-conditions',
+      },
+      {
+        source: '/refund-policy',
+        destination: '/policies/refund-policy',
+      },
+      {
+        source: '/shipping-policy',
+        destination: '/policies/shipping-policy',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

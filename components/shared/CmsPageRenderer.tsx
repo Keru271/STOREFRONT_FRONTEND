@@ -1435,10 +1435,24 @@ export function CmsPageRenderer({ page, theme }: CmsPageRendererProps) {
     }
 
     // 2. Raw HTML / Markdown string
+    const formatRawText = (raw: string) => {
+      if (!raw) return '';
+      if (/<[a-z][\s\S]*>/i.test(raw)) return raw;
+      return raw
+        .replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold my-3">$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold my-4">$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-black my-5">$1</h1>')
+        .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+        .replace(/^- (.*$)/gim, '<li class="ml-4 list-disc">$1</li>')
+        .replace(/\n\n/gim, '</p><p class="my-3 leading-relaxed">')
+        .replace(/\n/gim, '<br />');
+    };
+
     return (
       <div
         className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-heading prose-headings:font-bold prose-img:rounded-3xl"
-        dangerouslySetInnerHTML={{ __html: page.content }}
+        dangerouslySetInnerHTML={{ __html: formatRawText(page.content) }}
       />
     );
   };

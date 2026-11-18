@@ -48,6 +48,7 @@ import {
   Store,
   Wallet,
   Globe,
+  Phone,
 } from 'lucide-react';
 
 declare global {
@@ -251,6 +252,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
     country: customer?.address?.country || 'United States',
     label: 'Home',
     instructions: 'Please leave it at the front door, knock on arrival',
+    phone: customer?.phone || '',
   });
 
   useEffect(() => {
@@ -260,7 +262,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
           setGatewayConfig(res.gateways);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [addressData.country, storeCurrency]);
 
   // Dropoff options
@@ -270,9 +272,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
   // Customer contact
   const [contactData, setContactData] = useState({
-    name: customer?.name || 'Customer',
-    email: customer?.email || 'customer@example.com',
-    phone: customer?.phone || '+1 555-0199',
+    name: customer?.name || '',
+    email: customer?.email || '',
+    phone: customer?.phone || '',
   });
 
   // Payment details (Customer sees only Card/UPI if configured, and Cash on Delivery)
@@ -341,8 +343,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
     fulfillmentType === 'PICKUP' || isFreeShipping
       ? 0
       : typeof (theme as any).shippingFlatRate === 'number'
-      ? (theme as any).shippingFlatRate
-      : 9.99;
+        ? (theme as any).shippingFlatRate
+        : 9.99;
   const priorityExtraFee =
     deliverySpeed === 'PRIORITY' && fulfillmentType === 'DELIVERY' ? 1.99 : 0;
   const deliveryFee = standardShipping + priorityExtraFee;
@@ -375,11 +377,11 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
   // Auto-fill from customer or address book
   useEffect(() => {
     if (customer) {
-      setContactData({
-        name: customer.name || 'Customer',
-        email: customer.email || 'customer@example.com',
-        phone: customer.phone || '',
-      });
+      setContactData((prev) => ({
+        name: customer.name || prev.name || '',
+        email: customer.email || prev.email || '',
+        phone: customer.phone || prev.phone || '',
+      }));
       if (customer.address) {
         setAddressData((prev) => ({
           ...prev,
@@ -524,12 +526,22 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
       country: addr.country || 'United States',
       label: addr.label || 'Home',
     }));
+    if (addr.phone?.trim()) {
+      setContactData((prev) => ({
+        ...prev,
+        phone: prev.phone?.trim() ? prev.phone : addr.phone.trim(),
+      }));
+    }
   };
 
   const handleSaveAddress = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!newAddressForm.street?.trim() || !newAddressForm.city?.trim() || !newAddressForm.zip?.trim()) {
       toast.error('Please fill in required address fields (Street, City, ZIP)');
+      return;
+    }
+    if (!newAddressForm.phone?.trim() || newAddressForm.phone.replace(/\D/g, '').length < 7) {
+      toast.error('Contact phone number is mandatory (at least 7 digits)');
       return;
     }
 
@@ -571,6 +583,13 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
         instructions: newAddressForm.instructions || prev.instructions,
       }));
 
+      if (payload.phone) {
+        setContactData((prev) => ({
+          ...prev,
+          phone: payload.phone || prev.phone,
+        }));
+      }
+
       setShowAddAddressModal(false);
       setEditingAddress(null);
     } catch (err: any) {
@@ -584,7 +603,7 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
   // Preload Razorpay checkout script on checkout page mount
   useEffect(() => {
-    loadRazorpayScript().catch(() => {});
+    loadRazorpayScript().catch(() => { });
   }, []);
 
   // Order Placement Handler
@@ -601,16 +620,49 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
       return;
     }
 
+    const effectivePhone = (
+      contactData.phone ||
+      addressData.phone ||
+      (addresses.find((a) => a.id === selectedAddressId)?.phone) ||
+      customer?.phone ||
+      ''
+    ).trim();
+
+    if (!effectivePhone) {
+      toast.error('Phone number is mandatory for placing an order');
+      const phoneInput = document.getElementById('checkout-contact-phone');
+      if (phoneInput) {
+        phoneInput.focus();
+        phoneInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
+    if (effectivePhone.replace(/\D/g, '').length < 7) {
+      toast.error('Please enter a valid phone number (at least 7 digits)');
+      const phoneInput = document.getElementById('checkout-contact-phone');
+      if (phoneInput) {
+        phoneInput.focus();
+        phoneInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
+    // Keep contact state synchronized with effective phone
+    if (contactData.phone !== effectivePhone) {
+      setContactData((prev) => ({ ...prev, phone: effectivePhone }));
+    }
+
     startLoading('Placing your order...');
     try {
       const shippingAddress = {
-        name: contactData.name,
+        name: contactData.name || customer?.name || 'Customer',
         street: addressData.street + (addressData.aptSuite ? `, Apt ${addressData.aptSuite}` : ''),
         city: addressData.city,
         state: addressData.state,
         zip: addressData.zip,
         country: addressData.country,
-        phone: contactData.phone,
+        phone: effectivePhone,
       };
 
       const cartItemsPayload = items.map((i) => ({
@@ -626,9 +678,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
       // If order is fully covered by gift card
       if (isFullyPaidByGiftCard && appliedGiftCard) {
         const result = await processDirectCheckout({
-          customerName: contactData.name,
-          customerEmail: contactData.email,
-          customerPhone: contactData.phone,
+          customerName: contactData.name || customer?.name || 'Customer',
+          customerEmail: contactData.email || customer?.email || 'customer@example.com',
+          customerPhone: effectivePhone,
           shippingAddress,
           items: cartItemsPayload,
           couponCode: appliedDiscount?.code,
@@ -657,9 +709,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
         if (isRzpActive) {
           await loadRazorpayScript();
           const orderRes = await createRazorpayOrder({
-            customerName: contactData.name,
-            customerEmail: contactData.email,
-            customerPhone: contactData.phone,
+            customerName: contactData.name || customer?.name || 'Customer',
+            customerEmail: contactData.email || customer?.email || 'customer@example.com',
+            customerPhone: effectivePhone,
             shippingAddress,
             items: cartItemsPayload,
             couponCode: appliedDiscount?.code,
@@ -688,9 +740,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                       response.razorpay_order_id || orderRes.razorpayOrderId || '',
                     razorpay_payment_id: response.razorpay_payment_id || `pay_${Date.now()}`,
                     razorpay_signature: response.razorpay_signature || 'signature_valid',
-                    customerName: contactData.name,
-                    customerEmail: contactData.email,
-                    customerPhone: contactData.phone,
+                    customerName: contactData.name || customer?.name || 'Customer',
+                    customerEmail: contactData.email || customer?.email || 'customer@example.com',
+                    customerPhone: effectivePhone,
                     shippingAddress,
                     items: cartItemsPayload,
                     couponCode: appliedDiscount?.code,
@@ -716,9 +768,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 },
               },
               prefill: {
-                name: contactData.name,
-                email: contactData.email,
-                contact: contactData.phone,
+                name: contactData.name || customer?.name || 'Customer',
+                email: contactData.email || customer?.email || 'customer@example.com',
+                contact: effectivePhone,
               },
               theme: { color: theme.themePrimaryColor || '#0c2340' },
             };
@@ -736,8 +788,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
               stopLoading();
               toast.error(
                 response?.error?.description ||
-                  response?.error?.reason ||
-                  'Payment failed. Please try again.',
+                response?.error?.reason ||
+                'Payment failed. Please try again.',
               );
             });
             rzp.open();
@@ -749,9 +801,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
               razorpay_order_id: orderRes.razorpayOrderId || `order_${Date.now()}`,
               razorpay_payment_id: `pay_sim_${Date.now()}`,
               razorpay_signature: 'signature_valid',
-              customerName: contactData.name,
-              customerEmail: contactData.email,
-              customerPhone: contactData.phone,
+              customerName: contactData.name || customer?.name || 'Customer',
+              customerEmail: contactData.email || customer?.email || 'customer@example.com',
+              customerPhone: effectivePhone,
               shippingAddress,
               items: cartItemsPayload,
               couponCode: appliedDiscount?.code,
@@ -773,9 +825,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
           startLoading('Connecting to PayPal...');
           try {
             const paypalRes = await createPaypalOrder({
-              customerName: contactData.name,
-              customerEmail: contactData.email,
-              customerPhone: contactData.phone,
+              customerName: contactData.name || customer?.name || 'Customer',
+              customerEmail: contactData.email || customer?.email || 'customer@example.com',
+              customerPhone: effectivePhone,
               shippingAddress,
               items: cartItemsPayload,
               couponCode: appliedDiscount?.code,
@@ -809,9 +861,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                     const captureRes = await capturePaypalOrder({
                       paypalOrderId: paypalRes.paypalOrderId,
                       orderNumber: paypalRes.orderNumber,
-                      customerName: contactData.name,
-                      customerEmail: contactData.email,
-                      customerPhone: contactData.phone,
+                      customerName: contactData.name || customer?.name || 'Customer',
+                      customerEmail: contactData.email || customer?.email || 'customer@example.com',
+                      customerPhone: effectivePhone,
                       shippingAddress,
                       items: cartItemsPayload,
                       couponCode: appliedDiscount?.code,
@@ -839,9 +891,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
             const captureRes = await capturePaypalOrder({
               paypalOrderId: paypalRes.paypalOrderId,
               orderNumber: paypalRes.orderNumber,
-              customerName: contactData.name,
-              customerEmail: contactData.email,
-              customerPhone: contactData.phone,
+              customerName: contactData.name || customer?.name || 'Customer',
+              customerEmail: contactData.email || customer?.email || 'customer@example.com',
+              customerPhone: effectivePhone,
               shippingAddress,
               items: cartItemsPayload,
               couponCode: appliedDiscount?.code,
@@ -861,8 +913,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
             console.error('PayPal checkout error:', paypalErr);
             toast.error(
               paypalErr.response?.data?.message ||
-                paypalErr.message ||
-                'PayPal checkout failed. Please try again.',
+              paypalErr.message ||
+              'PayPal checkout failed. Please try again.',
             );
             stopLoading();
             return;
@@ -871,9 +923,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
         // Fallback: Direct Card Processing
         const result = await processDirectCheckout({
-          customerName: contactData.name,
-          customerEmail: contactData.email,
-          customerPhone: contactData.phone,
+          customerName: contactData.name || customer?.name || 'Customer',
+          customerEmail: contactData.email || customer?.email || 'customer@example.com',
+          customerPhone: effectivePhone,
           shippingAddress,
           items: cartItemsPayload,
           couponCode: appliedDiscount?.code,
@@ -894,9 +946,9 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
       // 2. Cash on Delivery
       if (paymentMethod === 'COD') {
         const result = await processDirectCheckout({
-          customerName: contactData.name,
-          customerEmail: contactData.email,
-          customerPhone: contactData.phone,
+          customerName: contactData.name || customer?.name || 'Customer',
+          customerEmail: contactData.email || customer?.email || 'customer@example.com',
+          customerPhone: effectivePhone,
           shippingAddress,
           items: cartItemsPayload,
           couponCode: appliedDiscount?.code,
@@ -1024,7 +1076,86 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* ═════════ LEFT COLUMN: Details & Options ═════════ */}
           <div className="lg:col-span-7 space-y-6">
-            {/* 1. Delivery Details Card (Display All Stored Addresses & Add Address) */}
+            {/* 1. Contact Information Card */}
+            <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 border border-neutral-200/80 dark:border-neutral-800 shadow-xs space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300">
+                    <Phone className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold tracking-tight">Contact Information</h2>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                      Order dispatch confirmation, delivery OTP &amp; tracking updates
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1 text-xs">
+                <div>
+                  <label className="font-bold text-neutral-700 dark:text-neutral-300 block mb-1.5">
+                    Customer Name
+                  </label>
+                  <input
+                    type="text"
+                    value={contactData.name}
+                    onChange={(e) => setContactData({ ...contactData, name: e.target.value })}
+                    placeholder="e.g. John Doe"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 font-medium outline-hidden focus:border-black dark:focus:border-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-neutral-700 dark:text-neutral-300 block mb-1.5">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={contactData.email}
+                    onChange={(e) => setContactData({ ...contactData, email: e.target.value })}
+                    placeholder="e.g. john@example.com"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 font-medium outline-hidden focus:border-black dark:focus:border-white"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="font-bold text-neutral-700 dark:text-neutral-300 flex items-center justify-between mb-1.5">
+                    <span className="flex items-center gap-1">
+                      <span>Phone Number</span>
+                      <span className="text-rose-500 font-black">*</span>
+                    </span>
+                    <span className="text-[11px] font-semibold text-rose-500 dark:text-rose-400">
+                      Mandatory for placing order
+                    </span>
+                  </label>
+                  <input
+                    id="checkout-contact-phone"
+                    type="tel"
+                    required
+                    value={contactData.phone}
+                    onChange={(e) => setContactData({ ...contactData, phone: e.target.value })}
+                    placeholder="e.g. +91 98765 43210 or 9876543210"
+                    className={`w-full px-3.5 py-2.5 rounded-xl border font-mono font-bold outline-hidden transition-colors ${!contactData.phone?.trim()
+                      ? 'border-rose-400 dark:border-rose-600 bg-rose-50/30 dark:bg-rose-950/20 text-neutral-900 dark:text-white focus:border-rose-500'
+                      : 'border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white focus:border-black dark:focus:border-white'
+                      }`}
+                  />
+                  {!contactData.phone?.trim() ? (
+                    <p className="text-[11px] text-rose-600 dark:text-rose-400 font-medium mt-1.5 flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span>Phone number is required to place your order and receive delivery tracking updates.</span>
+                    </p>
+                  ) : (
+                    <p className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-1.5">
+                      Carrier SMS alerts and order status notifications will be delivered to this phone number.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Delivery Details Card (Display All Stored Addresses & Add Address) */}
             <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 border border-neutral-200/80 dark:border-neutral-800 shadow-xs space-y-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -1059,21 +1190,19 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                       <div
                         key={addr.id || idx}
                         onClick={() => handleSelectAddress(addr)}
-                        className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-4 ${
-                          isSelected
-                            ? 'border-neutral-900 dark:border-white bg-neutral-50/90 dark:bg-neutral-800/80 shadow-xs ring-1 ring-neutral-900 dark:ring-white'
-                            : 'border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900'
-                        }`}
+                        className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-4 ${isSelected
+                          ? 'border-neutral-900 dark:border-white bg-neutral-50/90 dark:bg-neutral-800/80 shadow-xs ring-1 ring-neutral-900 dark:ring-white'
+                          : 'border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900'
+                          }`}
                       >
                         <div className="flex items-start gap-3.5 min-w-0">
                           {/* Radio Dot */}
                           <div className="mt-1 shrink-0">
                             <div
-                              className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                                isSelected
-                                  ? 'border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white'
-                                  : 'border-neutral-300 dark:border-neutral-600'
-                              }`}
+                              className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${isSelected
+                                ? 'border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white'
+                                : 'border-neutral-300 dark:border-neutral-600'
+                                }`}
                             >
                               {isSelected && (
                                 <div className="w-1.5 h-1.5 rounded-full bg-white dark:bg-neutral-900" />
@@ -1083,11 +1212,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
                           {/* Icon */}
                           <div
-                            className={`p-2.5 rounded-xl shrink-0 mt-0.5 ${
-                              isSelected
-                                ? 'bg-neutral-200/80 dark:bg-neutral-700 text-neutral-900 dark:text-white'
-                                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400'
-                            }`}
+                            className={`p-2.5 rounded-xl shrink-0 mt-0.5 ${isSelected
+                              ? 'bg-neutral-200/80 dark:bg-neutral-700 text-neutral-900 dark:text-white'
+                              : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400'
+                              }`}
                           >
                             {isOffice ? (
                               <Building2 className="w-4 h-4" />
@@ -1183,11 +1311,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                   {/* Priority Option */}
                   <div
                     onClick={() => setDeliverySpeed('PRIORITY')}
-                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
-                      deliverySpeed === 'PRIORITY'
-                        ? 'border-black dark:border-white bg-neutral-50/70 dark:bg-neutral-800/40 shadow-xs'
-                        : 'border-neutral-200/80 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700'
-                    }`}
+                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${deliverySpeed === 'PRIORITY'
+                      ? 'border-black dark:border-white bg-neutral-50/70 dark:bg-neutral-800/40 shadow-xs'
+                      : 'border-neutral-200/80 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700'
+                      }`}
                   >
                     <div className="flex items-center gap-3.5">
                       <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
@@ -1213,11 +1340,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                   {/* Standard Option (Selected default with thick border) */}
                   <div
                     onClick={() => setDeliverySpeed('STANDARD')}
-                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
-                      deliverySpeed === 'STANDARD'
-                        ? 'border-black dark:border-white bg-neutral-50/70 dark:bg-neutral-800/40 shadow-xs'
-                        : 'border-neutral-200/80 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700'
-                    }`}
+                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${deliverySpeed === 'STANDARD'
+                      ? 'border-black dark:border-white bg-neutral-50/70 dark:bg-neutral-800/40 shadow-xs'
+                      : 'border-neutral-200/80 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700'
+                      }`}
                   >
                     <div className="flex items-center gap-3.5">
                       <div className="p-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
@@ -1239,11 +1365,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                       setDeliverySpeed('SCHEDULE');
                       setShowScheduleModal(true);
                     }}
-                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
-                      deliverySpeed === 'SCHEDULE'
-                        ? 'border-black dark:border-white bg-neutral-50/70 dark:bg-neutral-800/40 shadow-xs'
-                        : 'border-neutral-200/80 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700'
-                    }`}
+                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${deliverySpeed === 'SCHEDULE'
+                      ? 'border-black dark:border-white bg-neutral-50/70 dark:bg-neutral-800/40 shadow-xs'
+                      : 'border-neutral-200/80 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700'
+                      }`}
                   >
                     <div className="flex items-center gap-3.5">
                       <div className="p-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
@@ -1264,11 +1389,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 <div className="space-y-3">
                   <div
                     onClick={() => setDeliverySpeed('STANDARD')}
-                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
-                      deliverySpeed === 'STANDARD'
-                        ? 'border-black dark:border-white bg-neutral-50/70 dark:bg-neutral-800/40 shadow-xs'
-                        : 'border-neutral-200/80 dark:border-neutral-800'
-                    }`}
+                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${deliverySpeed === 'STANDARD'
+                      ? 'border-black dark:border-white bg-neutral-50/70 dark:bg-neutral-800/40 shadow-xs'
+                      : 'border-neutral-200/80 dark:border-neutral-800'
+                      }`}
                   >
                     <div className="flex items-center gap-3.5">
                       <Clock className="w-5 h-5 text-neutral-600" />
@@ -1285,11 +1409,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                       setDeliverySpeed('SCHEDULE');
                       setShowScheduleModal(true);
                     }}
-                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
-                      deliverySpeed === 'SCHEDULE'
-                        ? 'border-black dark:border-white bg-neutral-50/70 dark:bg-neutral-800/40 shadow-xs'
-                        : 'border-neutral-200/80 dark:border-neutral-800'
-                    }`}
+                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${deliverySpeed === 'SCHEDULE'
+                      ? 'border-black dark:border-white bg-neutral-50/70 dark:bg-neutral-800/40 shadow-xs'
+                      : 'border-neutral-200/80 dark:border-neutral-800'
+                      }`}
                   >
                     <div className="flex items-center gap-3.5">
                       <Calendar className="w-5 h-5 text-neutral-600" />
@@ -1321,21 +1444,19 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 {isOnlinePaymentAvailable && (
                   <div
                     onClick={() => setPaymentMethod('CARD')}
-                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-4 ${
-                      paymentMethod === 'CARD' || paymentMethod === 'UPI'
-                        ? 'border-neutral-900 dark:border-white bg-neutral-50/90 dark:bg-neutral-800/80 shadow-xs ring-1 ring-neutral-900 dark:ring-white'
-                        : 'border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900'
-                    }`}
+                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-4 ${paymentMethod === 'CARD' || paymentMethod === 'UPI'
+                      ? 'border-neutral-900 dark:border-white bg-neutral-50/90 dark:bg-neutral-800/80 shadow-xs ring-1 ring-neutral-900 dark:ring-white'
+                      : 'border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900'
+                      }`}
                   >
                     <div className="flex items-start gap-3.5 min-w-0">
                       {/* Radio Dot */}
                       <div className="mt-1 shrink-0">
                         <div
-                          className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                            paymentMethod === 'CARD' || paymentMethod === 'UPI'
-                              ? 'border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white'
-                              : 'border-neutral-300 dark:border-neutral-600'
-                          }`}
+                          className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${paymentMethod === 'CARD' || paymentMethod === 'UPI'
+                            ? 'border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white'
+                            : 'border-neutral-300 dark:border-neutral-600'
+                            }`}
                         >
                           {(paymentMethod === 'CARD' || paymentMethod === 'UPI') && (
                             <div className="w-1.5 h-1.5 rounded-full bg-white dark:bg-neutral-900" />
@@ -1345,11 +1466,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
                       {/* Icon */}
                       <div
-                        className={`p-2.5 rounded-xl shrink-0 mt-0.5 ${
-                          paymentMethod === 'CARD' || paymentMethod === 'UPI'
-                            ? 'bg-neutral-200/80 dark:bg-neutral-700 text-neutral-900 dark:text-white'
-                            : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400'
-                        }`}
+                        className={`p-2.5 rounded-xl shrink-0 mt-0.5 ${paymentMethod === 'CARD' || paymentMethod === 'UPI'
+                          ? 'bg-neutral-200/80 dark:bg-neutral-700 text-neutral-900 dark:text-white'
+                          : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400'
+                          }`}
                       >
                         <CreditCard className="w-4 h-4" />
                       </div>
@@ -1376,21 +1496,19 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 {isCodEnabled && (
                   <div
                     onClick={() => setPaymentMethod('COD')}
-                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-4 ${
-                      paymentMethod === 'COD'
-                        ? 'border-neutral-900 dark:border-white bg-neutral-50/90 dark:bg-neutral-800/80 shadow-xs ring-1 ring-neutral-900 dark:ring-white'
-                        : 'border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900'
-                    }`}
+                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-4 ${paymentMethod === 'COD'
+                      ? 'border-neutral-900 dark:border-white bg-neutral-50/90 dark:bg-neutral-800/80 shadow-xs ring-1 ring-neutral-900 dark:ring-white'
+                      : 'border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-neutral-900'
+                      }`}
                   >
                     <div className="flex items-start gap-3.5 min-w-0">
                       {/* Radio Dot */}
                       <div className="mt-1 shrink-0">
                         <div
-                          className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                            paymentMethod === 'COD'
-                              ? 'border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white'
-                              : 'border-neutral-300 dark:border-neutral-600'
-                          }`}
+                          className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${paymentMethod === 'COD'
+                            ? 'border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white'
+                            : 'border-neutral-300 dark:border-neutral-600'
+                            }`}
                         >
                           {paymentMethod === 'COD' && (
                             <div className="w-1.5 h-1.5 rounded-full bg-white dark:bg-neutral-900" />
@@ -1400,11 +1518,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
 
                       {/* Icon */}
                       <div
-                        className={`p-2.5 rounded-xl shrink-0 mt-0.5 ${
-                          paymentMethod === 'COD'
-                            ? 'bg-neutral-200/80 dark:bg-neutral-700 text-neutral-900 dark:text-white'
-                            : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400'
-                        }`}
+                        className={`p-2.5 rounded-xl shrink-0 mt-0.5 ${paymentMethod === 'COD'
+                          ? 'bg-neutral-200/80 dark:bg-neutral-700 text-neutral-900 dark:text-white'
+                          : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400'
+                          }`}
                       >
                         <DollarSign className="w-4 h-4" />
                       </div>
@@ -1434,12 +1551,20 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
             </div>
 
             {/* Bottom Full-Width CTA Button (Matching Step 2) */}
-            <button
-              onClick={handlePlaceOrder}
-              className="w-full py-4 px-6 rounded-2xl font-bold text-base bg-black text-white hover:bg-neutral-800 active:scale-[0.99] transition shadow-xl cursor-pointer"
-            >
-              Continue to payment
-            </button>
+            <div className="space-y-2">
+              <button
+                onClick={handlePlaceOrder}
+                className="w-full py-4 px-6 rounded-2xl font-bold text-base bg-black text-white hover:bg-neutral-800 active:scale-[0.99] transition shadow-xl cursor-pointer"
+              >
+                Continue to payment
+              </button>
+              {!contactData.phone?.trim() && (
+                <p className="text-xs text-rose-500 font-semibold text-center flex items-center justify-center gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  <span>Phone number is required to place your order</span>
+                </p>
+              )}
+            </div>
           </div>
 
           {/* ═════════ RIGHT COLUMN: Sticky Order Summary ═════════ */}
@@ -1472,12 +1597,20 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
               </div>
 
               {/* Primary Duplicate Sticky CTA Button (Matching Step 2 / Step 8) */}
-              <button
-                onClick={handlePlaceOrder}
-                className="w-full py-4 px-6 rounded-2xl font-bold text-base bg-black text-white hover:bg-neutral-800 active:scale-[0.99] transition shadow-lg cursor-pointer"
-              >
-                Continue to payment
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={handlePlaceOrder}
+                  className="w-full py-4 px-6 rounded-2xl font-bold text-base bg-black text-white hover:bg-neutral-800 active:scale-[0.99] transition shadow-lg cursor-pointer"
+                >
+                  Continue to payment
+                </button>
+                {!contactData.phone?.trim() && (
+                  <p className="text-xs text-rose-500 font-semibold text-center flex items-center justify-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    <span>Phone number is required</span>
+                  </p>
+                )}
+              </div>
 
               {/* Cart Summary Accordion (Matching Step 8) */}
               <div className="border-t border-neutral-100 dark:border-neutral-800 pt-4">
@@ -1752,11 +1885,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                         key={type.id}
                         type="button"
                         onClick={() => setNewAddressForm({ ...newAddressForm, label: type.id })}
-                        className={`flex items-center justify-center gap-2 py-2 px-3 rounded-xl border font-bold text-xs transition-all cursor-pointer ${
-                          isActive
-                            ? 'border-black dark:border-white bg-black text-white dark:bg-white dark:text-black'
-                            : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300'
-                        }`}
+                        className={`flex items-center justify-center gap-2 py-2 px-3 rounded-xl border font-bold text-xs transition-all cursor-pointer ${isActive
+                          ? 'border-black dark:border-white bg-black text-white dark:bg-white dark:text-black'
+                          : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300'
+                          }`}
                       >
                         <IconComp className="w-3.5 h-3.5" />
                         <span>{type.label}</span>
@@ -1782,11 +1914,12 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 </div>
                 <div>
                   <label className="font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
-                    Contact Phone
+                    Contact Phone <span className="text-red-500 font-black">*</span>
                   </label>
                   <input
                     type="tel"
-                    placeholder="e.g. +1 555-0199"
+                    required
+                    placeholder="e.g. +1 555-0199 or +91 98765 43210"
                     value={newAddressForm.phone}
                     onChange={(e) => setNewAddressForm({ ...newAddressForm, phone: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 font-medium outline-hidden focus:border-black dark:focus:border-white"
@@ -1915,8 +2048,8 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                   {isSavingAddress
                     ? 'Saving...'
                     : editingAddress
-                    ? 'Update address'
-                    : 'Save & select address'}
+                      ? 'Update address'
+                      : 'Save & select address'}
                 </button>
               </div>
             </form>
@@ -2054,11 +2187,10 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                 <button
                   key={day}
                   onClick={() => setScheduledTime(`${day}, 11:30 AM – 12:00 PM`)}
-                  className={`px-4 py-3 rounded-2xl border-2 shrink-0 text-left transition cursor-pointer ${
-                    scheduledTime.includes(day)
-                      ? 'border-black dark:border-white bg-neutral-50 dark:bg-neutral-800'
-                      : 'border-neutral-200 dark:border-neutral-700'
-                  }`}
+                  className={`px-4 py-3 rounded-2xl border-2 shrink-0 text-left transition cursor-pointer ${scheduledTime.includes(day)
+                    ? 'border-black dark:border-white bg-neutral-50 dark:bg-neutral-800'
+                    : 'border-neutral-200 dark:border-neutral-700'
+                    }`}
                 >
                   <div className="text-xs font-bold text-neutral-900 dark:text-white">
                     {day.split(' ')[0]}

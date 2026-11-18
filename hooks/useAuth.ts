@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { clearCustomerSession } from '@/lib/api/client';
 import {
   loginCustomer,
   registerCustomer,
@@ -48,7 +49,11 @@ export function useAuth(): UseAuthReturn {
   const fetchProfile = useCallback(async () => {
     // For guest visitors with no stored customer token, skip calling /account/me
     // to prevent unwanted 401 unauthorized errors in console
-    if (typeof window !== 'undefined' && !localStorage.getItem('customer_token')) {
+    if (
+      typeof window !== 'undefined' &&
+      !localStorage.getItem('customer_token') &&
+      !localStorage.getItem('sf_access_token')
+    ) {
       setCustomer(null);
       return null;
     }
@@ -57,7 +62,10 @@ export function useAuth(): UseAuthReturn {
       const profile = await apiGetInfo();
       setCustomer(profile);
       return profile;
-    } catch {
+    } catch (err: any) {
+      if (err?.statusCode === 401 || err?.status === 401 || !localStorage.getItem('customer_token')) {
+        clearCustomerSession();
+      }
       setCustomer(null);
       return null;
     }
@@ -66,6 +74,17 @@ export function useAuth(): UseAuthReturn {
   // On mount, check if HttpOnly session or customer_token is valid
   useEffect(() => {
     fetchProfile().finally(() => setIsLoading(false));
+
+    // Listen to global logout event dispatched by 401 interceptor or logout actions
+    const handleCustomerLogout = () => {
+      setCustomer(null);
+      setIsLoading(false);
+    };
+
+    window.addEventListener('customer:logout', handleCustomerLogout);
+    return () => {
+      window.removeEventListener('customer:logout', handleCustomerLogout);
+    };
   }, [fetchProfile]);
 
   const login = useCallback(
@@ -103,9 +122,7 @@ export function useAuth(): UseAuthReturn {
   const logout = useCallback(async () => {
     setIsLoading(true);
     try {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('customer_token');
-      }
+      clearCustomerSession();
       await apiLogoutCustomer().catch(() => {});
     } finally {
       setCustomer(null);

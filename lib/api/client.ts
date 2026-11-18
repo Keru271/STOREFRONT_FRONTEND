@@ -39,6 +39,41 @@ export class ApiError extends Error {
   }
 }
 
+// ── Customer Session Management ───────────────────────────────────────────────
+
+let isCustomerRedirecting = false;
+
+export function clearCustomerSession(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem('customer_token');
+    localStorage.removeItem('sf_access_token');
+    localStorage.removeItem('customer_user');
+    localStorage.removeItem('customer_session');
+    localStorage.removeItem('customer_id');
+
+    sessionStorage.removeItem('customer_token');
+    sessionStorage.removeItem('sf_access_token');
+    sessionStorage.removeItem('customer_user');
+    sessionStorage.removeItem('customer_session');
+
+    // Clear cookies across common paths and variations
+    const cookiesToClear = ['customer_token', 'sf_access_token', 'accessToken'];
+    cookiesToClear.forEach((name) => {
+      document.cookie = `${name}=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+      if (window.location.hostname) {
+        document.cookie = `${name}=; path=/; domain=${window.location.hostname}; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+        document.cookie = `${name}=; path=/; domain=.${window.location.hostname}; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+      }
+    });
+
+    // Notify all active hooks & components to reset their auth state immediately
+    window.dispatchEvent(new CustomEvent('customer:logout'));
+  } catch (err) {
+    console.warn('Failed to clear customer session:', err);
+  }
+}
+
 // ── Store ID resolution ───────────────────────────────────────────────────────
 // Reads localStorage only in browser contexts; never on the server.
 // This prevents "localStorage is not defined" SSR crashes.
@@ -100,7 +135,7 @@ function getBrowserTenantHeaders(): Record<string, string> {
     if (storeSlug) result['x-store-slug'] = storeSlug;
     const storeId = localStorage.getItem('activeStoreId') || localStorage.getItem('storeId');
     if (storeId) result['x-store-id'] = storeId;
-  } catch {}
+  } catch { }
   return result;
 }
 
@@ -225,11 +260,42 @@ async function apiFetch<T>(
   console.log({ response });
 
   if (!response.ok) {
-    const errorData: ApiErrorResponse = await response
-      .json()
-      .catch(() => ({ message: `Request failed with status ${response.status}` }));
+    if (response.status === 401) {
+      console.warn('Storefront API 401 Unauthorized encountered. Purging customer session...');
+      clearCustomerSession();
 
-    throw new ApiError(errorData.message || `HTTP ${response.status}`, response.status);
+      if (typeof window !== 'undefined') {
+        const pathname = window.location.pathname;
+        // If the customer is on an authenticated page (/account, /account/*), redirect to login
+        if (pathname.startsWith('/account') && !pathname.startsWith('/auth/')) {
+          if (!isCustomerRedirecting) {
+            isCustomerRedirecting = true;
+            const redirectTarget = encodeURIComponent(pathname + window.location.search);
+            window.location.href = `/auth/login?redirect=${redirectTarget}`;
+          }
+        }
+      }
+    }
+
+    let apiMessage: string | null = null;
+    try {
+      const errorData: any = await response.json();
+      if (typeof errorData === 'string' && errorData.trim()) {
+        apiMessage = errorData.trim();
+      } else if (errorData && typeof errorData === 'object') {
+        apiMessage =
+          errorData.message ||
+          errorData.error ||
+          (Array.isArray(errorData.errors) ? errorData.errors.join(', ') : null);
+      }
+    } catch {
+      const rawText = await response.text().catch(() => null);
+      if (rawText && rawText.length < 300) {
+        apiMessage = rawText;
+      }
+    }
+
+    throw new ApiError(apiMessage || `Request failed with status ${response.status}`, response.status);
   }
 
   // Handle 204 No Content

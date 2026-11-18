@@ -74,7 +74,7 @@ export async function getCheckoutSummary(payload: {
 export async function createRazorpayOrder(payload: {
   customerName: string;
   customerEmail: string;
-  customerPhone?: string;
+  customerPhone: string;
   shippingAddress: CheckoutAddress;
   items: CheckoutCartItemPayload[];
   couponCode?: string;
@@ -100,7 +100,7 @@ export async function verifyRazorpayPayment(payload: {
   razorpay_signature: string;
   customerName: string;
   customerEmail: string;
-  customerPhone?: string;
+  customerPhone: string;
   shippingAddress: CheckoutAddress;
   items: CheckoutCartItemPayload[];
   couponCode?: string;
@@ -122,7 +122,7 @@ export async function verifyRazorpayPayment(payload: {
 export async function createPaypalOrder(payload: {
   customerName: string;
   customerEmail: string;
-  customerPhone?: string;
+  customerPhone: string;
   shippingAddress: CheckoutAddress;
   items: CheckoutCartItemPayload[];
   couponCode?: string;
@@ -147,7 +147,7 @@ export async function capturePaypalOrder(payload: {
   orderNumber?: string;
   customerName: string;
   customerEmail: string;
-  customerPhone?: string;
+  customerPhone: string;
   shippingAddress: CheckoutAddress;
   items: CheckoutCartItemPayload[];
   couponCode?: string;
@@ -170,7 +170,7 @@ export async function capturePaypalOrder(payload: {
 export async function processDirectCheckout(payload: {
   customerName: string;
   customerEmail: string;
-  customerPhone?: string;
+  customerPhone: string;
   shippingAddress: CheckoutAddress;
   items: CheckoutCartItemPayload[];
   couponCode?: string;
