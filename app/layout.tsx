@@ -22,6 +22,7 @@ import { ThemeToastContainer } from '@/components/shared/ThemeToastContainer';
 import { ThemeLoader } from '@/components/shared/ThemeLoader';
 import CommonCartDrawer from '@/components/cart/CommonCartDrawer';
 import { StorefrontCookieConsent } from '@/components/shared/StorefrontCookieConsent';
+import { GlobalModalScrollLock } from '@/components/shared/GlobalModalScrollLock';
 import { AiShoppingAssistant } from '@/components/shared/AiShoppingAssistant';
 import { PixelTracker } from '@/components/analytics/PixelTracker';
 import { MaintenanceGuard } from '@/components/shared/MaintenanceGuard';
@@ -178,6 +179,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           fontFamily: 'var(--sf-body-font)',
         }}
       >
+        <GlobalModalScrollLock />
         <ThemeProvider theme={theme}>
           <PixelTracker theme={theme} />
           <LoadingProvider>
