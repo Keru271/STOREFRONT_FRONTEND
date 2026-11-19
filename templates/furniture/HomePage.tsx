@@ -158,6 +158,20 @@ export default function FurnitureHomePage({
     },
   ];
 
+  // Dynamic category mapping from backend store catalog, falling back to curated sanctuary domains
+  const displayedCuratedCategories =
+    categories && categories.length > 0
+      ? categories.slice(0, 4).map((c, idx) => {
+          const fallback = curatedCategories[idx % curatedCategories.length];
+          return {
+            title: c.name,
+            count: c.productCount !== undefined ? `${c.productCount} Articulated Objects` : fallback.count,
+            href: `/products?category=${encodeURIComponent(c.slug || c.id)}`,
+            image: c.image || fallback.image,
+          };
+        })
+      : curatedCategories;
+
   return (
     <div
       className="min-h-screen bg-[#faf9f6] text-[#1a1c1a] antialiased selection:bg-[#c5e7d6] selection:text-[#4a695b]"
@@ -273,7 +287,7 @@ export default function FurnitureHomePage({
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-            {curatedCategories.map((cat) => (
+            {displayedCuratedCategories.map((cat) => (
               <Link
                 key={cat.title}
                 href={cat.href}

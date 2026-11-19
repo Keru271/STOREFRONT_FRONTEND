@@ -77,79 +77,110 @@ export default function FurnitureFooter() {
             </div>
           </div>
 
-          {/* Curations Column */}
-          <div className="lg:col-span-2 lg:col-start-6">
-            <p
-              className="text-[11px] font-semibold text-[#040505] uppercase mb-4 tracking-wider"
-              style={{ fontFamily: 'var(--font-plus-jakarta, sans-serif)' }}
-            >
-              Curations
-            </p>
-            <ul className="space-y-2.5 text-[13px]">
-              <li>
-                <Link href="/products" className="text-[#444748] hover:text-[#040505] transition-colors">
-                  All Objects
-                </Link>
-              </li>
-              <li>
-                <Link href="/products?category=furniture" className="text-[#444748] hover:text-[#040505] transition-colors">
-                  Artisanal Furniture
-                </Link>
-              </li>
-              <li>
-                <Link href="/products?category=ceramics" className="text-[#444748] hover:text-[#040505] transition-colors">
-                  Ceramics & Decor
-                </Link>
-              </li>
-              <li>
-                <Link href="/products?category=wellness" className="text-[#444748] hover:text-[#040505] transition-colors">
-                  Botanical Wellness
-                </Link>
-              </li>
-              <li>
-                <Link href="/products?sort=newest" className="text-[#444748] hover:text-[#040505] transition-colors">
-                  Seasonal Releases
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Navigation Links: Dynamic CMS Menu or Sanctuary Curations */}
+          {cmsFooterItems && cmsFooterItems.length > 0 ? (
+            <div className="lg:col-span-5 lg:col-start-6">
+              <p
+                className="text-[11px] font-semibold text-[#040505] uppercase mb-4 tracking-wider"
+                style={{ fontFamily: 'var(--font-plus-jakarta, sans-serif)' }}
+              >
+                Directory & Curations
+              </p>
+              <div className="grid grid-cols-2 gap-3 text-[13px]">
+                {cmsFooterItems.map((item, idx) => {
+                  const target = item.target || '_self';
+                  const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
+                  return (
+                    <Link
+                      key={item.id || idx}
+                      href={item.href || item.url || '/'}
+                      target={target}
+                      rel={rel}
+                      className="text-[#444748] hover:text-[#040505] transition-colors"
+                    >
+                      {item.label || item.title}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Curations Column */}
+              <div className="lg:col-span-2 lg:col-start-6">
+                <p
+                  className="text-[11px] font-semibold text-[#040505] uppercase mb-4 tracking-wider"
+                  style={{ fontFamily: 'var(--font-plus-jakarta, sans-serif)' }}
+                >
+                  Curations
+                </p>
+                <ul className="space-y-2.5 text-[13px]">
+                  <li>
+                    <Link href="/products" className="text-[#444748] hover:text-[#040505] transition-colors">
+                      All Objects
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/products?category=furniture" className="text-[#444748] hover:text-[#040505] transition-colors">
+                      Artisanal Furniture
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/products?category=ceramics" className="text-[#444748] hover:text-[#040505] transition-colors">
+                      Ceramics & Decor
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/products?category=wellness" className="text-[#444748] hover:text-[#040505] transition-colors">
+                      Botanical Wellness
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/products?sort=newest" className="text-[#444748] hover:text-[#040505] transition-colors">
+                      Seasonal Releases
+                    </Link>
+                  </li>
+                </ul>
+              </div>
 
-          {/* Client Care Column */}
-          <div className="lg:col-span-2">
-            <p
-              className="text-[11px] font-semibold text-[#040505] uppercase mb-4 tracking-wider"
-              style={{ fontFamily: 'var(--font-plus-jakarta, sans-serif)' }}
-            >
-              Client Care
-            </p>
-            <ul className="space-y-2.5 text-[13px]">
-              <li>
-                <Link href="/support" className="text-[#444748] hover:text-[#040505] transition-colors">
-                  Worldwide Shipping
-                </Link>
-              </li>
-              <li>
-                <Link href="/support" className="text-[#444748] hover:text-[#040505] transition-colors">
-                  Returns & Exchanges
-                </Link>
-              </li>
-              <li>
-                <Link href="/support" className="text-[#444748] hover:text-[#040505] transition-colors">
-                  Material Care Guide
-                </Link>
-              </li>
-              <li>
-                <Link href="/support" className="text-[#444748] hover:text-[#040505] transition-colors">
-                  Bespoke Inquiries
-                </Link>
-              </li>
-              <li>
-                <Link href="/support" className="text-[#444748] hover:text-[#040505] transition-colors">
-                  Contact Concierge
-                </Link>
-              </li>
-            </ul>
-          </div>
+              {/* Client Care Column */}
+              <div className="lg:col-span-2">
+                <p
+                  className="text-[11px] font-semibold text-[#040505] uppercase mb-4 tracking-wider"
+                  style={{ fontFamily: 'var(--font-plus-jakarta, sans-serif)' }}
+                >
+                  Client Care
+                </p>
+                <ul className="space-y-2.5 text-[13px]">
+                  <li>
+                    <Link href="/support" className="text-[#444748] hover:text-[#040505] transition-colors">
+                      Worldwide Shipping
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/support" className="text-[#444748] hover:text-[#040505] transition-colors">
+                      Returns & Exchanges
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/support" className="text-[#444748] hover:text-[#040505] transition-colors">
+                      Material Care Guide
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/support" className="text-[#444748] hover:text-[#040505] transition-colors">
+                      Bespoke Inquiries
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/support" className="text-[#444748] hover:text-[#040505] transition-colors">
+                      Contact Concierge
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </>
+          )}
 
           {/* Pledge to Earth Column */}
           <div className="lg:col-span-3">

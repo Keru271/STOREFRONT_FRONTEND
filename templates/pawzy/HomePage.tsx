@@ -370,6 +370,21 @@ export default function PawzyHomePage({
   const favoritesList = products.slice(0, 4);
   const bestSellersList = products.slice(4, 8).length >= 4 ? products.slice(4, 8) : products.slice(0, 4);
 
+  // Dynamic category mapping from backend store catalog, falling back to preset pet categories
+  const displayedPetCategories =
+    categories && categories.length > 0
+      ? categories.slice(0, 6).map((c, idx) => {
+          const fallback = PET_CATEGORIES[idx % PET_CATEGORIES.length];
+          return {
+            name: c.name,
+            query: c.slug || c.id,
+            image: c.image,
+            Icon: fallback.Icon,
+            blobShape: fallback.blobShape,
+          };
+        })
+      : PET_CATEGORIES.map((c) => ({ ...c, image: undefined }));
+
   return (
     <div className="min-h-screen flex flex-col font-sans bg-white dark:bg-[#0c121e] text-slate-800 dark:text-slate-100 antialiased selection:bg-amber-300 selection:text-slate-900">
       <PawzyHeader />
@@ -489,7 +504,7 @@ export default function PawzyHomePage({
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 items-center justify-items-center">
-            {PET_CATEGORIES.map((cat) => {
+            {displayedPetCategories.map((cat) => {
               const IconComp = cat.Icon;
               return (
                 <Link
@@ -498,9 +513,17 @@ export default function PawzyHomePage({
                   className="group flex flex-col items-center justify-center text-center transition-all duration-300 transform hover:-translate-y-1.5 focus:outline-none"
                 >
                   <div
-                    className={`w-28 h-24 sm:w-32 sm:h-28 md:w-36 md:h-32 bg-[#edf5fd] dark:bg-sky-950/40 flex items-center justify-center shadow-xs group-hover:bg-[#e0effe] dark:group-hover:bg-sky-900/50 group-hover:scale-105 transition-all duration-300 ${cat.blobShape}`}
+                    className={`w-28 h-24 sm:w-32 sm:h-28 md:w-36 md:h-32 bg-[#edf5fd] dark:bg-sky-950/40 flex items-center justify-center shadow-xs group-hover:bg-[#e0effe] dark:group-hover:bg-sky-900/50 group-hover:scale-105 transition-all duration-300 overflow-hidden ${cat.blobShape}`}
                   >
-                    <IconComp className="w-14 h-14 sm:w-16 sm:h-16 stroke-slate-900 dark:stroke-slate-100 transition-transform duration-300 group-hover:scale-110" />
+                    {cat.image ? (
+                      <img
+                        src={cat.image}
+                        alt={cat.name}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    ) : (
+                      <IconComp className="w-14 h-14 sm:w-16 sm:h-16 stroke-slate-900 dark:stroke-slate-100 transition-transform duration-300 group-hover:scale-110" />
+                    )}
                   </div>
                   <span className="mt-4 font-bold text-base sm:text-lg text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
                     {cat.name}

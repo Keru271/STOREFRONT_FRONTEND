@@ -27,7 +27,9 @@ export default function LuxeHeader() {
   const [expandedSubmenus, setExpandedSubmenus] = useState<Record<string, boolean>>({});
 
   const { items: menuItems } = useMenu('header', { fallbackItems: defaultNavLinks });
+  const { items: mobileMenuItems } = useMenu('mobile-drawer-menu');
   const navLinks = menuItems.length > 0 ? menuItems : defaultNavLinks;
+  const drawerLinks = mobileMenuItems.length > 0 ? mobileMenuItems : navLinks;
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -393,7 +395,7 @@ export default function LuxeHeader() {
             {/* Links */}
             <div className="flex-1 overflow-y-auto p-5 space-y-4">
               <nav className="flex flex-col gap-3">
-                {navLinks.map((link, idx) => {
+                {drawerLinks.map((link, idx) => {
                   const href = link.href || link.url || '/';
                   const label = link.label || link.title || 'Link';
                   const linkId = link.id || href || String(idx);

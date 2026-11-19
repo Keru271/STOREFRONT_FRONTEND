@@ -14,15 +14,27 @@ export function useMenu(handle: string = 'header', options: UseMenuOptions = {})
 
   // Check if this menu is already pre-fetched on the server side
   const lowerHandle = handle.toLowerCase();
-  const isHeader =
-    lowerHandle.includes('header') || lowerHandle.includes('main') || lowerHandle.includes('nav');
+  const isMobile =
+    lowerHandle === 'mobile' ||
+    lowerHandle === 'mobile-drawer-menu' ||
+    lowerHandle === 'mobile-drawer' ||
+    lowerHandle.includes('mobile') ||
+    lowerHandle.includes('drawer');
   const isFooter = lowerHandle.includes('footer');
+  const isHeader =
+    !isMobile &&
+    !isFooter &&
+    (lowerHandle.includes('header') || lowerHandle.includes('main') || lowerHandle.includes('nav'));
 
-  const serverMenu = isHeader
-    ? menuCtx?.headerMenu
-    : isFooter
-      ? menuCtx?.footerMenu
-      : menuCtx?.menus.find((m) => m.handle.toLowerCase() === lowerHandle);
+  const serverMenu = isMobile
+    ? (menuCtx?.mobileMenu?.items && menuCtx.mobileMenu.items.length > 0
+        ? menuCtx.mobileMenu
+        : menuCtx?.headerMenu)
+    : isHeader
+      ? menuCtx?.headerMenu
+      : isFooter
+        ? menuCtx?.footerMenu
+        : menuCtx?.menus.find((m) => m.handle.toLowerCase() === lowerHandle);
 
   const initialItems =
     serverMenu?.items && serverMenu.items.length > 0
@@ -46,12 +58,25 @@ export function useMenu(handle: string = 'header', options: UseMenuOptions = {})
     let isMounted = true;
     setIsLoading(true);
 
-    getMenu(handle)
+    const targetHandle = isMobile ? 'mobile-drawer-menu' : handle;
+
+    getMenu(targetHandle)
       .then((data) => {
         if (!isMounted) return;
         if (data && data.items && data.items.length > 0) {
           setMenu(data);
           setItems(data.items);
+        } else if (isMobile) {
+          // Fallback to header menu if mobile menu is not yet defined
+          return getMenu('header').then((hdrData) => {
+            if (!isMounted) return;
+            if (hdrData && hdrData.items && hdrData.items.length > 0) {
+              setMenu(hdrData);
+              setItems(hdrData.items);
+            } else if (options.fallbackItems && options.fallbackItems.length > 0) {
+              setItems(options.fallbackItems);
+            }
+          });
         } else if (options.fallbackItems && options.fallbackItems.length > 0) {
           setItems(options.fallbackItems);
         }
@@ -71,7 +96,7 @@ export function useMenu(handle: string = 'header', options: UseMenuOptions = {})
     return () => {
       isMounted = false;
     };
-  }, [handle, serverMenu]);
+  }, [handle, serverMenu, isMobile]);
 
   return {
     menu,

@@ -42,6 +42,20 @@ const CATEGORY_TILES = [
 export default function FunoHomePage({ theme, products, collections, categories }: HomePageProps) {
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'new' | 'featured'>('all');
 
+  // Dynamic category mapping from backend store catalog, falling back to preset tiles
+  const displayedCategoryTiles =
+    categories && categories.length > 0
+      ? categories.slice(0, 4).map((c, idx) => {
+          const fallback = CATEGORY_TILES[idx % CATEGORY_TILES.length];
+          return {
+            name: c.name,
+            desc: c.description || fallback.desc,
+            query: c.slug || c.id,
+            image: c.image || fallback.image,
+          };
+        })
+      : CATEGORY_TILES;
+
   const filteredProducts = products.filter((p) => {
     if (selectedFilter === 'new') return true;
     if (selectedFilter === 'featured')
@@ -154,7 +168,7 @@ export default function FunoHomePage({ theme, products, collections, categories 
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-            {CATEGORY_TILES.map((cat, idx) => (
+            {displayedCategoryTiles.map((cat, idx) => (
               <Link
                 key={idx}
                 href={`/products?category=${cat.query}`}

@@ -137,10 +137,11 @@ export const revalidate = 0;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Server-side fetching of Theme and Menus in parallel
-  const [theme, headerMenu, footerMenu] = await Promise.all([
+  const [theme, headerMenu, footerMenu, mobileMenu] = await Promise.all([
     getTheme(),
     getMenu('header'),
     getMenu('footer'),
+    getMenu('mobile-drawer-menu').then((m) => m || getMenu('mobile')),
   ]);
 
   // Generate dynamic @font-face, Google Fonts link, and CSS custom variables based on DB theme config
@@ -187,7 +188,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <CartProvider>
                 <CommonCartDrawer />
                 <WishlistProvider>
-                  <MenuProvider headerMenu={headerMenu} footerMenu={footerMenu}>
+                  <MenuProvider
+                    headerMenu={headerMenu}
+                    footerMenu={footerMenu}
+                    mobileMenu={mobileMenu}
+                  >
                     <ThemeLoader />
                     <ThemeToastContainer />
                     <MaintenanceGuard theme={theme}>

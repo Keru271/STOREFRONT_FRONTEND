@@ -3,10 +3,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
+import { useMenu } from '@/hooks/useMenu';
 import { FunoLogo } from './Header';
 
 export default function FunoFooter() {
   const { theme } = useTheme();
+  const { items: cmsFooterItems } = useMenu('footer');
 
   return (
     <footer className="w-full bg-[#161616] text-[#a0a0a0] pt-16 pb-12 border-t border-[#262626]">
@@ -36,84 +38,110 @@ export default function FunoFooter() {
             </div>
           </div>
 
-          {/* Quick Links Column 1: Shop */}
-          <div className="lg:col-span-2 space-y-4">
-            <h4 className="text-xs font-black text-white uppercase tracking-widest">Catalog</h4>
-            <ul className="space-y-2.5 text-xs font-medium">
-              <li>
-                <Link
-                  href="/products?category=living-room"
-                  className="hover:text-white hover:underline transition"
-                >
-                  Living Room
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=bedroom"
-                  className="hover:text-white hover:underline transition"
-                >
-                  Bedroom Suites
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=dining"
-                  className="hover:text-white hover:underline transition"
-                >
-                  Dining & Kitchen
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=lighting"
-                  className="hover:text-white hover:underline transition"
-                >
-                  Lighting & Lamps
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=decor"
-                  className="hover:text-white hover:underline transition"
-                >
-                  Ceramics & Accents
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Quick Links Column: Dynamic CMS or Presets */}
+          {cmsFooterItems && cmsFooterItems.length > 0 ? (
+            <div className="lg:col-span-4 space-y-4">
+              <h4 className="text-xs font-black text-white uppercase tracking-widest">Navigation</h4>
+              <div className="grid grid-cols-2 gap-2.5 text-xs font-medium">
+                {cmsFooterItems.map((item, idx) => {
+                  const target = item.target || '_self';
+                  const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
+                  return (
+                    <Link
+                      key={item.id || idx}
+                      href={item.href || item.url || '/'}
+                      target={target}
+                      rel={rel}
+                      className="hover:text-white hover:underline transition"
+                    >
+                      {item.label || item.title}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Quick Links Column 1: Shop */}
+              <div className="lg:col-span-2 space-y-4">
+                <h4 className="text-xs font-black text-white uppercase tracking-widest">Catalog</h4>
+                <ul className="space-y-2.5 text-xs font-medium">
+                  <li>
+                    <Link
+                      href="/products?category=living-room"
+                      className="hover:text-white hover:underline transition"
+                    >
+                      Living Room
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/products?category=bedroom"
+                      className="hover:text-white hover:underline transition"
+                    >
+                      Bedroom Suites
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/products?category=dining"
+                      className="hover:text-white hover:underline transition"
+                    >
+                      Dining & Kitchen
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/products?category=lighting"
+                      className="hover:text-white hover:underline transition"
+                    >
+                      Lighting & Lamps
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/products?category=decor"
+                      className="hover:text-white hover:underline transition"
+                    >
+                      Ceramics & Accents
+                    </Link>
+                  </li>
+                </ul>
+              </div>
 
-          {/* Quick Links Column 2: Studio */}
-          <div className="lg:col-span-2 space-y-4">
-            <h4 className="text-xs font-black text-white uppercase tracking-widest">Studio</h4>
-            <ul className="space-y-2.5 text-xs font-medium">
-              <li>
-                <Link href="/pages/about" className="hover:text-white hover:underline transition">
-                  Our Philosophy
-                </Link>
-              </li>
-              <li>
-                <Link href="/collections" className="hover:text-white hover:underline transition">
-                  Lookbook & Drops
-                </Link>
-              </li>
-              <li>
-                <Link href="/pages/faq" className="hover:text-white hover:underline transition">
-                  Care & Warranty
-                </Link>
-              </li>
-              <li>
-                <Link href="/pages/contact" className="hover:text-white hover:underline transition">
-                  Studio Locations
-                </Link>
-              </li>
-              <li>
-                <Link href="/pages/privacy" className="hover:text-white hover:underline transition">
-                  Privacy Policy
-                </Link>
-              </li>
-            </ul>
-          </div>
+              {/* Quick Links Column 2: Studio */}
+              <div className="lg:col-span-2 space-y-4">
+                <h4 className="text-xs font-black text-white uppercase tracking-widest">Studio</h4>
+                <ul className="space-y-2.5 text-xs font-medium">
+                  <li>
+                    <Link href="/pages/about" className="hover:text-white hover:underline transition">
+                      Our Philosophy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/collections" className="hover:text-white hover:underline transition">
+                      Lookbook & Drops
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/pages/faq" className="hover:text-white hover:underline transition">
+                      Care & Warranty
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/pages/contact" className="hover:text-white hover:underline transition">
+                      Studio Locations
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/pages/privacy" className="hover:text-white hover:underline transition">
+                      Privacy Policy
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </>
+          )}
 
           {/* Newsletter Column */}
           <div className="lg:col-span-4 space-y-4">

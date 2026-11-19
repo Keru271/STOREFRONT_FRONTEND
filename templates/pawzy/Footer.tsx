@@ -3,10 +3,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
+import { useMenu } from '@/hooks/useMenu';
 import { PawzyLogo } from './Header';
 
 export default function PawzyFooter() {
   const { theme } = useTheme();
+  const { items: cmsFooterItems } = useMenu('footer');
 
   return (
     <footer
@@ -102,69 +104,100 @@ export default function PawzyFooter() {
             </ul>
           </div>
 
-          {/* Information */}
-          <div className="space-y-3">
-            <h4
-              className="text-[16px] font-bold text-[#1f2937]"
-              style={{ fontFamily: "'Fredoka', sans-serif" }}
-            >
-              Information
-            </h4>
-            <ul className="space-y-2 text-[13.44px] font-medium text-[#6b7280]">
-              <li>
-                <Link href="/pages/about" className="hover:text-[#1f2937] transition">
-                  About Our Studio
-                </Link>
-              </li>
-              <li>
-                <Link href="/support" className="hover:text-[#1f2937] transition">
-                  Terms of Delivery
-                </Link>
-              </li>
-              <li>
-                <Link href="/pages/privacy" className="hover:text-[#1f2937] transition">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/support" className="hover:text-[#1f2937] transition">
-                  FAQs & Help Center
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Navigation Links (Dynamic CMS or Presets) */}
+          {cmsFooterItems && cmsFooterItems.length > 0 ? (
+            <div className="md:col-span-2 space-y-3">
+              <h4
+                className="text-[16px] font-bold text-[#1f2937]"
+                style={{ fontFamily: "'Fredoka', sans-serif" }}
+              >
+                Quick Links
+              </h4>
+              <div className="grid grid-cols-2 gap-2.5 text-[13.44px] font-medium text-[#6b7280]">
+                {cmsFooterItems.map((item, idx) => {
+                  const target = item.target || '_self';
+                  const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
+                  return (
+                    <Link
+                      key={item.id || idx}
+                      href={item.href || item.url || '/'}
+                      target={target}
+                      rel={rel}
+                      className="hover:text-[#1f2937] transition"
+                    >
+                      {item.label || item.title}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Information */}
+              <div className="space-y-3">
+                <h4
+                  className="text-[16px] font-bold text-[#1f2937]"
+                  style={{ fontFamily: "'Fredoka', sans-serif" }}
+                >
+                  Information
+                </h4>
+                <ul className="space-y-2 text-[13.44px] font-medium text-[#6b7280]">
+                  <li>
+                    <Link href="/pages/about" className="hover:text-[#1f2937] transition">
+                      About Our Studio
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/support" className="hover:text-[#1f2937] transition">
+                      Terms of Delivery
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/pages/privacy" className="hover:text-[#1f2937] transition">
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/support" className="hover:text-[#1f2937] transition">
+                      FAQs & Help Center
+                    </Link>
+                  </li>
+                </ul>
+              </div>
 
-          {/* Our Policies */}
-          <div className="space-y-3">
-            <h4
-              className="text-[16px] font-bold text-[#1f2937]"
-              style={{ fontFamily: "'Fredoka', sans-serif" }}
-            >
-              Our Policies
-            </h4>
-            <ul className="space-y-2 text-[13.44px] font-medium text-[#6b7280]">
-              <li>
-                <Link href="/support" className="hover:text-[#1f2937] transition">
-                  Pet Care Guarantee
-                </Link>
-              </li>
-              <li>
-                <Link href="/support" className="hover:text-[#1f2937] transition">
-                  Secure Shopping
-                </Link>
-              </li>
-              <li>
-                <Link href="/account" className="hover:text-[#1f2937] transition">
-                  Track Your Shipment
-                </Link>
-              </li>
-              <li>
-                <Link href="/support" className="hover:text-[#1f2937] transition">
-                  Returns & Replacements
-                </Link>
-              </li>
-            </ul>
-          </div>
+              {/* Our Policies */}
+              <div className="space-y-3">
+                <h4
+                  className="text-[16px] font-bold text-[#1f2937]"
+                  style={{ fontFamily: "'Fredoka', sans-serif" }}
+                >
+                  Our Policies
+                </h4>
+                <ul className="space-y-2 text-[13.44px] font-medium text-[#6b7280]">
+                  <li>
+                    <Link href="/support" className="hover:text-[#1f2937] transition">
+                      Pet Care Guarantee
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/support" className="hover:text-[#1f2937] transition">
+                      Secure Shopping
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/account" className="hover:text-[#1f2937] transition">
+                      Track Your Shipment
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/support" className="hover:text-[#1f2937] transition">
+                      Returns & Replacements
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </>
+          )}
         </div>
 
         {/* ── Bottom Bar & Payment Icons ─────────────────────────────────── */}

@@ -65,6 +65,70 @@ export default function MincomHomePage({
   const onSale = products.slice(6, 9);
   const featuredPicks = products.slice(9, 12);
 
+  const defaultRooms = [
+    {
+      title: 'Living Room',
+      sub: 'Sofas, Lounges & Coffee Tables',
+      count: '48 items',
+      image:
+        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=600&auto=format&fit=crop',
+      href: '/products?category=living-room',
+    },
+    {
+      title: 'Bedroom Sets',
+      sub: 'Platform Beds, Nightstands & Linens',
+      count: '32 items',
+      image:
+        'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?q=80&w=600&auto=format&fit=crop',
+      href: '/products?category=bedroom',
+    },
+    {
+      title: 'Kitchen & Dining',
+      sub: 'Solid Wood Dining Tables & Chairs',
+      count: '24 items',
+      image:
+        'https://images.unsplash.com/photo-1617806118233-18e1de247200?q=80&w=600&auto=format&fit=crop',
+      href: '/products?category=dining',
+    },
+    {
+      title: 'Office & Decor',
+      sub: 'Ergonomic Desks, Bookshelves & Lamps',
+      count: '40 items',
+      image:
+        'https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=600&auto=format&fit=crop',
+      href: '/products?category=office',
+    },
+  ];
+
+  const displayedRooms =
+    categories && categories.length > 0
+      ? categories.slice(0, 4).map((c, idx) => {
+          const fallback = defaultRooms[idx % defaultRooms.length];
+          return {
+            title: c.name,
+            sub: c.description || fallback.sub,
+            count: c.productCount !== undefined ? `${c.productCount} items` : fallback.count,
+            image: c.image || fallback.image,
+            href: `/products?category=${encodeURIComponent(c.slug || c.id)}`,
+          };
+        })
+      : defaultRooms;
+
+  const categoryFilterTabs = [
+    { label: 'All Items', key: 'all' },
+    ...(categories && categories.length > 0
+      ? categories.slice(0, 5).map((c) => ({
+          label: c.name,
+          key: (c.slug || c.name).toLowerCase(),
+        }))
+      : [
+          { label: 'Living Room', key: 'living-room' },
+          { label: 'Bedroom', key: 'bedroom' },
+          { label: 'Dining', key: 'dining' },
+          { label: 'Office', key: 'office' },
+        ]),
+  ];
+
   return (
     <div
       className="min-h-screen flex flex-col antialiased font-sans"
@@ -193,40 +257,7 @@ export default function MincomHomePage({
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-          {[
-            {
-              title: 'Living Room',
-              sub: 'Sofas, Lounges & Coffee Tables',
-              count: '48 items',
-              image:
-                'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=600&auto=format&fit=crop',
-              href: '/products?category=living-room',
-            },
-            {
-              title: 'Bedroom Sets',
-              sub: 'Platform Beds, Nightstands & Linens',
-              count: '32 items',
-              image:
-                'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?q=80&w=600&auto=format&fit=crop',
-              href: '/products?category=bedroom',
-            },
-            {
-              title: 'Kitchen & Dining',
-              sub: 'Solid Wood Dining Tables & Chairs',
-              count: '24 items',
-              image:
-                'https://images.unsplash.com/photo-1617806118233-18e1de247200?q=80&w=600&auto=format&fit=crop',
-              href: '/products?category=dining',
-            },
-            {
-              title: 'Office & Decor',
-              sub: 'Ergonomic Desks, Bookshelves & Lamps',
-              count: '40 items',
-              image:
-                'https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=600&auto=format&fit=crop',
-              href: '/products?category=office',
-            },
-          ].map((room) => (
+          {displayedRooms.map((room) => (
             <Link
               key={room.title}
               href={room.href}
@@ -264,13 +295,7 @@ export default function MincomHomePage({
 
           {/* Filter Pills */}
           <div className="flex flex-wrap gap-2 text-xs font-bold">
-            {[
-              { label: 'All Items', key: 'all' },
-              { label: 'Living Room', key: 'living-room' },
-              { label: 'Bedroom', key: 'bedroom' },
-              { label: 'Dining', key: 'dining' },
-              { label: 'Office', key: 'office' },
-            ].map((tab) => (
+            {categoryFilterTabs.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setSelectedCategoryTab(tab.key)}

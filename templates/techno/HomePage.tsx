@@ -83,6 +83,36 @@ export default function TechnoHomePage({
     },
   ];
 
+  // Dynamic category mapping from backend store catalog, falling back to preset artisan traditions
+  const displayedCraftCategories =
+    categories && categories.length > 0
+      ? categories.slice(0, 5).map((c, idx) => {
+          const fallback = craftCategories[idx % craftCategories.length];
+          return {
+            id: c.slug || c.id,
+            name: c.name,
+            count: c.productCount !== undefined ? `${c.productCount} pieces` : fallback.count,
+            image: c.image || fallback.image,
+            tag: c.description || fallback.tag,
+          };
+        })
+      : craftCategories;
+
+  const craftTabs = [
+    { id: 'all', label: 'All Disciplines' },
+    ...(categories && categories.length > 0
+      ? categories.slice(0, 5).map((c) => ({
+          id: (c.slug || c.name).toLowerCase(),
+          label: c.name,
+        }))
+      : [
+          { id: 'ceramics', label: 'Ceramics' },
+          { id: 'textiles', label: 'Textiles' },
+          { id: 'woodwork', label: 'Woodwork' },
+          { id: 'jewelry', label: 'Jewelry' },
+        ]),
+  ];
+
   const featuredStories = [
     {
       title: 'The Art of the Pit Fire: How Smoke Breathes Color into Clay',
@@ -254,7 +284,7 @@ export default function TechnoHomePage({
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
-            {craftCategories.map((craft) => (
+            {displayedCraftCategories.map((craft) => (
               <Link
                 key={craft.id}
                 href={`/products?category=${craft.id}`}
@@ -307,13 +337,7 @@ export default function TechnoHomePage({
 
             {/* Filter Chips per design.md (h-8, px-3.5, rounded-4px, border-1px #D6D3D1, hover:bg-[#FDF6EC]) */}
             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-              {[
-                { id: 'all', label: 'All Disciplines' },
-                { id: 'ceramics', label: 'Ceramics' },
-                { id: 'textiles', label: 'Textiles' },
-                { id: 'woodwork', label: 'Woodwork' },
-                { id: 'jewelry', label: 'Jewelry' },
-              ].map((tab) => (
+              {craftTabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setSelectedCraftTab(tab.id)}

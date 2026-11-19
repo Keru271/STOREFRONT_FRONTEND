@@ -35,7 +35,9 @@ export default function MincomHeader() {
   const [expandedSubmenus, setExpandedSubmenus] = useState<Record<string, boolean>>({});
 
   const { items: menuItems } = useMenu('header', { fallbackItems: defaultNavLinks });
+  const { items: mobileMenuItems } = useMenu('mobile-drawer-menu');
   const navLinks = menuItems.length > 0 ? menuItems : defaultNavLinks;
+  const drawerLinks = mobileMenuItems.length > 0 ? mobileMenuItems : navLinks;
 
   // Prevent background scrolling when mobile drawer is open
   useEffect(() => {
@@ -606,7 +608,7 @@ export default function MincomHeader() {
                   Navigation
                 </p>
                 <nav className="space-y-1">
-                  {navLinks.map((link, idx) => {
+                  {drawerLinks.map((link, idx) => {
                     const href = link.href || link.url || '/';
                     const label = link.label || link.title || 'Link';
                     const linkId = link.id || href || String(idx);

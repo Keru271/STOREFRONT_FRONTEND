@@ -36,6 +36,7 @@ export default function PawzyHeader() {
   const { itemCount, openCart } = useCart();
   const { wishlistCount } = useWishlist();
   const { items: menuItems } = useMenu('header');
+  const { items: mobileMenuItems } = useMenu('mobile-drawer-menu');
 
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -496,31 +497,44 @@ export default function PawzyHeader() {
                 </button>
               </div>
 
-              <nav className="space-y-3 font-bold text-[14px] text-[#1f2937]">
-                <Link href="/" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#ffd100]">
-                  Home
-                </Link>
-                <Link href="/products" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#ffd100]">
-                  All Products
-                </Link>
-                <Link href="/products?category=dogs" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 pl-4 text-[13px] text-[#6b7280]">
-                  🐕 Dogs Supplies
-                </Link>
-                <Link href="/products?category=cats" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 pl-4 text-[13px] text-[#6b7280]">
-                  🐈 Cats Supplies
-                </Link>
-                <Link href="/products?category=food" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 pl-4 text-[13px] text-[#6b7280]">
-                  🥩 Food & Treats
-                </Link>
-                <Link href="/products?category=toys" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 pl-4 text-[13px] text-[#6b7280]">
-                  🎾 Toys & Accessories
-                </Link>
-                <Link href="/pages/about" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#ffd100]">
-                  About Pawzy
-                </Link>
-                <Link href="/support" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#ffd100]">
-                  Help & Contact
-                </Link>
+              <nav className="space-y-2 font-bold text-[14px] text-[#1f2937]">
+                {(mobileMenuItems && mobileMenuItems.length > 0
+                  ? mobileMenuItems
+                  : menuItems && menuItems.length > 0
+                    ? menuItems
+                    : [
+                        { id: '1', label: 'Home', url: '/' },
+                        { id: '2', label: 'All Products', url: '/products' },
+                        { id: '3', label: '🐕 Dogs Supplies', url: '/products?category=dogs' },
+                        { id: '4', label: '🐈 Cats Supplies', url: '/products?category=cats' },
+                        { id: '5', label: '🥩 Food & Treats', url: '/products?category=food' },
+                        { id: '6', label: '🎾 Toys & Accessories', url: '/products?category=toys' },
+                        { id: '7', label: 'About Pawzy', url: '/pages/about' },
+                        { id: '8', label: 'Help & Contact', url: '/support' },
+                      ]
+                ).map((item, idx) => {
+                  const href = item.url || item.href || '/';
+                  const label = item.label || item.title || 'Link';
+                  const target = item.target || '_self';
+                  const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
+                  return (
+                    <Link
+                      key={item.id || href || idx}
+                      href={href}
+                      target={target}
+                      rel={rel}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-between py-2 hover:text-[#ffd100] transition"
+                    >
+                      <span>{label}</span>
+                      {item.badge && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
               </nav>
             </div>
 

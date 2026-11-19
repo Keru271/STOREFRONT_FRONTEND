@@ -84,6 +84,20 @@ export default function DemoHomePage({
   const [dealAdding, setDealAdding] = useState(false);
   const [dealAdded, setDealAdded] = useState(false);
 
+  // Dynamic category mapping from backend store catalog, falling back to preset tiles
+  const displayedCategoryTiles =
+    categories && categories.length > 0
+      ? categories.slice(0, 4).map((c, idx) => {
+          const fallback = CATEGORY_TILES[idx % CATEGORY_TILES.length];
+          return {
+            name: c.name,
+            desc: c.description || fallback.desc,
+            query: c.slug || c.id,
+            image: c.image || fallback.image,
+          };
+        })
+      : CATEGORY_TILES;
+
   // Countdown timer state for Deal of the Day
   const [timeLeft, setTimeLeft] = useState({ hours: 14, minutes: 32, seconds: 48 });
 
@@ -290,7 +304,7 @@ export default function DemoHomePage({
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-            {CATEGORY_TILES.map((cat, idx) => (
+            {displayedCategoryTiles.map((cat, idx) => (
               <Link
                 key={idx}
                 href={`/products?category=${cat.query}`}

@@ -65,6 +65,7 @@ export default function TechnoHeader() {
   const { itemCount, openCart } = useCart();
   const { wishlistCount } = useWishlist();
   const { items: menuItems } = useMenu('header');
+  const { items: mobileMenuItems } = useMenu('mobile-drawer-menu');
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -101,7 +102,7 @@ export default function TechnoHeader() {
     };
   }, [mobileMenuOpen]);
 
-  const defaultCategories = [
+  const defaultCategories: { label: string; href: string; badge?: string | null }[] = [
     { label: 'All Handmade Goods', href: '/products' },
     { label: 'Ceramics & Pottery', href: '/products?category=ceramics' },
     { label: 'Woven Textiles', href: '/products?category=textiles' },
@@ -152,9 +153,8 @@ export default function TechnoHeader() {
 
       {/* ── Main Sticky Header ────────────────────────────────────────────── */}
       <header
-        className={`sticky top-0 z-40 w-full bg-[#FFFBF5] border-b border-[#E7E5E4] transition-shadow ${
-          scrolled ? 'border-b-[#D6D3D1]' : ''
-        }`}
+        className={`sticky top-0 z-40 w-full bg-[#FFFBF5] border-b border-[#E7E5E4] transition-shadow ${scrolled ? 'border-b-[#D6D3D1]' : ''
+          }`}
         style={{ fontFamily: "'Open Sans', sans-serif" }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 flex items-center justify-between gap-4">
@@ -344,16 +344,34 @@ export default function TechnoHeader() {
               {/* Mobile Navigation List */}
               <div className="space-y-1">
                 <p className="text-[11px] font-bold uppercase tracking-widest text-[#A8A29E] px-2 mb-2">
-                  Shop By Craft
+                  Navigation
                 </p>
-                {defaultCategories.map((cat, idx) => (
+                {(mobileMenuItems && mobileMenuItems.length > 0
+                  ? mobileMenuItems.map((item) => ({
+                    label: item.title || item.label || 'Link',
+                    href: item.url || item.href || '#',
+                    badge: item.badge,
+                  }))
+                  : menuItems && menuItems.length > 0
+                    ? menuItems.map((item) => ({
+                      label: item.title || item.label || 'Link',
+                      href: item.url || item.href || '#',
+                      badge: item.badge,
+                    }))
+                    : defaultCategories
+                ).map((cat, idx) => (
                   <Link
                     key={idx}
                     href={cat.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block px-3 py-2.5 rounded-[4px] text-[15px] font-medium text-[#1C1917] hover:bg-[#FDF6EC] hover:text-[#C2410C]"
+                    className="flex items-center justify-between px-3 py-2.5 rounded-[4px] text-[15px] font-medium text-[#1C1917] hover:bg-[#FDF6EC] hover:text-[#C2410C]"
                   >
-                    {cat.label}
+                    <span>{cat.label}</span>
+                    {cat.badge && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                        {cat.badge}
+                      </span>
+                    )}
                   </Link>
                 ))}
               </div>

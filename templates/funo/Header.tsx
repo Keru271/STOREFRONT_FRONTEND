@@ -74,8 +74,15 @@ export default function FunoHeader() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [expandedMobileSubmenus, setExpandedMobileSubmenus] = useState<Record<string, boolean>>({});
+
+  const { items: mobileNavItems } = useMenu('mobile-drawer-menu');
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const toggleMobileSubmenu = (id: string) => {
+    setExpandedMobileSubmenus((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -751,63 +758,101 @@ export default function FunoHeader() {
               </div>
 
               {/* Navigation Links */}
-              <nav className="space-y-3 font-bold text-sm text-slate-900 uppercase">
-                <Link
-                  href="/"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 hover:text-orange-500 transition"
-                >
-                  HOME
-                </Link>
-                <Link
-                  href="/products"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 hover:text-orange-500 transition"
-                >
-                  SHOPS & CATALOG
-                </Link>
-                <Link
-                  href="/products?category=living-room"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 pl-4 text-xs text-slate-600 hover:text-orange-500"
-                >
-                  — Living Room
-                </Link>
-                <Link
-                  href="/products?category=bedroom"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 pl-4 text-xs text-slate-600 hover:text-orange-500"
-                >
-                  — Bedroom
-                </Link>
-                <Link
-                  href="/products?category=dining"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 pl-4 text-xs text-slate-600 hover:text-orange-500"
-                >
-                  — Dining & Kitchen
-                </Link>
-                <Link
-                  href="/products?category=lighting"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 pl-4 text-xs text-slate-600 hover:text-orange-500"
-                >
-                  — Lighting
-                </Link>
-                <Link
-                  href="/pages/about"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 hover:text-orange-500 transition"
-                >
-                  BLOG & STORIES
-                </Link>
-                <Link
-                  href="/pages/contact"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 hover:text-orange-500 transition"
-                >
-                  PAGES & CONTACT
-                </Link>
+              <nav className="space-y-1 font-bold text-sm text-slate-900 uppercase">
+                {(mobileNavItems && mobileNavItems.length > 0
+                  ? mobileNavItems
+                  : [
+                      { id: 'm-home', label: 'HOME', url: '/' },
+                      { id: 'm-shops', label: 'SHOPS & CATALOG', url: '/products' },
+                      { id: 'm-living', label: '— Living Room', url: '/products?category=living-room' },
+                      { id: 'm-bedroom', label: '— Bedroom', url: '/products?category=bedroom' },
+                      { id: 'm-dining', label: '— Dining & Kitchen', url: '/products?category=dining' },
+                      { id: 'm-lighting', label: '— Lighting', url: '/products?category=lighting' },
+                      { id: 'm-blog', label: 'BLOG & STORIES', url: '/pages/about' },
+                      { id: 'm-contact', label: 'PAGES & CONTACT', url: '/pages/contact' },
+                    ]
+                ).map((item, idx) => {
+                  const href = item.url || item.href || '/';
+                  const label = item.label || item.title || 'Link';
+                  const itemId = item.id || href || String(idx);
+                  const hasChildren = item.children && item.children.length > 0;
+                  const isExpanded = !!expandedMobileSubmenus[itemId];
+                  const target = item.target || '_self';
+                  const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
+
+                  return (
+                    <div key={itemId} className="space-y-1">
+                      <div className="flex items-center justify-between group">
+                        <Link
+                          href={href}
+                          target={target}
+                          rel={rel}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex-1 py-2 hover:text-orange-500 transition flex items-center justify-between pr-2"
+                        >
+                          <span>{label}</span>
+                          {item.badge && (
+                            <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-orange-100 text-orange-600">
+                              {item.badge}
+                            </span>
+                          )}
+                        </Link>
+                        {hasChildren && (
+                          <button
+                            type="button"
+                            onClick={() => toggleMobileSubmenu(itemId)}
+                            className="p-2 text-slate-400 hover:text-slate-800 transition cursor-pointer"
+                            aria-label={`Toggle ${label} sublinks`}
+                          >
+                            <svg
+                              className={`w-4 h-4 transition-transform duration-200 ${
+                                isExpanded ? 'rotate-180 text-orange-500' : ''
+                              }`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 9l-7 7-7-7"
+                              />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+
+                      {hasChildren && isExpanded && (
+                        <div className="pl-4 pb-1 space-y-1 border-l-2 border-orange-200 ml-1">
+                          {item.children!.map((sub, sIdx) => {
+                            const subHref = sub.url || sub.href || '#';
+                            const subLabel = sub.label || sub.title || 'Sublink';
+                            const subTarget = sub.target || '_self';
+                            const subRel = subTarget === '_blank' ? 'noopener noreferrer' : undefined;
+                            return (
+                              <Link
+                                key={sub.id || subHref || sIdx}
+                                href={subHref}
+                                target={subTarget}
+                                rel={subRel}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="block py-1.5 text-xs font-semibold text-slate-600 hover:text-orange-500 transition flex items-center justify-between"
+                              >
+                                <span>{subLabel}</span>
+                                {sub.badge && (
+                                  <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                                    {sub.badge}
+                                  </span>
+                                )}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </nav>
             </div>
 

@@ -258,71 +258,102 @@ export default function TechnoFooter() {
             </div>
           </div>
 
-          {/* Links Column 1: Discover */}
-          <div className="space-y-3">
-            <h5
-              className="text-[14px] font-semibold text-white tracking-wide uppercase"
-              style={{ fontFamily: "'Lora', serif" }}
-            >
-              Handcrafted Goods
-            </h5>
-            <ul className="space-y-2 text-[13px]">
-              {footerLinks.discover.map((item, idx) => (
-                <li key={idx}>
-                  <Link
-                    href={item.href}
-                    className="text-[#A8A29E] hover:text-[#D4A373] transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Navigation Links: Dynamic CMS or Presets */}
+          {cmsFooterItems && cmsFooterItems.length > 0 ? (
+            <div className="lg:col-span-3 space-y-4">
+              <h5
+                className="text-[14px] font-semibold text-white tracking-wide uppercase"
+                style={{ fontFamily: "'Lora', serif" }}
+              >
+                Store Directory & Navigation
+              </h5>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-[13px]">
+                {cmsFooterItems.map((item, idx) => {
+                  const target = item.target || '_self';
+                  const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
+                  return (
+                    <Link
+                      key={item.id || idx}
+                      href={item.href || item.url || '/'}
+                      target={target}
+                      rel={rel}
+                      className="text-[#A8A29E] hover:text-[#D4A373] transition-colors"
+                    >
+                      {item.label || item.title}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Links Column 1: Discover */}
+              <div className="space-y-3">
+                <h5
+                  className="text-[14px] font-semibold text-white tracking-wide uppercase"
+                  style={{ fontFamily: "'Lora', serif" }}
+                >
+                  Handcrafted Goods
+                </h5>
+                <ul className="space-y-2 text-[13px]">
+                  {footerLinks.discover.map((item, idx) => (
+                    <li key={idx}>
+                      <Link
+                        href={item.href}
+                        className="text-[#A8A29E] hover:text-[#D4A373] transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-          {/* Links Column 2: Maker Community */}
-          <div className="space-y-3">
-            <h5
-              className="text-[14px] font-semibold text-white tracking-wide uppercase"
-              style={{ fontFamily: "'Lora', serif" }}
-            >
-              For Artisans
-            </h5>
-            <ul className="space-y-2 text-[13px]">
-              {footerLinks.makers.map((item, idx) => (
-                <li key={idx}>
-                  <Link
-                    href={item.href}
-                    className="text-[#A8A29E] hover:text-[#D4A373] transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+              {/* Links Column 2: Maker Community */}
+              <div className="space-y-3">
+                <h5
+                  className="text-[14px] font-semibold text-white tracking-wide uppercase"
+                  style={{ fontFamily: "'Lora', serif" }}
+                >
+                  For Artisans
+                </h5>
+                <ul className="space-y-2 text-[13px]">
+                  {footerLinks.makers.map((item, idx) => (
+                    <li key={idx}>
+                      <Link
+                        href={item.href}
+                        className="text-[#A8A29E] hover:text-[#D4A373] transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-          {/* Links Column 3: Customer Care */}
-          <div className="space-y-3">
-            <h5
-              className="text-[14px] font-semibold text-white tracking-wide uppercase"
-              style={{ fontFamily: "'Lora', serif" }}
-            >
-              Customer Care
-            </h5>
-            <ul className="space-y-2 text-[13px]">
-              {footerLinks.support.map((item, idx) => (
-                <li key={idx}>
-                  <Link
-                    href={item.href}
-                    className="text-[#A8A29E] hover:text-[#D4A373] transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+              {/* Links Column 3: Customer Care */}
+              <div className="space-y-3">
+                <h5
+                  className="text-[14px] font-semibold text-white tracking-wide uppercase"
+                  style={{ fontFamily: "'Lora', serif" }}
+                >
+                  Customer Care
+                </h5>
+                <ul className="space-y-2 text-[13px]">
+                  {footerLinks.support.map((item, idx) => (
+                    <li key={idx}>
+                      <Link
+                        href={item.href}
+                        className="text-[#A8A29E] hover:text-[#D4A373] transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
+          )}
         </div>
 
         {/* ── 4. Copyright & Provenance Bar ────────────────────────── */}

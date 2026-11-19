@@ -426,6 +426,7 @@ export interface Category {
   icon?: string | null;
   image?: string | null;
   description?: string | null;
+  productCount?: number;
 }
 
 export interface Collection {

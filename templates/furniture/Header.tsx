@@ -54,6 +54,7 @@ export default function FurnitureHeader() {
   const { wishlistCount } = useWishlist();
   const { currency, formatPrice } = useCurrency();
   const { items: menuItems } = useMenu('header');
+  const { items: mobileMenuItems } = useMenu('mobile-drawer-menu');
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -81,8 +82,8 @@ export default function FurnitureHeader() {
   const navLinks =
     menuItems && menuItems.length > 0
       ? menuItems.map((item) => ({
-        label: item.title,
-        href: item.url || '#',
+        label: item.title || item.label || 'Link',
+        href: item.url || item.href || '#',
       }))
       : [
         { label: 'Shop All', href: '/products' },
@@ -91,6 +92,14 @@ export default function FurnitureHeader() {
         { label: 'Wellness', href: '/products?category=wellness' },
         { label: 'Editorial', href: '/about' },
       ];
+
+  const drawerLinks =
+    mobileMenuItems && mobileMenuItems.length > 0
+      ? mobileMenuItems.map((item) => ({
+          label: item.title || item.label || 'Link',
+          href: item.url || item.href || '#',
+        }))
+      : navLinks;
 
   return (
     <header className="fixed top-0 left-0 right-0 w-full z-50 bg-[#faf9f6]/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.03)] border-b border-[#e3e2e0]/50 transition-all duration-200">
@@ -255,7 +264,7 @@ export default function FurnitureHeader() {
             <SearchAutocomplete />
           </div>
           <nav className="flex flex-col space-y-2">
-            {navLinks.map((link) => (
+            {drawerLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}

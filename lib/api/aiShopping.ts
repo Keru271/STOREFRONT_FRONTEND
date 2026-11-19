@@ -90,11 +90,20 @@ export async function processCustomerAiShopping(
 }> {
   // Try calling backend LLM + PostgreSQL vector & filter search endpoint first
   try {
-    const backendRes = await apiClient.post<any>('/api/products/ai-search', {
-      query: message,
-      currency,
-      limit: 4,
-    });
+    let backendRes: any;
+    try {
+      backendRes = await apiClient.post<any>('api/storefront/products/ai-search', {
+        query: message,
+        currency,
+        limit: 4,
+      });
+    } catch {
+      backendRes = await apiClient.post<any>('/api/products/ai-search', {
+        query: message,
+        currency,
+        limit: 4,
+      });
+    }
 
     if (backendRes && backendRes.products && backendRes.products.length > 0) {
       return {
