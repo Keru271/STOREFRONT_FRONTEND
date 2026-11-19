@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { ApiError } from '@/lib/api/client';
 import type { AuthPageProps } from '@/templates';
+import { PhoneInputWithCountry } from '@/components/ui/PhoneInputWithCountry';
 
 export default function LuxeSignupPage({ theme }: AuthPageProps) {
   const router = useRouter();
@@ -219,27 +220,36 @@ export default function LuxeSignupPage({ theme }: AuthPageProps) {
                 >
                   {field.label}
                 </label>
-                <input
-                  id={field.id}
-                  name={field.name}
-                  type={field.type}
-                  value={formData[field.name as keyof typeof formData]}
-                  onChange={handleChange}
-                  required={field.name !== 'phone'}
-                  autoComplete={field.autoComplete}
-                  className="w-full px-4 py-3.5 text-sm bg-transparent border outline-none transition-all"
-                  style={{
-                    color: 'var(--sf-text)',
-                    borderColor: 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
-                  }}
-                  onFocus={(e) =>
-                    ((e.target as HTMLInputElement).style.borderColor = 'var(--sf-primary)')
-                  }
-                  onBlur={(e) =>
-                    ((e.target as HTMLInputElement).style.borderColor =
-                      'color-mix(in srgb, var(--sf-text) 15%, transparent)')
-                  }
-                />
+                {field.name === 'phone' ? (
+                  <PhoneInputWithCountry
+                    value={formData.phone}
+                    onChange={(val) => setFormData((prev) => ({ ...prev, phone: val }))}
+                    placeholder="98765 43210"
+                    defaultCountryCode="+91"
+                  />
+                ) : (
+                  <input
+                    id={field.id}
+                    name={field.name}
+                    type={field.type}
+                    value={formData[field.name as keyof typeof formData]}
+                    onChange={handleChange}
+                    required={field.name !== 'phone'}
+                    autoComplete={field.autoComplete}
+                    className="w-full px-4 py-3.5 text-sm bg-transparent border outline-none transition-all"
+                    style={{
+                      color: 'var(--sf-text)',
+                      borderColor: 'color-mix(in srgb, var(--sf-text) 15%, transparent)',
+                    }}
+                    onFocus={(e) =>
+                      ((e.target as HTMLInputElement).style.borderColor = 'var(--sf-primary)')
+                    }
+                    onBlur={(e) =>
+                      ((e.target as HTMLInputElement).style.borderColor =
+                        'color-mix(in srgb, var(--sf-text) 15%, transparent)')
+                    }
+                  />
+                )}
               </div>
             ))}
 

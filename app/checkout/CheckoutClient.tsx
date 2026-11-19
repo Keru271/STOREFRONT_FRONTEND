@@ -21,6 +21,7 @@ import { useToast } from '@/hooks/useToast';
 import { useLoader } from '@/hooks/useLoader';
 import { useAuth } from '@/hooks/useAuth';
 import { trackInitiateCheckout } from '@/lib/analytics/events';
+import { PhoneInputWithCountry } from '@/components/ui/PhoneInputWithCountry';
 import {
   ArrowLeft,
   ChevronDown,
@@ -1129,17 +1130,13 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                       Mandatory for placing order
                     </span>
                   </label>
-                  <input
+                  <PhoneInputWithCountry
                     id="checkout-contact-phone"
-                    type="tel"
                     required
                     value={contactData.phone}
-                    onChange={(e) => setContactData({ ...contactData, phone: e.target.value })}
-                    placeholder="e.g. +91 98765 43210 or 9876543210"
-                    className={`w-full px-3.5 py-2.5 rounded-xl border font-mono font-bold outline-hidden transition-colors ${!contactData.phone?.trim()
-                      ? 'border-rose-400 dark:border-rose-600 bg-rose-50/30 dark:bg-rose-950/20 text-neutral-900 dark:text-white focus:border-rose-500'
-                      : 'border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white focus:border-black dark:focus:border-white'
-                      }`}
+                    onChange={(val) => setContactData({ ...contactData, phone: val })}
+                    placeholder="98765 43210"
+                    defaultCountryCode="+91"
                   />
                   {!contactData.phone?.trim() ? (
                     <p className="text-[11px] text-rose-600 dark:text-rose-400 font-medium mt-1.5 flex items-center gap-1">
@@ -1913,16 +1910,13 @@ export default function CheckoutClient({ theme }: CheckoutClientProps) {
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
-                    Contact Phone <span className="text-red-500 font-black">*</span>
-                  </label>
-                  <input
-                    type="tel"
+                  <PhoneInputWithCountry
+                    label="Contact Phone"
                     required
-                    placeholder="e.g. +1 555-0199 or +91 98765 43210"
+                    placeholder="98765 43210"
                     value={newAddressForm.phone}
-                    onChange={(e) => setNewAddressForm({ ...newAddressForm, phone: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 font-medium outline-hidden focus:border-black dark:focus:border-white"
+                    onChange={(val) => setNewAddressForm({ ...newAddressForm, phone: val })}
+                    defaultCountryCode="+91"
                   />
                 </div>
               </div>
